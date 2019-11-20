@@ -6,6 +6,9 @@ import router from './router'
 import { Auth0Plugin } from "./auth";
 import { domain, clientId } from "../auth_config.json";
 
+//instance properties
+Vue.prototype.$appName = 'Equibase'
+
 Vue.config.productionTip = false
 
 Vue.use(Auth0Plugin, {

@@ -1,10 +1,11 @@
 import axios from "axios";
+import { getAccessToken } from './auth';
+
 export default () => {
   return axios.create({
     baseURL: "http://localhost:8081",
-    auth: {
-        username: 'admin',
-        password: 'Z3PtaWKwKzwFz2Yc6z9q8L7njdKJA@XTK'
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`
     }
   });
 };

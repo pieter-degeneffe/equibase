@@ -1,25 +1,37 @@
 <template>
-  <div class="home">
+  <v-container>
+    <v-layout column>
+      <v-flex class="display-2 text-xs-center my-5">Homepagina</v-flex>
+      <v-flex>
+        <p class="subheading mt-3">
+          Dit is de homepagina van Equibase
+        </p>
+      </v-flex>
+    </v-layout>
+  </v-container>
+  <!-- <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-    <!-- Check that the SDK client is not currently loading before accessing is methods -->
     <div v-if="!$auth.loading">
-      <!-- show login when not authenticated -->
       <button v-if="!$auth.isAuthenticated" @click="login">Log in</button>
-      <!-- show logout when authenticated -->
       <button v-if="$auth.isAuthenticated" @click="logout">Log out</button>
+      <br>
+      <div>
+        <button @click="callApi">Call</button>
+        <p>Repons: {{ apiMessage }}</p>
+      </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import axios from "axios";
 
 export default {
   name: 'home',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      apiMessage: ""
+    };
   },
   methods: {
     login() {
@@ -28,6 +40,19 @@ export default {
     logout() {
       this.$auth.logout();
       this.$router.push({ path: "/" });
+    },
+    async callApi() {
+      // Get the access token from the auth wrapper
+      const token = await this.$auth.getTokenSilently();
+
+      // Use Axios to make a call to the API
+      const { data } = await axios.get("http://localhost:3001/api", {
+        headers: {
+          Authorization: `Bearer ${token}`    // send the access token through the 'Authorization' header
+        }
+      });
+
+      this.apiMessage = data;
     }
   }
 }
