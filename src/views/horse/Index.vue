@@ -1,13 +1,6 @@
 <template>
-  <v-card
-    class="ma-5"
-    outlined
-  >
-    <v-toolbar
-      flat
-      color="blue-grey"
-      dark
-    >
+  <v-card class="ma-5" outlined>
+    <v-toolbar flat color="blue-grey" dark>
       <v-toolbar-title>Hengsten</v-toolbar-title>
     </v-toolbar>
     <!-- <v-data-table

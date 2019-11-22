@@ -1,59 +1,40 @@
 <template>
   <v-container>
-    <v-layout column>
-      <v-flex class="display-2 text-xs-center my-5">Homepagina</v-flex>
-      <v-flex>
-        <p class="subheading mt-3">
-          Dit is de homepagina van Equibase
-        </p>
-      </v-flex>
-    </v-layout>
+    <v-card outlined color="red" dark flat v-show="!isLoggedIn()" class="mb-2">
+      <v-card-title>
+        <v-icon large left>mdi-alert-box</v-icon>
+        <span class="title font-weight-light">Login om toegang te krijgen tot {{ this.$appName }}</span>
+      </v-card-title>
+      <v-card-text>
+        Om toegang te kunnen krijgen tot de {{ this.$appName }} applicatie moet je eerst ingelogd zijn
+      </v-card-text>
+      <v-card-actions>
+        <v-btn depressed color="error" @click="handleLogin()">Inloggen</v-btn>
+      </v-card-actions>
+    </v-card>
+    <v-card outlined flat v-show="isLoggedIn()">
+      <v-card-title>
+        <span class="title font-weight-light">Welkom in de {{ this.$appName }} applicatie</span>
+      </v-card-title>
+      <v-card-text>
+        Gebruik het menu om doorheen de verschillende opties te navigeren
+      </v-card-text>
+    </v-card>
   </v-container>
-  <!-- <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <div v-if="!$auth.loading">
-      <button v-if="!$auth.isAuthenticated" @click="login">Log in</button>
-      <button v-if="$auth.isAuthenticated" @click="logout">Log out</button>
-      <br>
-      <div>
-        <button @click="callApi">Call</button>
-        <p>Repons: {{ apiMessage }}</p>
-      </div>
-    </div>
-  </div> -->
 </template>
-
 <script>
-import axios from "axios";
-
-export default {
-  name: 'home',
-  data() {
-    return {
-      apiMessage: ""
-    };
-  },
-  methods: {
-    login() {
-      this.$auth.loginWithRedirect();
-    },
-    logout() {
-      this.$auth.logout();
-      this.$router.push({ path: "/" });
-    },
-    async callApi() {
-      // Get the access token from the auth wrapper
-      const token = await this.$auth.getTokenSilently();
-
-      // Use Axios to make a call to the API
-      const { data } = await axios.get("http://localhost:3001/api", {
-        headers: {
-          Authorization: `Bearer ${token}`    // send the access token through the 'Authorization' header
-        }
-      });
-
-      this.apiMessage = data;
+  import { isLoggedIn, login, logout } from '@/services/auth';
+  export default {
+    methods: {
+      handleLogin() {
+        login();
+      },
+      handleLogout() {
+        logout();
+      },
+      isLoggedIn() {
+        return isLoggedIn();
+      },
     }
   }
-}
 </script>

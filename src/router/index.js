@@ -12,16 +12,27 @@ const routes = [
     //beforeEnter: requireAuth
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('@/views/About'),
-    beforeEnter: requireAuth
-  },
-  {
     path: "/horse",
     name: "horse",
     component: () => import("@/views/horse/Index"),
     beforeEnter: requireAuth
+  },
+  {
+    path: "/horse/:id",
+    props: true,
+    component: () => import("@/views/horse/Horse"),
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/customer",
+    name: "customer",
+    component: () => import("@/views/customer/Index")
+  },
+  {
+    path: "/customer/:id",
+    props: true,
+    name: "customer page",
+    component: () => import("@/views/customer/Customer")
   },
   {
     path: '/callback',

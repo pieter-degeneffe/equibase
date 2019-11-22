@@ -1,11 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer app v-model="drawer">
-      <v-list-item
-        v-for="menuItem in menu"
-        :key="menuItem.title"
-        :to="menuItem.url"
-      >
+      <v-list-item v-for="menuItem in menu" :key="menuItem.title" :to="menuItem.url">
         <v-list-item-icon>
           <v-icon>{{ menuItem.icon }}</v-icon>
         </v-list-item-icon>
@@ -16,14 +12,15 @@
         </v-list-item-content>
       </v-list-item>
     </v-navigation-drawer>
-    <v-toolbar dense>
+    <v-toolbar flat dense color="primary" dark>
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
         class="hidden-md-and-up"
       ></v-app-bar-nav-icon>
-      <router-link to="/">
-        <v-toolbar-title>{{ this.$appName }}</v-toolbar-title>
-      </router-link>
+      <!-- <router-link to="/">
+        <v-toolbar-title light>{{ this.$appName }}</v-toolbar-title>
+      </router-link> -->
+      <v-toolbar-title>{{ this.$appName }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn
@@ -35,8 +32,8 @@
           v-show="isLoggedIn()"
           >{{ menuItem.title }}</v-btn
         >
-        <v-btn text v-show="isLoggedIn()" @click="handleLogout()" color="warning">Log out </v-btn>
-        <v-btn text v-show="!isLoggedIn()" @click="handleLogin()" color="success" dark>Log In</v-btn>
+        <v-btn text v-show="isLoggedIn()" @click="handleLogout()">Log out </v-btn>
+        <v-btn text v-show="!isLoggedIn()" @click="handleLogin()" dark>Log In</v-btn>
       </v-toolbar-items>
     </v-toolbar>
   </div>
@@ -59,11 +56,6 @@ export default {
           title: "Klanten",
           url: "/customer",
           icon: "mdi-account"
-        },
-        {
-          title: "About",
-          url: "/about",
-          icon: "mdi-account"
         }
       ]
     };
@@ -81,11 +73,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-a.router-link-active {
-  text-decoration: none;
-  text-transform: uppercase;
-  color: rgba(0, 0, 0, 0.87);
-}
-</style>
