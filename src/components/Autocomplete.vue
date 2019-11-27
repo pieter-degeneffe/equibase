@@ -2,11 +2,11 @@
   <div>
     <v-autocomplete v-model="selectedCustomer" :items="customers" label="Eigenaar" :placeholder="fullName | capitalize" return-object outlined>
       <template slot="selection" slot-scope="data">
-        {{ data.item.first_name | capitalize}} {{ data.item.last_name | capitalize}}
+        {{ data.item.first_name | capitalize }} {{ data.item.last_name | capitalize}}
       </template>
       <template v-slot:item="data">
-        <v-list-item-avatar color="red">
-          <span class="white">{{ (data.item.first_name[0] + data.item.last_name[0]) || '?' }}</span>
+        <v-list-item-avatar color="primary">
+          <span class="white--text">{{ (data.item.first_name[0] + data.item.last_name[0]) || '?' }}</span>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title>{{ data.item.first_name | capitalize}} {{ data.item.last_name | capitalize}}</v-list-item-title>
