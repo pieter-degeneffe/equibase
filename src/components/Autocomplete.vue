@@ -48,7 +48,6 @@ export default {
         this.errored = true;
       } finally {
         this.loading = false;
-        //console.log(this.customers);
       }
     }
   }
