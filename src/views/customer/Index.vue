@@ -1,24 +1,13 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-toolbar flat color="blue-grey" dark>
-      <v-toolbar-title>Klanten</v-toolbar-title>
-    </v-toolbar>
-    <v-simple-table fixed-header>
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th class="text-left">Naam</th>
-            <th class="text-left">Paarden</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="customer in customers" :key="customer ._id" @click="openCustomerPage(customer._id)">
-            <td>{{ customer.first_name }} {{ customer.last_name }}</td>
-            <td>{{ customer.horses.length}}</td>
-          </tr>
-        </tbody>
+    <v-data-table :headers="headers" :items="customers" multi-sort class="elevation-1" :loading="loading" loading-text="Bezig met laden...">
+      <template v-slot:item="props">
+        <tr @click="openCustomerPage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
+          <td>{{ props.item.first_name | capitalize}} {{ props.item.last_name | capitalize}}</td>
+          <td>{{ props.item.horses.length}}</td>
+        </tr>
       </template>
-    </v-simple-table>
+    </v-data-table>
   </v-card>
 </template>
 
@@ -27,7 +16,20 @@ import customerAPI from "@/services/CustomerAPI.js";
 export default {
   data() {
     return {
+      errored: false,
+      loading: true,
       customers: [],
+      headers: [
+        {
+          text: 'Naam klant',
+          align: 'left',
+          sortable: true
+        },
+        {
+          text: 'Paarden',
+          align: 'left',
+        }
+      ],
     };
   },
   mounted() {
@@ -46,6 +48,9 @@ export default {
     },
     openCustomerPage(id) {
       this.$router.push("/customer/" + id);
+    },
+    mouseOver(hoverState) {
+      hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
     }
   }
 }
