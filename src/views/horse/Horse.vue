@@ -32,15 +32,27 @@
             <v-text-field v-model="horse.grandfather" :counter="128" label="Grootvader" required outlined></v-text-field>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="12" md="4">
+      <!-- </v-container>
+      <v-divider></v-divider>
+      <v-container> -->
+        <v-row justify="end">
             <v-btn :disabled="!valid" color="success" class="mr-4" @click="saveHorse()" depressed>
               Opslaan
             </v-btn>
-            <v-btn color="warning" @click="deleteHorse()" depressed>
+            <v-btn color="warning" depressed @click="dialog = true">
               Verwijderen
             </v-btn>
-          </v-col>
+            <v-dialog v-model="dialog" persistent max-width="350">
+              <v-card>
+                <v-card-title class="headline">{{ horse.name }} verwijderen?</v-card-title>
+                <v-card-text>Ben je zeker dat je het paard {{ horse.name }} wilt verwijderen? Dit kan niet meer ongedaan gemaakt worden</v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="success" depressed @click="dialog = false">Annuleren</v-btn>
+                  <v-btn color="error" depressed @click="deleteHorse()">Verwijderen</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
         </v-row>
         {{ horse.owner }}
       </v-container>
@@ -63,7 +75,8 @@ export default {
       nameRules: [
         v => !!v || 'Naam is verplicht',
         v => (v && v.length <= 128) || 'Moet minder dan 128 tekens bevatten'
-      ]
+      ],
+      dialog: false
     };
   },
   computed: {
@@ -83,10 +96,12 @@ export default {
     },
     async saveHorse() {
       await horseAPI.putHorse(this.horse);
+      console.log(this.horse);
     },
     async deleteHorse() {
       await horseAPI.deleteHorse(this.horse._id);
-      this.$router.push({ path: '/horse' })
+      this.$router.push({ path: '/horse' });
+      this.dialog = false;
     },
     updateOwner(newOwner) {
       console.log(newOwner);

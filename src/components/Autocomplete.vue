@@ -1,6 +1,19 @@
 <template>
   <div>
-    <v-autocomplete v-model="selectedCustomer" :items="customers" label="Eigenaar" item-text="first_name" :placeholder="this.owner.fullName" return-object outlined>
+    <!-- <v-autocomplete v-model="selectedCustomer" :items="customers" label="Eigenaar" item-text="first_name" :placeholder="fullName" return-object outlined> -->
+    <v-autocomplete v-model="selectedCustomer" :items="customers" label="Eigenaar" :placeholder="fullName | capitalize" return-object outlined>
+      <template slot="selection" slot-scope="data">
+        {{ data.item.first_name | capitalize}} {{ data.item.last_name | capitalize}}
+      </template>
+      <template v-slot:item="data">
+        <v-list-item-avatar color="red">
+          <span class="white">{{ (data.item.first_name[0] + data.item.last_name[0]) || '?' }}</span>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title>{{ data.item.first_name | capitalize}} {{ data.item.last_name | capitalize}}</v-list-item-title>
+          <v-list-item-subtitle>{{ data.item.email }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </template>
     </v-autocomplete>
   </div>
 </template>
@@ -36,7 +49,7 @@ export default {
         this.errored = true;
       } finally {
         this.loading = false;
-        console.log(this.customers);
+        //console.log(this.customers);
       }
     }
   }

@@ -24,10 +24,13 @@ Vue.use(Auth0Plugin, {
   }
 });
 
-Vue.filter('capitalize', function (value) {
-  if (!value) return ''
-  value = value.toString()
-  return value.charAt(0).toUpperCase() + value.slice(1)
+Vue.filter('capitalize', function (str) {
+  if (!str) return ''
+  const splitStr = str.toLowerCase().split(' ');
+  for (var i = 0; i < splitStr.length; i++) {
+    splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+   }
+   return splitStr.join(' ');
 })
 
 //Config of vuefilterdate
