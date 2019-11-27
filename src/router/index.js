@@ -26,13 +26,15 @@ const routes = [
   {
     path: "/customer",
     name: "customer",
-    component: () => import("@/views/customer/Index")
+    component: () => import("@/views/customer/Index"),
+    beforeEnter: requireAuth
   },
   {
     path: "/customer/:id",
     props: true,
     name: "customer page",
-    component: () => import("@/views/customer/Customer")
+    component: () => import("@/views/customer/Customer"),
+    beforeEnter: requireAuth
   },
   {
     path: '/callback',

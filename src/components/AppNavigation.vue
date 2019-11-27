@@ -7,7 +7,9 @@
         </v-list-item-icon>
         <v-list-item-content>
           <v-list-item-title>
-            {{ menuItem.title }}
+            <router-link to="home">
+              {{ menuItem.title }}
+            </router-link>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -17,10 +19,10 @@
         @click.stop="drawer = !drawer"
         class="hidden-md-and-up"
       ></v-app-bar-nav-icon>
-      <!-- <router-link to="/">
-        <v-toolbar-title light>{{ this.$appName }}</v-toolbar-title>
-      </router-link> -->
-      <v-toolbar-title>{{ this.$appName }}</v-toolbar-title>
+      <router-link to="/" id="homelink">
+        <v-toolbar-title>{{ this.$appName }}</v-toolbar-title>
+      </router-link>
+      <!-- <v-toolbar-title>{{ this.$appName }}</v-toolbar-title> -->
       <v-spacer></v-spacer>
       <v-toolbar-items>
         <v-btn
@@ -73,3 +75,9 @@ export default {
   }
 };
 </script>
+<style lang="css">
+header a#homelink {
+  color: #FFF;
+  text-decoration: none;
+}
+</style>

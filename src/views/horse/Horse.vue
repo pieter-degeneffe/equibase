@@ -1,23 +1,8 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-toolbar flat color="blue-grey" dark>
+    <v-toolbar flat dark>
       <v-toolbar-title>{{ horse.name }}</v-toolbar-title>
     </v-toolbar>
-    <!-- <v-layout>
-      <v-flex
-        xs12
-        md6
-        pa-5
-      >
-        <h1></h1>
-      </v-flex>
-      <v-form>
-        <v-text-field v-model="horse.name" label="Naam paard" :placeholder="horse.name" outlined></v-text-field>
-      </v-form>
-      <div class="my-2">
-        <v-btn depressed color="primary" @click="saveHorse(horse)">Opslaan</v-btn>
-      </div>
-    </v-layout> -->
     <v-form v-model="valid">
       <v-container>
         <v-row>
@@ -28,11 +13,7 @@
             <v-select :items="horseType" v-model="horse.type" label="Geslacht" outlined></v-select>
           </v-col>
           <v-col cols="12" md="4">
-
-
             <autocomplete :owner="owner" @update-owner="updateOwner"></autocomplete>
-
-
           </v-col>
         </v-row>
         <v-row>
@@ -108,7 +89,7 @@ export default {
       this.$router.push({ path: '/horse' })
     },
     updateOwner(newOwner) {
-      //console.log(newOwner._id);
+      console.log(newOwner);
       this.horse.owner = newOwner._id;
     }
   },

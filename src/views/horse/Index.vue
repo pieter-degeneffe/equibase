@@ -1,29 +1,14 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-toolbar flat color="blue-grey" dark>
-      <v-toolbar-title>Hengsten</v-toolbar-title>
-    </v-toolbar>
-    <!-- <v-data-table
-      :headers="headers"
-      :items="horses"
-      :items-per-page="2"
-    ></v-data-table> -->
-    <v-simple-table fixed-header>
-      <template v-slot:default>
-        <thead>
-          <tr>
-            <th class="text-left">Hengst</th>
-            <th class="text-left">Stamboom</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="horse in horses" :key="horse._id" @click="openHorsePage(horse._id)">
-            <td>{{ horse.name }}</td>
-            <td>{{ horse.father }} x {{ horse.grandfather }}</td>
-          </tr>
-        </tbody>
+    <v-data-table :headers="headers" :items="horses" :sort-by="['name']" multi-sort class="elevation-1" :loading="loading" loading-text="Bezig met laden...">
+      <template v-slot:item="props">
+        <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.father }} & {{ props.item.grandfather }}</td>
+          <td>{{ props.item.type }}</td>
+        </tr>
       </template>
-    </v-simple-table>
+    </v-data-table>
   </v-card>
 </template>
 <script>
@@ -31,15 +16,23 @@ import horseAPI from "@/services/HorseAPI.js";
 export default {
   data() {
     return {
-      headers: [
-        {
-          text: 'Naam hengst', align: 'left', sortable: true, value: 'name'
-        },
-        { text: 'Vader', value: 'father' }
-      ],
       errored: false,
       loading: true,
       horses: [],
+      headers: [
+        {
+          text: 'Naam paard',
+          align: 'left',
+          sortable: true
+        },
+        {
+          text: 'Stamboom',
+          align: 'left',
+        },
+        {
+          text: 'Type'
+        },
+      ],
     };
   },
   mounted() {
@@ -58,6 +51,9 @@ export default {
     },
     openHorsePage(id) {
       this.$router.push("/horse/" + id);
+    },
+    mouseOver(hoverState) {
+      hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
     }
   }
 };

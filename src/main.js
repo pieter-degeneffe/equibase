@@ -5,6 +5,7 @@ import vuetify from './plugins/vuetify';
 import router from './router'
 import { Auth0Plugin } from "./auth";
 import { domain, clientId } from "../auth_config.json";
+import VueFilterDateFormat from 'vue-filter-date-format';
 
 //instance properties
 Vue.prototype.$appName = 'Equibase'
@@ -28,6 +29,25 @@ Vue.filter('capitalize', function (value) {
   value = value.toString()
   return value.charAt(0).toUpperCase() + value.slice(1)
 })
+
+//Config of vuefilterdate
+Vue.use(VueFilterDateFormat, {
+  dayOfWeekNames: [
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday',
+    'Friday', 'Saturday'
+  ],
+  dayOfWeekNamesShort: [
+    'Su', 'Mo', 'Tu', 'We', 'Tr', 'Fr', 'Sa'
+  ],
+  monthNames: [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ],
+  monthNamesShort: [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ]
+});
 
 new Vue({
   vuetify,
