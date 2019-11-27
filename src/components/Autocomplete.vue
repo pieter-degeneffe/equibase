@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <v-autocomplete v-model="selectedCustomer" :items="customers" label="Eigenaar" item-text="first_name" :placeholder="fullName" return-object outlined> -->
     <v-autocomplete v-model="selectedCustomer" :items="customers" label="Eigenaar" :placeholder="fullName | capitalize" return-object outlined>
       <template slot="selection" slot-scope="data">
         {{ data.item.first_name | capitalize}} {{ data.item.last_name | capitalize}}
