@@ -11,4 +11,7 @@ export default {
       customer
     });
   },
+  deleteCustomer(id) {
+    return API().delete("/api/customer/" + id);
+  }
 };
