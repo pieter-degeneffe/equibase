@@ -36,23 +36,23 @@
       <v-divider></v-divider>
       <v-container> -->
         <v-row justify="end">
-            <v-btn :disabled="!valid" color="success" class="mr-4" @click="saveHorse()" depressed>
-              Opslaan
-            </v-btn>
-            <v-btn color="warning" depressed @click="dialog = true">
-              Verwijderen
-            </v-btn>
-            <v-dialog v-model="dialog" persistent max-width="350">
-              <v-card>
-                <v-card-title class="headline">{{ horse.name }} verwijderen?</v-card-title>
-                <v-card-text>Ben je zeker dat je het paard {{ horse.name }} wilt verwijderen? Dit kan niet meer ongedaan gemaakt worden</v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="success" depressed @click="dialog = false">Annuleren</v-btn>
-                  <v-btn color="error" depressed @click="deleteHorse()">Verwijderen</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
+          <v-btn :disabled="!valid" color="success" class="mr-4" @click="saveHorse()" depressed>
+            Opslaan
+          </v-btn>
+          <v-btn color="warning" depressed @click="deleteDialog = true">
+            Verwijderen
+          </v-btn>
+          <v-dialog v-model="deleteDialog" persistent max-width="350">
+            <v-card>
+              <v-card-title class="headline">{{ horse.name }} verwijderen?</v-card-title>
+              <v-card-text>Ben je zeker dat je het paard {{ horse.name }} wilt verwijderen? Dit kan niet meer ongedaan gemaakt worden</v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="success" depressed @click="deleteDialog = false">Annuleren</v-btn>
+                <v-btn color="error" depressed @click="deleteHorse()">Verwijderen</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-row>
         {{ horse.owner }}
       </v-container>
@@ -76,7 +76,7 @@ export default {
         v => !!v || 'Naam is verplicht',
         v => (v && v.length <= 128) || 'Moet minder dan 128 tekens bevatten'
       ],
-      dialog: false
+      deleteDialog: false
     };
   },
   computed: {
@@ -96,7 +96,6 @@ export default {
     },
     async saveHorse() {
       await horseAPI.putHorse(this.horse);
-      console.log(this.horse);
     },
     async deleteHorse() {
       await horseAPI.deleteHorse(this.horse._id);
