@@ -1,11 +1,23 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :items="customers" multi-sort class="elevation-1" :loading="loading" loading-text="Bezig met laden...">
+    <v-data-table :headers="headers" :items="customers" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-toolbar-title>Klanten</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" dark class="mb-2" @click="openCustomerPage()">Klant toevoegen</v-btn>
+        </v-toolbar>
+      </template>
       <template v-slot:item="props">
         <tr @click="openCustomerPage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
-          <td>{{ props.item.first_name | capitalize}} {{ props.item.last_name | capitalize}}</td>
+          <td>{{ props.item.first_name | capitalize}} </td>
+          <td>{{ props.item.last_name | capitalize}} </td>
           <td>{{ props.item.horses.length}}</td>
         </tr>
+      </template>
+      <template v-slot:no-data>
+        Geen klanten in de database
       </template>
     </v-data-table>
   </v-card>
@@ -21,13 +33,21 @@ export default {
       customers: [],
       headers: [
         {
-          text: 'Naam klant',
+          text: 'Voornaam',
+          value: 'first_name',
+          align: 'left',
+          sortable: true
+        },
+        {
+          text: 'Achternaam',
+          value: 'last_name',
           align: 'left',
           sortable: true
         },
         {
           text: 'Paarden',
           align: 'left',
+          sortable: false
         }
       ],
     };
@@ -55,6 +75,3 @@ export default {
   }
 }
 </script>
-
-<style lang="css" scoped>
-</style>
