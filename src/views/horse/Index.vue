@@ -1,11 +1,19 @@
 <template>
   <v-card class="ma-5" outlined>
     <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden...">
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-layout justify-end>
+            <v-btn color="primary" dark class="mb-2" @click="openHorsePage()">Paard toevoegen</v-btn>
+          </v-layout>
+        </v-toolbar>
+      </template>
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.father }} & {{ props.item.grandfather }}</td>
           <td>{{ props.item.type }}</td>
+          <td>{{ props.item.create_date }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -34,6 +42,11 @@ export default {
         {
           text: 'Type paard',
           sortable: false
+        },
+        {
+          text: 'Aangemaakt op',
+          value: 'create_date',
+          sortable: true
         },
       ],
     };
