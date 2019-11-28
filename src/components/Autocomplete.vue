@@ -28,7 +28,10 @@ export default {
   },
   computed: {
     fullName () {
-      return this.owner.first_name + ' ' + this.owner.last_name;
+      if (this.owner.first_name && this.owner.last_name){
+        return this.owner.first_name + ' ' + this.owner.last_name;
+      }
+      return "Eigenaar";
     }
   },
   mounted() {
