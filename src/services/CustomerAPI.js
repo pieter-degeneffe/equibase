@@ -11,6 +11,9 @@ export default {
   getCustomer(id) {
     return API().get("/api/customer/" + id);
   },
+  getCustomerHorses(id) {
+    return API().get("/api/customer/" + id + "/horse");
+  },
   putCustomer(customer) {
     return API().put("/api/customer/" + customer._id, {
       customer
