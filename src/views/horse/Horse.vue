@@ -32,9 +32,6 @@
             <v-text-field v-model="horse.grandfather" :counter="128" label="Grootvader" required outlined></v-text-field>
           </v-col>
         </v-row>
-      <!-- </v-container>
-      <v-divider></v-divider>
-      <v-container> -->
         <v-row justify="end">
           <v-btn :disabled="!valid" color="success" class="mr-4" @click="saveHorse()" depressed>
             Opslaan
@@ -92,7 +89,7 @@ export default {
       const horse = await horseAPI.getHorse(id);
       this.horse = horse.data;
       const owner = await customerAPI.getCustomer(this.horse.owner);
-      this.owner = owner.data
+      this.owner = owner.data;
     },
     async saveHorse() {
       await horseAPI.putHorse(this.horse);
