@@ -6,6 +6,8 @@ import router from './router'
 import { Auth0Plugin } from "./auth";
 import { domain, clientId } from "../auth_config.json";
 import VueFilterDateFormat from 'vue-filter-date-format';
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
 
 //instance properties
 Vue.prototype.$appName = 'Equibase'
