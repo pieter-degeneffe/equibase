@@ -1,5 +1,8 @@
 import API from "@/services/API";
 export default {
+  postCustomer() {
+    return API().post("/api/customer");
+  },
   getCustomers() {
     return API().get("/api/customer");
   },
