@@ -1,6 +1,6 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :items="horses" :sort-by="['name']" multi-sort class="elevation-1" :loading="loading" loading-text="Bezig met laden...">
+    <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden...">
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
@@ -22,15 +22,18 @@ export default {
       headers: [
         {
           text: 'Naam paard',
+          value: 'name',
           align: 'left',
           sortable: true
         },
         {
           text: 'Stamboom',
           align: 'left',
+          sortable: false
         },
         {
-          text: 'Type'
+          text: 'Type paard',
+          sortable: false
         },
       ],
     };
