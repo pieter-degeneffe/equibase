@@ -3,17 +3,16 @@
     <v-data-table :headers="headers" :items="customers" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Klanten</v-toolbar-title>
-          <v-divider class="mx-4" inset vertical></v-divider>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" dark class="mb-2" @click="openCustomerPage()">Klant toevoegen</v-btn>
+          <v-layout justify-end>
+            <v-btn color="primary" dark class="mb-2" @click="openCustomerPage()">Klant toevoegen</v-btn>
+          </v-layout>
         </v-toolbar>
       </template>
       <template v-slot:item="props">
         <tr @click="openCustomerPage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.first_name | capitalize}} </td>
           <td>{{ props.item.last_name | capitalize}} </td>
-          <td>{{ props.item.horses.length}}</td>
+          <!-- <td>{{ props.item.horses.length}}</td> -->
         </tr>
       </template>
       <template v-slot:no-data>
