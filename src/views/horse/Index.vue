@@ -40,7 +40,7 @@ export default {
           sortable: false
         },
         {
-          text: 'Type paard',
+          text: 'Geslacht',
           sortable: false
         },
         {
