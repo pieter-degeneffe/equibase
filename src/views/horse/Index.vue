@@ -13,7 +13,7 @@
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.father }} & {{ props.item.grandfather }}</td>
           <td>{{ props.item.type }}</td>
-          <td>{{ props.item.create_date }}</td>
+          <td>{{ new Date(props.item.create_date) | dateFormat('DD/MM/YY')}}</td>
         </tr>
       </template>
     </v-data-table>
