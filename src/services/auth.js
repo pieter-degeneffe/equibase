@@ -7,7 +7,7 @@ const ACCESS_TOKEN_KEY = 'access_token';
 
 const CLIENT_ID = 'ikWVRx69KalfttdwTkW5lzcMy71Q9he7';
 const CLIENT_DOMAIN = 'equibase.eu.auth0.com';
-const REDIRECT = 'http://localhost:8080/callback';
+const REDIRECT = process.env.VUE_APP_AUTH0_REDIRECT;
 const SCOPE = 'full_access';
 const AUDIENCE = 'https://api.equibase.app';
 
