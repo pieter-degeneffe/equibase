@@ -55,7 +55,7 @@
           </v-dialog>
         </v-row>
         <v-snackbar v-model="snackbar">
-          Klant is succesvol opgeslaan
+          Paard is succesvol opgeslaan
           <v-btn color="pink" text @click="snackbar = false">
             Close
           </v-btn>
