@@ -3,7 +3,7 @@ import { getAccessToken } from './auth';
 
 export default () => {
   return axios.create({
-    baseURL: "http://localhost:8081",
+    baseURL: process.env.VUE_APP_API_BASE_URL,
     headers: {
       Authorization: `Bearer ${getAccessToken()}`
     }
