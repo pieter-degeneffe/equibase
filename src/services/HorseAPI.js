@@ -8,6 +8,9 @@ export default {
   getHorses() {
     return API().get("/api/horse");
   },
+  getHorseCount() {
+    return API().get("/api/horse/count");
+  },
   getHorse(id) {
     return API().get("/api/horse/" + id);
   },
