@@ -27,9 +27,18 @@
             <v-card-title>
               <span class="title font-weight-light">Klanten</span>
             </v-card-title>
-            <v-card-text>
-              One of three columns
-            </v-card-text>
+            <v-list dense>
+              <v-list-item-group>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-check</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ horseCount }} Paard<span v-if="horseCount > 1">en</span> in de database</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
             <v-card-actions>
               <v-btn depressed to="/horse">Naar klanten</v-btn>
             </v-card-actions>
@@ -38,13 +47,22 @@
         <v-col cols="12" md="6">
           <v-card class="pa-2" outlined flat tile>
             <v-card-title>
-              <span class="title font-weight-light">Klanten</span>
+              <span class="title font-weight-light">Paarden</span>
             </v-card-title>
-            <v-card-text>
-              One of three columns
-            </v-card-text>
+            <v-list dense>
+              <v-list-item-group>
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-check</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ customerCount }} Klant<span v-if="customerCount > 1">en</span> in de database</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
             <v-card-actions>
-              <v-btn depressed to="/customer">Naar klanten</v-btn>
+              <v-btn depressed to="/customer">Naar paarden</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -54,7 +72,19 @@
 </template>
 <script>
   import { isLoggedIn, login, logout } from '@/services/auth';
+  import customerAPI from "@/services/CustomerAPI.js";
+  import horseAPI from "@/services/HorseAPI.js";
   export default {
+    data() {
+      return {
+        customerCount: "",
+        horseCount: ""
+      };
+    },
+    mounted() {
+      this.getCustomerCount();
+      this.getHorseCount();
+    },
     methods: {
       handleLogin() {
         login();
@@ -64,6 +94,14 @@
       },
       isLoggedIn() {
         return isLoggedIn();
+      },
+      async getCustomerCount() {
+        const response = await customerAPI.getCustomerCount();
+        this.customerCount = response.data;
+      },
+      async getHorseCount() {
+        const response = await horseAPI.getHorseCount();
+        this.horseCount = response.data;
       },
     }
   }
