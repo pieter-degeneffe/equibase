@@ -22,7 +22,7 @@
         </v-card-text>
       </v-card>
       <v-row>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="6">
           <v-card class="pa-2" outlined flat tile>
             <v-card-title>
               <span class="title font-weight-light">Klanten</span>
@@ -31,11 +31,11 @@
               One of three columns
             </v-card-text>
             <v-card-actions>
-              <v-btn depressed>Naar klanten</v-btn>
+              <v-btn depressed to="/horse">Naar klanten</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
-        <v-col cols="12" md="4">
+        <v-col cols="12" md="6">
           <v-card class="pa-2" outlined flat tile>
             <v-card-title>
               <span class="title font-weight-light">Klanten</span>
@@ -44,20 +44,7 @@
               One of three columns
             </v-card-text>
             <v-card-actions>
-              <v-btn depressed>Naar klanten</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-        <v-col cols="12" md="4">
-          <v-card class="pa-2" outlined flat tile>
-            <v-card-title>
-              <span class="title font-weight-light">Klanten</span>
-            </v-card-title>
-            <v-card-text>
-              One of three columns
-            </v-card-text>
-            <v-card-actions>
-              <v-btn depressed>Naar klanten</v-btn>
+              <v-btn depressed to="/customer">Naar klanten</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
