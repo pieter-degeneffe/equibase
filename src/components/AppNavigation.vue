@@ -49,14 +49,14 @@ export default {
       drawer: false,
       menu: [
         {
-          title: "Paarden",
-          url: "/horse",
-          icon: "mdi-chess-knight"
-        },
-        {
           title: "Klanten",
           url: "/customer",
           icon: "mdi-account"
+        },
+        {
+          title: "Paarden",
+          url: "/horse",
+          icon: "mdi-chess-knight"
         }
       ]
     };
