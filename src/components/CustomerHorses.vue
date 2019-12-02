@@ -9,10 +9,6 @@
         </tr>
       </template>
     </v-data-table>
-
-    aantal paarden: {{ horses.length }}
-    <br/><br/>
-    {{ customer }}
   </div>
 </template>
 <script>
@@ -21,6 +17,7 @@ export default {
   props: ['customer'],
   data() {
     return {
+      loading: false,
       horses: [],
       headers: [
         {
@@ -54,6 +51,12 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    openHorsePage(id) {
+      this.$router.push("/horse/" + id);
+    },
+    mouseOver(hoverState) {
+      hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
     }
   }
 }
