@@ -43,11 +43,11 @@ export default {
           align: 'left',
           sortable: true
         },
-        {
-          text: 'Paarden',
-          align: 'left',
-          sortable: false
-        }
+        // {
+        //   text: 'Paarden',
+        //   align: 'left',
+        //   sortable: false
+        // }
       ],
     };
   },
