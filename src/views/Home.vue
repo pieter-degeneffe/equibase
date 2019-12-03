@@ -40,7 +40,7 @@
               </v-list-item-group>
             </v-list>
             <v-card-actions>
-              <v-btn depressed to="/horse">Naar klanten</v-btn>
+              <v-btn depressed to="/customer">Naar klanten</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -62,7 +62,7 @@
               </v-list-item-group>
             </v-list>
             <v-card-actions>
-              <v-btn depressed to="/customer">Naar paarden</v-btn>
+              <v-btn depressed to="/horse">Naar paarden</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
