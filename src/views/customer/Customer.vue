@@ -5,8 +5,12 @@
     </v-toolbar>
     <v-tabs>
       <v-tab>
-        <v-icon left>mdi-account</v-icon>
-        Persoonlijke gegevens
+        <v-icon left>mdi-book-open-variant</v-icon>
+        Algemene gegevens
+      </v-tab>
+      <v-tab>
+        <v-icon left>mdi-account-box</v-icon>
+        Contacten
       </v-tab>
       <v-tab>
         <v-icon left>mdi-horseshoe</v-icon>
@@ -15,6 +19,12 @@
       <v-tab-item class="ma-5">
         <v-card flat>
           <customer-form :customer="customer"></customer-form>
+        </v-card>
+      </v-tab-item>
+      <v-tab-item class="ma-5">
+        <v-card flat>
+          Hier komen de contactpersonen
+          <!-- <customer-horses :customer="customer"></customer-horses> -->
         </v-card>
       </v-tab-item>
       <v-tab-item class="ma-5">
