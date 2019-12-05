@@ -23,8 +23,7 @@
       </v-tab-item>
       <v-tab-item class="ma-5">
         <v-card flat>
-          Hier komen de contactpersonen
-          <!-- <customer-horses :customer="customer"></customer-horses> -->
+          <customer-contacts :customer="customer"></customer-contacts>
         </v-card>
       </v-tab-item>
       <v-tab-item class="ma-5">
@@ -38,8 +37,9 @@
 
 <script>
 import customerAPI from "@/services/CustomerAPI.js";
-import CustomerForm from "@/components/cutomer/Form";
-import CustomerHorses from "@/components/cutomer/Horses";
+import CustomerForm from "@/components/customer/Form";
+import CustomerHorses from "@/components/customer/Horses";
+import CustomerContacts from "@/components/customer/Contacts";
 export default {
   props: ["id"],
   data() {
@@ -59,7 +59,8 @@ export default {
   },
   components: {
     CustomerForm,
-    CustomerHorses
+    CustomerHorses,
+    CustomerContacts
   },
 };
 </script>
