@@ -38,8 +38,8 @@
 
 <script>
 import customerAPI from "@/services/CustomerAPI.js";
-import CustomerForm from "@/components/CustomerForm";
-import CustomerHorses from "@/components/CustomerHorses";
+import CustomerForm from "@/components/cutomer/Form";
+import CustomerHorses from "@/components/cutomer/Horses";
 export default {
   props: ["id"],
   data() {
