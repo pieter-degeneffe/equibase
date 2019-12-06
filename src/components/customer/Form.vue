@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-row>
         <v-col cols="12" md="4" sm="6">
-          <v-radio-group row v-model="customer.type" :rules="required">
+          <v-radio-group row v-model="customer.type" :rules="required" required>
             <v-radio label="Particulier" value="particulier"></v-radio>
             <v-radio label="Bedrijf" value="bedrijf"></v-radio>
           </v-radio-group>
@@ -52,9 +52,12 @@
           <v-text-field v-model="customer.city" :counter="32" :rules="length32" label="Gemeente" outlined></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
-          <v-select v-model="customer.country" :items="countries" label="Land" outlined></v-select>
+          <v-select v-model="customer.country" :items="countries" :rules="required" label="Land" outlined></v-select>
         </v-col>
       </v-row>
+      <v-alert type="error" v-if="errored" >
+        {{ errorMessage }}
+      </v-alert>
       <v-row justify="end">
           <v-btn v-if="!customer._id" :disabled="!valid" color="success" depressed class="mr-4" @click="createCustomer()">
             Klant opslaan
@@ -93,6 +96,8 @@ export default {
   data() {
     return {
       loading: null,
+      errored: false,
+      errorMessage: '',
       languages: ["NL", "FR", "EN"],
       countries: ["Afghanistan","Albanië","Algerije","Andorra","Angola","Antigua-Barbuda","Argentinië","Armenië","Aruba","Australië","Azerbaijan","Bahamas","Bahrein","Belize","België","Bermuda","Bolivia","Bosnië-Herzegovina","Botswana","Brazilië","Brunei Darussalam","Bulgarije","Burundi","Cambodja",
       "Cameroen","Canada","Cayman Eilanden","Centraal-Afrikaanse Republiek","Chili","China","Ciprus","Colombia","Congo","Cook Eilanden","Costa Rica","Groatië","Cuba","Cyprus","Denemarken","Dominica","Dominicaanse Republiek","DR Congo","Duitsland","Ecuador","Egypte","El Salvador","Eritrea","Estland","Ethiopië","Fiji","Filipijnen","Finland","Frankrijk","Frans Polynesië","Gabon","Gambia","Georgië","Ghana","Griekenland","Groenland","Guam","Guatemala","Guinee-Bissau","Guyana","Haïti","Honduras","Hongarije","Ierland","IJsland","India","Indonesië","Irak","Iran","Israël","Italië","Ivoorkust","Jamaica","Japan","Jemen","Joegoslavië","Jordanië","Kameroen","Kazachstan","Kenya","Kirgizstan","Koeweit","Korea","Kroatië","Laos","Lesotho","Letland","Libanon","Liberia","Libië","Liechtenstein","Litouwen","Luxemburg","Macedonië","Maleisië","Mali","Malta","Marokko","Mauritanië","Mauritius","Mexico","Moldova","Monaco","Mozambique","Namibië","Nederland","Nepal","Nicaragua","Nieuw Zeeland","Niger","Nigeria","Noorwegen","Oezbekistan","Oman","Oostenrijk","Pakistan","Papoea-Nieuw-Guinea","Paraguay","Peru","Polen","Portugal","Puerto Rico","Quatar","Roemenië","Rusland","Rwanda","Saint Lucia","Salomonseilanden","San Marino","Saudi-Arabië","Schotland","Senegal","Sierra Leone","Singapore","Slovenië","Slowakije","Somalië","Spanje","Sri Lanka","Sudan","Syrie","Tadzjikistan","Taiwan","Thailand","Tobago","Tsjechië","Tsjaad","Tunesië","Turkije","Turkmenistan","Trinidad","Uganda","Ukraine","Uruguay","Venezuela","Verenigd Koninkrijk","Verenigde Staten","Vietnam","Zaïre","Zambia","Zimbabwe","Zuid-Afrika","Zweden","Zwitserland"],
@@ -115,16 +120,20 @@ export default {
         v => /.+@.+\..+/.test(v) || 'Geef een geldig e-mail adres',
       ],
       phoneRules: [
+        v => !!v || 'Dit veld is verplicht',
         v => (v || '').length <= 16 || 'Mag maximum 16 tekens bevatten',
         v => v || /^\+[1-9]\d{1,14}$/.test(v) || 'Geef een geldig Telefoonnummer'
       ],
       length8: [
+        v => !!v || 'Dit veld is verplicht',
         v => (v || '').length <= 16 || 'Mag maximum 8 tekens bevatten',
       ],
       length16: [
+        v => !!v || 'Dit veld is verplicht',
         v => (v || '').length <= 16 || 'Mag maximum 16 tekens bevatten',
       ],
       length32: [
+        v => !!v || 'Dit veld is verplicht',
         v => (v || '').length <= 32 || 'Mag maximum 32 tekens bevatten',
       ],
     };
@@ -141,9 +150,13 @@ export default {
         await customerAPI.postCustomer(this.customer);
       } catch (e) {
         this.errored = true;
+        this.errorMessage = e.response.data.message;
       } finally {
+        if (!this.errored) {
+          this.snackbar = true;
+          this.errored = false;
+        }
         this.loading = false;
-        this.snackbar = true;
       }
     },
     async updateCustomer() {
@@ -152,9 +165,13 @@ export default {
         await customerAPI.putCustomer(this.customer);
       } catch (e) {
         this.errored = true;
+        this.errorMessage = e.response.data.message;
       } finally {
+        if (!this.errored) {
+          this.snackbar = true;
+          this.errored = false;
+        }
         this.loading = false;
-        this.snackbar = true
       }
     },
     async deleteCustomer() {
@@ -163,9 +180,14 @@ export default {
         await customerAPI.deleteCustomer(this.customer._id);
       } catch(e) {
         this.errored = true;
+        this.errorMessage = e.response.data.message;
       } finally {
-        this.$router.push({ path: '/customer' });
-        this.deleteDialog = false;
+        if (!this.errored) {
+          this.$router.push({ path: '/customer' });
+          this.errored = false;
+          this.deleteDialog = false;
+        }
+        this.loading = false;
       }
     },
   }
