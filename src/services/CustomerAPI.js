@@ -24,5 +24,18 @@ export default {
   },
   deleteCustomer(id) {
     return API().delete("/api/customer/" + id);
+  },
+  addContact(customer, contact) {
+    return API().post("/api/customer/" + customer._id + "/contact", {
+      contact
+    });
+  },
+  updateContact(customer, contact) {
+    return API().put("/api/customer/" + customer._id + "/contact/" + contact._id, {
+      contact
+    });
+  },
+  deleteContact(customer, contact) {
+    return API().delete("/api/customer/" + customer._id + "/contact/" + contact._id);
   }
 };
