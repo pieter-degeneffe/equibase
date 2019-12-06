@@ -8,6 +8,9 @@
           <td>{{ props.item.type }}</td>
         </tr>
       </template>
+      <template v-slot:no-data>
+        Deze klant heeft nog geen paarden
+      </template>
     </v-data-table>
   </div>
 </template>
