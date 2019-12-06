@@ -30,22 +30,9 @@ export default {
     };
   },
   computed: {
-    // fields () {
-    //   if (!this.model) return []
-    //   console.log(this.model);
-    //   this.$emit('update-owner', this.model);
-    //   return Object.keys(this.model).map(key => {
-    //     return {
-    //       key,
-    //       value: this.model[key] || 'n/a',
-    //     }
-    //   })
-    // },
     items () {
       return this.entries.map(entry => {
-        const Description = entry.first_name.length > this.descriptionLimit
-          ? entry.first_name.slice(0, this.descriptionLimit) + '...'
-          : entry.first_name
+        const Description = entry.first_name + " " + entry.last_name
         return Object.assign({}, entry, { Description })
       })
     },
