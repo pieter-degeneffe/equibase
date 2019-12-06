@@ -8,7 +8,7 @@
         <v-icon left>mdi-book-open-variant</v-icon>
         Algemene gegevens
       </v-tab>
-      <v-tab>
+      <v-tab v-if="customer.type === 'bedrijf'">
         <v-icon left>mdi-account-box</v-icon>
         Contacten
       </v-tab>
@@ -21,7 +21,7 @@
           <customer-form :customer="customer"></customer-form>
         </v-card>
       </v-tab-item>
-      <v-tab-item class="ma-5">
+      <v-tab-item class="ma-5" v-if="customer.type === 'bedrijf'">
         <v-card flat>
           <customer-contacts :customer="customer"></customer-contacts>
         </v-card>
