@@ -33,12 +33,12 @@
           <v-text-field v-model="customer.email" :counter="64" :rules="emailRules" label="E-mail adres" required outlined></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
-          <v-text-field v-model="customer.telehpone" :counter="16" label="Telefoonnummer" persistent-hint hint="voorbeeld: +32486688502" outlined></v-text-field>
+          <v-text-field v-model="customer.telephone" :counter="16" label="Telefoonnummer" persistent-hint hint="voorbeeld: +32486688502" outlined></v-text-field>
         </v-col>
       </v-row>
       <v-row>
         <v-col cols="12" md="4" sm="6">
-          <v-text-field v-model="customer.straatnaam" :counter="32" :rules="length32" label="Straatnaam" outlined></v-text-field>
+          <v-text-field v-model="customer.street" :counter="32" :rules="length32" label="Straatnaam" outlined></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.house_number" :counter="16" :rules="length16" label="Huisnummer" outlined></v-text-field>
