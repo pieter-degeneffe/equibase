@@ -14,7 +14,7 @@
           <v-text-field v-model="customer.company" :counter="64" :rules="nameRules" label="Naam bedrijf" required outlined :loading="loading"></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
-          <v-text-field v-model="customer.tva" :counter="14" :rules="tvaRules" validate-on-blur label="BTW-nummer" required outlined :loading="loading"></v-text-field>
+          <v-text-field v-model="customer.tva" :counter="14" :rules="tvaRules" validate-on-blur label="BTW-nummer" persistent-hint hint="voorbeeld: BE0123456789" required outlined :loading="loading"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
@@ -28,8 +28,7 @@
           <v-select v-model="customer.language" :rules="required" :items="languages" label="Taal klant" outlined></v-select>
         </v-col>
       </v-row>
-
-      <!-- <v-row>
+      <v-row>
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.email" :counter="64" :rules="emailRules" label="E-mail adres" required outlined></v-text-field>
         </v-col>
@@ -53,9 +52,9 @@
           <v-text-field v-model="customer.city" :counter="32" :rules="length32" label="Gemeente" outlined></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
-          <v-select v-model="customer.country" :items="countries" :rules="required" label="Land" outlined></v-select>
+          <v-select v-model="customer.country" :items="countries" label="Land" outlined></v-select>
         </v-col>
-      </v-row> -->
+      </v-row>
       <v-row justify="end">
           <v-btn v-if="!customer._id" :disabled="!valid" color="success" depressed class="mr-4" @click="createCustomer()">
             Klant opslaan
