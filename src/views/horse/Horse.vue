@@ -13,10 +13,13 @@
             <v-select v-model="horse.type" :items="horseType" :rules="required" label="Geslacht" outlined></v-select>
           </v-col>
           <v-col cols="12" md="4">
-            <autocomplete :owner="owner" @update-owner="updateOwner"></autocomplete>
+            <select-owner :owner="owner" @update-owner="updateOwner"></select-owner>
           </v-col>
         </v-row>
         <v-row>
+          <!-- <v-col cols="12" md="4">
+            <autocomplete-old :owner="owner" @update-owner="updateOwner"></autocomplete-old>
+          </v-col> -->
           <v-col cols="12" md="4">
             <v-text-field v-model="horse.ueln" type="number" :counter="15" label="UELN" required outlined></v-text-field>
           </v-col>
@@ -68,7 +71,7 @@
 <script>
 import horseAPI from "@/services/HorseAPI.js";
 import customerAPI from "@/services/CustomerAPI.js";
-import autocomplete from "@/components/Autocomplete";
+import selectOwner from "@/components/SelectOwner";
 export default {
   props: ["id"],
   data() {
@@ -147,7 +150,7 @@ export default {
     },
   },
   components: {
-    autocomplete
+    selectOwner
   },
 };
 </script>
