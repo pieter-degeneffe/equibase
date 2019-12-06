@@ -12,6 +12,7 @@
         <tr @click="openCustomerPage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.first_name | capitalize}} </td>
           <td>{{ props.item.last_name | capitalize}} </td>
+          <td><span v-if="props.item.company">{{ props.item.company | capitalize}}</span> <span v-else class="grey--text"><em>particulier</em></span></td>
           <!-- <td>{{ props.item.horses.length}}</td> -->
         </tr>
       </template>
@@ -40,6 +41,12 @@ export default {
         {
           text: 'Achternaam',
           value: 'last_name',
+          align: 'left',
+          sortable: true
+        },
+        {
+          text: 'Bedrijf',
+          value: 'company',
           align: 'left',
           sortable: true
         },
