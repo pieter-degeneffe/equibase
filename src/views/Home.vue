@@ -34,7 +34,7 @@
                     <v-icon>mdi-check</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title>{{ horseCount }} Paard<span v-if="horseCount > 1">en</span> in de database</v-list-item-title>
+                    <v-list-item-title>{{ customerCount }} Klant<span v-if="customerCount > 1">en</span> in de database</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
@@ -56,7 +56,7 @@
                     <v-icon>mdi-check</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title>{{ customerCount }} Klant<span v-if="customerCount > 1">en</span> in de database</v-list-item-title>
+                    <v-list-item-title>{{ horseCount }} Paard<span v-if="horseCount > 1">en</span> in de database</v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
               </v-list-item-group>
