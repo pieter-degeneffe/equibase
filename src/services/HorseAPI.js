@@ -21,5 +21,15 @@ export default {
   },
   deleteHorse(id) {
     return API().delete("/api/horse/" + id);
-  }
+  },
+  postPassport(id, formData) {
+    return API().post("/api/horse/" + id + "/passport",
+      formData,
+      {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+  },
 };
