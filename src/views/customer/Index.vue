@@ -13,7 +13,7 @@
           <td>{{ props.item.first_name | capitalize}} </td>
           <td>{{ props.item.last_name | capitalize}} </td>
           <td><span v-if="props.item.company">{{ props.item.company | capitalize}}</span> <span v-else class="grey--text"><em>particulier</em></span></td>
-          <!-- <td>{{ props.item.horses.length}}</td> -->
+          <td>{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
         </tr>
       </template>
       <template v-slot:no-data>
@@ -46,6 +46,12 @@ export default {
         },
         {
           text: 'Bedrijf',
+          value: 'company',
+          align: 'left',
+          sortable: true
+        },
+        {
+          text: 'Aangemaakt op',
           value: 'company',
           align: 'left',
           sortable: true
