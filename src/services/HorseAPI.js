@@ -32,4 +32,7 @@ export default {
       }
     )
   },
+  deletePassport(horse) {
+    return API().delete("/api/horse/" + horse._id + "/passport");
+  }
 };
