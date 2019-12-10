@@ -4,7 +4,7 @@
       v-model="model"
       :items="items"
       :loading="isLoading"
-      :placeholder="fullName | capitalize"
+      :placeholder="fullName"
       :search-input.sync="search"
       hide-no-data
       hide-selected
