@@ -2,7 +2,7 @@ import API from "@/services/API";
 export default {
   postHorse(horse) {
     return API().post("/api/horse", {
-      name: horse // add our data to the request body
+      horse
     });
   },
   getHorses() {
