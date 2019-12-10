@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app>
+    <v-navigation-drawer v-if="isLoggedIn()" v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app>
       <v-list dense v-show="isLoggedIn()">
         <v-list-item v-for="(item, i) in menu" :key="i" :to="item.url">
           <v-list-item-action>
@@ -21,7 +21,7 @@
       </template>
     </v-navigation-drawer>
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-show="isLoggedIn()"></v-app-bar-nav-icon>
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
         <router-link to="/" id="homelink">
           {{ this.$appName }}
