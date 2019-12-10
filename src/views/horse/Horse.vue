@@ -17,12 +17,20 @@
           </v-col>
         </v-row>
         <v-row>
-          <!-- <v-col cols="12" md="4">
-            <autocomplete-old :owner="owner" @update-owner="updateOwner"></autocomplete-old>
-          </v-col> -->
           <v-col cols="12" md="4">
             <v-text-field v-model="horse.ueln" type="number" :counter="15" label="UELN" required outlined></v-text-field>
           </v-col>
+          <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
+            <v-switch v-model="horse.surrogate" label="Draagmoeder"></v-switch>
+          </v-col>
+          <v-col cols="12" md="4">
+          <v-menu v-model="birthDateMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
+            <template v-slot:activator="{ on }">
+              <v-text-field v-model="computedBirthDateFormatted" label="Geboortedatum" v-on="on" readonly outlined></v-text-field>
+            </template>
+            <v-date-picker v-model="horse.date_of_birth" no-title @input="birthDateMenu = false"></v-date-picker>
+          </v-menu>
+        </v-col>
         </v-row>
         <v-row>
           <v-col cols="12" md="4">
@@ -60,7 +68,7 @@
         <v-snackbar v-model="snackbar">
           Paard is succesvol opgeslaan
           <v-btn color="pink" text @click="snackbar = false">
-            Close
+            sluiten
           </v-btn>
         </v-snackbar>
       </v-container>
@@ -74,30 +82,38 @@ import customerAPI from "@/services/CustomerAPI.js";
 import selectOwner from "@/components/SelectOwner";
 export default {
   props: ["id"],
-  data() {
-    return {
-      horse: "",
-      owner: "",
-      horseType: ['hengst', 'merrie'],
-      valid: false,
-      snackbar: false,
-      nameRules: [
-        v => !!v || 'Dit veld is verplicht',
-        v => (v && v.length <= 64) || 'Mag maximum 64 tekens bevatten',
-      ],
-      length64: [
-        v => (v || '').length <= 64 || 'Mag maximum 8 tekens bevatten',
-      ],
-      required: [
-        v => !!v || 'Dit veld is verplicht'
-      ],
-      deleteDialog: false
-    };
-  },
+  data: vm => ({
+    horse: "",
+    owner: "",
+    horseType: ['hengst', 'merrie'],
+    valid: false,
+    snackbar: false,
+    nameRules: [
+      v => !!v || 'Dit veld is verplicht',
+      v => (v && v.length <= 64) || 'Mag maximum 64 tekens bevatten',
+    ],
+    length64: [
+      v => (v || '').length <= 64 || 'Mag maximum 8 tekens bevatten',
+    ],
+    required: [
+      v => !!v || 'Dit veld is verplicht'
+    ],
+    deleteDialog: false,
+    birthDateMenu: false,
+    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+  }),
   computed: {
     fullName () {
       return this.owner.first_name + ' ' + this.owner.last_name;
-    }
+    },
+    computedBirthDateFormatted () {
+      return this.formatDate(this.horse.date_of_birth)
+    },
+  },
+  watch: {
+    date() {
+      this.dateFormatted = this.formatDate(this.horse.date_of_birth)
+    },
   },
   mounted() {
     if (this.id !== "undefined") this.loadHorse(this.id);
@@ -107,8 +123,10 @@ export default {
     async loadHorse(id) {
       const horse = await horseAPI.getHorse(id);
       this.horse = horse.data;
-      const owner = await customerAPI.getCustomer(this.horse.owner);
-      this.owner = owner.data;
+      if (this.horse.owner) {
+        const owner = await customerAPI.getCustomer(this.horse.owner);
+        this.owner = owner.data;
+      }
     },
     async createHorse() {
       try {
@@ -122,6 +140,7 @@ export default {
     },
     async updateHorse() {
       try {
+        this.horse.date_of_birth = new Date(this.horse.date_of_birth).toISOString();
         await horseAPI.putHorse(this.horse);
       } catch (e) {
         this.errored = true;
@@ -143,11 +162,17 @@ export default {
     updateOwner(newOwner) {
       this.horse.owner = newOwner._id;
     },
-    validate () {
+    validate() {
       if (this.$refs.form.validate()) {
         this.snackbar = true
       }
     },
+    formatDate (date) {
+      if (!date) return null
+      date = new Date(date).toISOString().substr(0, 10)
+      const [year, month, day] = date.split('-')
+      return `${day}/${month}/${year}`
+    }
   },
   components: {
     selectOwner
