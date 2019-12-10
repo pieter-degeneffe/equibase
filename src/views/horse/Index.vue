@@ -1,19 +1,36 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden...">
+    <v-toolbar flat color="white">
+      <v-layout justify-end>
+        <v-btn color="primary" dark class="mb-2" @click="openHorsePage()">Paard toevoegen</v-btn>
+      </v-layout>
+    </v-toolbar>
+    <v-data-table :headers="headers" :items="stallions" :loading="loading" loading-text="Bezig met laden..." class="ma-4">
       <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-layout justify-end>
-            <v-btn color="primary" dark class="mb-2" @click="openHorsePage()">Paard toevoegen</v-btn>
-          </v-layout>
-        </v-toolbar>
+        <v-toolbar-title>Hengsten</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
       </template>
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.father }} & {{ props.item.grandfather }}</td>
           <td>{{ props.item.type }}</td>
-          <td>{{ new Date(props.item.create_date) | dateFormat('DD/MM/YY')}}</td>
+          <td>{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
+        </tr>
+      </template>
+    </v-data-table>
+    <hr>
+    <v-data-table :headers="headers" :items="mares" :loading="loading" loading-text="Bezig met laden..." class="ma-4">
+      <template v-slot:top>
+        <v-toolbar-title>Merries</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
+      </template>
+      <template v-slot:item="props">
+        <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.father }} & {{ props.item.grandfather }}</td>
+          <td>{{ props.item.type }}</td>
+          <td>{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
         </tr>
       </template>
     </v-data-table>
@@ -53,6 +70,18 @@ export default {
   },
   mounted() {
     this.loadHorses();
+  },
+  computed: {
+    mares () {
+      return this.horses.filter(function(horse) {
+        return horse.type === "merrie";
+      });
+    },
+    stallions () {
+      return this.horses.filter(function(horse) {
+        return horse.type === "hengst";
+      });
+    },
   },
   methods: {
     async loadHorses() {
