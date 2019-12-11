@@ -3,13 +3,13 @@
     <v-card outlined color="red" dark flat tile v-show="!isLoggedIn()" class="mb-2">
       <v-card-title>
         <v-icon large left>mdi-alert-box</v-icon>
-        <span class="title font-weight-light">Login om toegang te krijgen tot {{ this.$appName }}</span>
+        <span class="title font-weight-light">Login om toegang te krijgen</span>
       </v-card-title>
       <v-card-text>
-        Om toegang te krijgen tot de {{ this.$appName }} applicatie moet je eerst ingelogd zijn
+        Om toegang te krijgen tot {{ this.$appName }} moet je eerst ingelogd zijn
       </v-card-text>
       <v-card-actions>
-        <v-btn depressed color="error" @click="handleLogin()">Inloggen</v-btn>
+        <v-btn depressed  @click="handleLogin()">Inloggen</v-btn>
       </v-card-actions>
     </v-card>
     <div v-show="isLoggedIn()">
@@ -21,7 +21,7 @@
           Gebruik het menu om doorheen de verschillende opties te navigeren
         </v-card-text>
       </v-card>
-      <v-row>
+      <!-- <v-row>
         <v-col cols="12" md="6">
           <v-card class="pa-2" outlined flat tile>
             <v-card-title>
@@ -66,7 +66,7 @@
             </v-card-actions>
           </v-card>
         </v-col>
-      </v-row>
+      </v-row> -->
     </div>
   </v-container>
 </template>
