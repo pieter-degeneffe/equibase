@@ -12,13 +12,20 @@ const routes = [
     //beforeEnter: requireAuth
   },
   {
-    path: "/horse",
-    name: "horse",
-    component: () => import("@/views/horse/Index"),
+    path: "/horse/stallion",
+    name: "hengst",
+    component: () => import("@/views/horse/Table"),
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/horse/mare",
+    name: "merrie",
+    component: () => import("@/views/horse/Table"),
     beforeEnter: requireAuth
   },
   {
     path: "/horse/:id",
+    name: "horse",
     props: true,
     component: () => import("@/views/horse/Horse"),
     beforeEnter: requireAuth
