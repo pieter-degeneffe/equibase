@@ -52,11 +52,7 @@ export default {
   },
   methods: {
     openHorsePage(id){
-      if (id) {
-        this.$router.push({ name: 'horse', params: { id: id }})
-      } else {
-        this.$router.push({ name: 'horse', query: { type: this.$route.name } })
-      }
+      this.$router.push("/horse/" + id);
     },
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
