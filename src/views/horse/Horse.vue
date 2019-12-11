@@ -18,42 +18,64 @@
             <v-container>
               <v-row>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.name" :counter="64" :rules="nameRules" label="Naam paard" outlined></v-text-field>
+                  <v-text-field v-model="horse.name" :counter="64" :rules="nameRules" label="Naam paard" :disabled="!horse.status" outlined></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.type" :items="horseType" :rules="required" label="Geslacht" outlined></v-select>
+                  <v-select v-model="horse.type" :items="horseType" :rules="required" label="Geslacht" :disabled="!horse.status" outlined></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <select-owner :owner="owner" @update-owner="updateOwner"></select-owner>
+                  <select-owner :owner="owner" @update-owner="updateOwner" :disabled="!horse.status"></select-owner>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.ueln" type="number" :counter="15" label="UELN" required outlined></v-text-field>
+                  <v-text-field v-model="horse.ueln" type="number" :counter="15" label="UELN" :disabled="!horse.status" outlined></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field v-model="horse.microship" :counter="15" label="Microship" :disabled="!horse.status" outlined></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-menu v-model="birthDateMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
                     <template v-slot:activator="{ on }">
-                      <v-text-field v-model="computedBirthDateFormatted" label="Geboortedatum" v-on="on" readonly outlined></v-text-field>
+                      <v-text-field v-model="computedBirthDateFormatted" label="Geboortedatum" v-on="on" readonly :disabled="!horse.status" outlined></v-text-field>
                     </template>
                     <v-date-picker v-model="horse.date_of_birth" no-title @input="birthDateMenu = false"></v-date-picker>
                   </v-menu>
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
-                  <v-switch v-model="horse.surrogate" label="Draagmoeder"></v-switch>
+                <v-col cols="12" md="4">
+                  <v-select v-model="horse.studbook" :items="horseStudbook" label="Stamboek" :disabled="!horse.status" outlined></v-select>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-select v-model="horse.coat_color" :items="horseCoatColor" label="Vachtkleur" :disabled="!horse.status" outlined></v-select>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.father" :counter="64" :rules="length64" label="Vader" required outlined></v-text-field>
+                  <v-text-field v-model="horse.father" :counter="64" :rules="length64" label="Vader" :disabled="!horse.status" outlined></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.mother" :counter="64" :rules="length64" label="Moeder" required outlined></v-text-field>
+                  <v-text-field v-model="horse.mother" :counter="64" :rules="length64" label="Moeder" :disabled="!horse.status" outlined></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.grandfather" :counter="64" :rules="length64" label="Grootvader" required outlined></v-text-field>
+                  <v-text-field v-model="horse.grandfather" :counter="64" :rules="length64" label="Grootvader" :disabled="!horse.status" outlined></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-switch v-model="horse.status" :label="horseLiving" flat></v-switch>
+                </v-col>
+                <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
+                  <v-switch v-model="horse.surrogate" label="Draagmoeder" flat></v-switch>
+                </v-col>
+              </v-row>
+              <v-row v-if="horse.surrogate">
+                <v-col cols="12" md="4">
+                  <v-text-field v-model="horse.surrogate_uid" :counter="64" :rules="length64" label="Brandnummer" :disabled="!horse.status" outlined></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-select v-model="horse.surrogate_location" :items="surrogateLocation" label="Locatie" :disabled="!horse.status" outlined></v-select>
                 </v-col>
               </v-row>
               <v-row justify="end">
@@ -94,10 +116,8 @@
         </v-card>
       </v-tab-item>
     </v-tabs>
-
   </v-card>
 </template>
-
 <script>
 import horseAPI from "@/services/HorseAPI.js";
 import customerAPI from "@/services/CustomerAPI.js";
@@ -106,9 +126,12 @@ import horsePassport from "@/components/horse/Passport";
 export default {
   props: ["id"],
   data: vm => ({
-    horse: "",
+    horse: {},
     owner: "",
     horseType: ['hengst', 'merrie'],
+    horseStudbook: ['Aes','American Quarter Horse','Anglo-arabian','Arab','Bwp','Hannover','Holstein','Kwpn','Lusitana','Oldenburg','Others','Sbs','Sf','Stud-book Du Cheval De Selle Luxembourgeois (S.c.s.l.)','Westfalen','Zangersheide'],
+    horseCoatColor: ['vos','zwart','bruin'],
+    surrogateLocation: ['locatie 1','locatie 2','locatie 3'],
     valid: false,
     snackbar: false,
     nameRules: [
@@ -132,6 +155,10 @@ export default {
     computedBirthDateFormatted () {
       return this.formatDate(this.horse.date_of_birth)
     },
+    horseLiving() {
+      if (!this.horse.status) return "Overleden";
+      return "Levend";
+    }
   },
   watch: {
     date() {
@@ -140,7 +167,9 @@ export default {
   },
   mounted() {
     if (this.id !== "undefined") this.loadHorse(this.id);
-    else this.horse = {};
+    else {
+      this.horse.status = "true"
+    }
   },
   methods: {
     async loadHorse(id) {
@@ -163,7 +192,9 @@ export default {
     },
     async updateHorse() {
       try {
-        this.horse.date_of_birth = new Date(this.horse.date_of_birth).toISOString();
+        console.log('update request received');
+        if(this.horse.date_of_birth) this.horse.date_of_birth = new Date(this.horse.date_of_birth).toISOString();
+        console.log(this.horse);
         await horseAPI.putHorse(this.horse);
       } catch (e) {
         this.errored = true;
