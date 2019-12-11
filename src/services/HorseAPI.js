@@ -5,8 +5,13 @@ export default {
       horse
     });
   },
-  getHorses() {
-    return API().get("/api/horse");
+  getHorses(type) {
+    console.log(type);
+    return API().get("/api/horse", {
+      params: {
+        type: type
+      }
+    });
   },
   getHorseCount() {
     return API().get("/api/horse/count");
