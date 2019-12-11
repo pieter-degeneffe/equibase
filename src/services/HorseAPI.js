@@ -20,6 +20,7 @@ export default {
     return API().get("/api/horse/" + id);
   },
   putHorse(horse) {
+    console.log(' API update request received');
     return API().put("/api/horse/" + horse._id, {
       horse
     });
