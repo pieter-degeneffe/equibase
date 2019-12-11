@@ -30,15 +30,6 @@
                       <v-col cols="12" sm="12" md="12">
                         <v-select v-model="editedItem.role" :rules="required" :items="role" label="Rol" outlined></v-select>
                       </v-col>
-                      <!-- <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                      </v-col> -->
                     </v-row>
                   </v-container>
                 </v-card-text>
@@ -74,7 +65,7 @@ export default {
     return {
       dialog: false,
       loading: true,
-      role: ["NL", "FR", "EN"],
+      role: ["Eigenaar bedrijf", "Boekhouder", "Transporteur", "Verantwoordelijke fokkerij"],
       headers: [
         { text: 'Voornaam', align: 'left', sortable: false, value: 'first_name' },
         { text: 'Achternaam', align: 'left', sortable: false, value: 'last_name' },
@@ -128,7 +119,6 @@ export default {
       const index = this.contacts.indexOf(item)
       confirm('Are you sure you want to delete this item?') && this.contacts.splice(index, 1)
     },
-
     close () {
       this.dialog = false
       setTimeout(() => {
