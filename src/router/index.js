@@ -25,7 +25,6 @@ const routes = [
   },
   {
     path: "/horse/:id",
-    name: "horse",
     props: true,
     component: () => import("@/views/horse/Horse"),
     beforeEnter: requireAuth
