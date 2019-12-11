@@ -1,13 +1,6 @@
 <template>
   <v-card class="ma-5" outlined>
     <v-data-table :headers="headers" :items="customers" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-layout justify-end>
-            <v-btn color="primary" dark class="mb-2" @click="openCustomerPage()">Klant toevoegen</v-btn>
-          </v-layout>
-        </v-toolbar>
-      </template>
       <template v-slot:item="props">
         <tr @click="openCustomerPage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.first_name | capitalize}} </td>
@@ -20,6 +13,10 @@
         Geen klanten in de database
       </template>
     </v-data-table>
+    <v-btn bottom color="primary" class="ma-2 white--text" dark depressed @click="openCustomerPage()" fixed right>
+        Klant toevoegen
+        <v-icon right dark>mdi-plus</v-icon>
+      </v-btn>
   </v-card>
 </template>
 
