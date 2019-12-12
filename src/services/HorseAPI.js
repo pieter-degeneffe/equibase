@@ -6,7 +6,6 @@ export default {
     });
   },
   getHorses(type) {
-    console.log(type);
     return API().get("/api/horse", {
       params: {
         type: type
