@@ -32,7 +32,7 @@
                   <v-text-field v-model="horse.ueln" type="number" :counter="15" label="UELN" :disabled="!horse.status" outlined></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.microship" :counter="15" label="Microship" :disabled="!horse.status" outlined></v-text-field>
+                  <v-text-field v-model="horse.microchip" :rules="required" :counter="15" type="number" label="Microchip" :disabled="!horse.status" outlined></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-menu v-model="birthDateMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
