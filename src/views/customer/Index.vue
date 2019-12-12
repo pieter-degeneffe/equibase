@@ -1,6 +1,13 @@
 <template>
   <v-card class="ma-5" outlined>
     <v-data-table :headers="headers" :items="customers" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
+      <template v-slot:top>
+        <v-toolbar-title>Klanten</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
+      </template>
+      <template v-slot:no-data>
+        Geen klanten in de database
+      </template>
       <template v-slot:item="props">
         <tr @click="openCustomerPage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.first_name | capitalize}} </td>
@@ -8,9 +15,6 @@
           <td><span v-if="props.item.company">{{ props.item.company | capitalize}}</span> <span v-else class="grey--text"><em>particulier</em></span></td>
           <td>{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
         </tr>
-      </template>
-      <template v-slot:no-data>
-        Geen klanten in de database
       </template>
     </v-data-table>
     <v-btn bottom color="primary" class="ma-2 white--text" dark depressed @click="openCustomerPage()" fixed right>
