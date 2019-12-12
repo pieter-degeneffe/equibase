@@ -18,7 +18,7 @@
       </v-tab>
       <v-tab-item class="ma-5">
         <v-card flat>
-          <customer-form :customer="customer"></customer-form>
+          <customer-form :customer="customer" :loading="loading"></customer-form>
         </v-card>
       </v-tab-item>
       <v-tab-item class="ma-5" v-if="customer.type === 'bedrijf'">
@@ -45,6 +45,7 @@ export default {
   data() {
     return {
       customer: "",
+      loading: null
     };
   },
   mounted() {
@@ -53,8 +54,15 @@ export default {
   },
   methods: {
     async loadCustomer(id) {
-      const response = await customerAPI.getCustomer(id);
-      this.customer = response.data;
+      try {
+        this.loading = true;
+        const response = await customerAPI.getCustomer(id);
+        this.customer = response.data;
+      } catch(e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
     },
   },
   components: {
