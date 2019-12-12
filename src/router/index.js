@@ -43,6 +43,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/settings/location",
+    name: "location",
+    component: () => import("@/views/settings/Location"),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/callback',
     component: () => import('@/components/Callback')
   },
