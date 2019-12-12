@@ -1,6 +1,9 @@
 <template>
   <div>
     <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden..." class="ma-4">
+      <template v-slot:no-data>
+          Geen {{ tableName }} in de database
+      </template>
       <template v-slot:top>
         <v-toolbar-title>{{ tableName }}</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
