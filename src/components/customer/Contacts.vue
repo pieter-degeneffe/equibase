@@ -1,6 +1,9 @@
 <template>
   <div>
     <v-data-table :headers="headers" :items="contacts" :loading="loading" loading-text="Bezig met laden...">
+      <template v-slot:no-data>
+          Geen klanten in de database
+      </template>
         <template v-slot:top>
           <v-toolbar flat color="white">
             <v-spacer></v-spacer>
