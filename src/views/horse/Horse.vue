@@ -16,72 +16,83 @@
         <v-card flat>
           <v-form ref="form" v-model="valid">
             <v-container>
-              <v-row>
+              <v-row dense>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.name" :counter="64" :rules="nameRules" label="Naam paard*" :disabled="horse.death" outlined></v-text-field>
+                  <v-text-field v-model="horse.name" :counter="64" :rules="nameRules" label="Naam paard*" :disabled="horse.death" :loading="loading" outlined></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.type" :rules="required" :items="horseType" label="Geslacht*" :disabled="horse.death" outlined></v-select>
+                  <v-select v-model="horse.type" :rules="required" :items="horseType" label="Geslacht*" :disabled="horse.death" :loading="loading" outlined></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <select-owner :owner="owner" @update-owner="updateOwner" :disabled="horse.death"></select-owner>
+                  <v-select v-model="horse.surrogate_location" :items="surrogateLocation" label="Locatie" :disabled="horse.death" :loading="loading" outlined></v-select>
                 </v-col>
               </v-row>
-              <v-row>
+              <v-row dense>
+                <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
+                  <v-switch outlined v-model="horse.surrogate" label="Draagmoeder" flat></v-switch>
+                </v-col>
+                <v-col v-if="horse.surrogate" cols="12" md="4">
+                  <v-text-field v-model="horse.surrogate_uid" :counter="64" :rules="length64" label="Draagmoeder brandnummer" :disabled="horse.death" outlined></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row dense>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.ueln" type="number" :counter="15" label="UELN" :disabled="horse.death" outlined></v-text-field>
+                  <select-owner :owner="owner" @update-owner="updateOwner" :disabled="horse.death" :loading="loading"></select-owner>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.microchip" :rules="required" :counter="15" type="number" label="Microchip*" :disabled="horse.death" outlined></v-text-field>
+                  <v-text-field v-model="horse.ueln" type="number" :counter="15" label="UELN" :disabled="horse.death" outlined :loading="loading"></v-text-field>
                 </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field v-model="horse.microchip" :rules="required" :counter="15" type="number" label="Microchip*" :disabled="horse.death" outlined :loading="loading"></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row dense>
                 <v-col cols="12" md="4">
                   <v-menu v-model="birthDateMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
                     <template v-slot:activator="{ on }">
-                      <v-text-field v-model="computedBirthDateFormatted" label="Geboortedatum" v-on="on" readonly :disabled="horse.death" outlined></v-text-field>
+                      <v-text-field v-model="computedBirthDateFormatted" label="Geboortedatum" v-on="on" readonly :disabled="horse.death" outlined :loading="loading"></v-text-field>
                     </template>
                     <v-date-picker v-model="horse.date_of_birth" no-title @input="birthDateMenu = false"></v-date-picker>
                   </v-menu>
                 </v-col>
-              </v-row>
-              <v-row>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.studbook" :items="horseStudbook" label="Stamboek" :disabled="horse.death" outlined></v-select>
+                  <v-select v-model="horse.studbook" :items="horseStudbook" label="Stamboek" :disabled="horse.death" outlined :loading="loading"></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.coat_color" :items="horseCoatColor" label="Vachtkleur" :disabled="horse.death" outlined></v-select>
+                  <v-select v-model="horse.coat_color" :items="horseCoatColor" label="Vachtkleur" :disabled="horse.death" outlined :loading="loading"></v-select>
                 </v-col>
               </v-row>
-              <v-row>
+              <v-row dense>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.father" :counter="64" :rules="length64" label="Vader" :disabled="horse.death" outlined></v-text-field>
+                  <v-text-field v-model="horse.father" :counter="64" :rules="length64" label="Vader" :disabled="horse.death" outlined :loading="loading"></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.mother" :counter="64" :rules="length64" label="Moeder" :disabled="horse.death" outlined></v-text-field>
+                  <v-text-field v-model="horse.mother" :counter="64" :rules="length64" label="Moeder" :disabled="horse.death" outlined :loading="loading"></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.grandfather" :counter="64" :rules="length64" label="Grootvader" :disabled="horse.death" outlined></v-text-field>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="12" md="4">
-                  <v-switch v-model="horse.death" :label="horseLiving" flat></v-switch>
-                </v-col>
-                <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
-                  <v-switch v-model="horse.surrogate" label="Draagmoeder" flat></v-switch>
+                  <v-text-field v-model="horse.grandfather" :counter="64" :rules="length64" label="Grootvader" :disabled="horse.death" outlined :loading="loading"></v-text-field>
                 </v-col>
               </v-row>
-              <v-row v-if="horse.surrogate">
+              <v-row dense>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.surrogate_uid" :counter="64" :rules="length64" label="Brandnummer" :disabled="horse.death" outlined></v-text-field>
+                  <v-switch dense v-model="horse.keep_for_food_chain" label="Houden voor voedselketen" :disabled="horse.death" flat></v-switch>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.surrogate_location" :items="surrogateLocation" label="Locatie" :disabled="horse.death" outlined></v-select>
+                  <v-switch color="red" dense v-model="horse.death" :label="horseLiving" flat></v-switch>
+                </v-col>
+                <v-col cols="12" md="4" v-if="horse.death">
+                  <v-menu v-model="deathDateMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
+                    <template v-slot:activator="{ on }">
+                      <v-text-field v-model="computedDeathDateFormatted" label="Overlijdensdatum" v-on="on" readonly outlined></v-text-field>
+                    </template>
+                    <v-date-picker v-model="horse.date_of_death" no-title @input="deathDateMenu = false"></v-date-picker>
+                  </v-menu>
                 </v-col>
               </v-row>
               <v-alert type="error" v-if="errored" >
                 {{ errorMessage }}
               </v-alert>
-              <v-row justify="end">
+              <v-row justify="end" dense>
                 <v-btn v-if="!horse._id" :disabled="!valid" color="success" class="mr-4" @click="createHorse()" depressed>
                   Paard opslaan
                 </v-btn>
@@ -129,6 +140,7 @@ import horsePassport from "@/components/horse/Passport";
 export default {
   props: ["id"],
   data: vm => ({
+    loading: null,
     horse: {},
     owner: "",
     horseType: ['hengst', 'merrie'],
@@ -152,6 +164,7 @@ export default {
     deleteDialog: false,
     birthDateMenu: false,
     dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+    deathDateMenu: false,
   }),
   computed: {
     fullName () {
@@ -159,6 +172,9 @@ export default {
     },
     computedBirthDateFormatted () {
       return this.formatDate(this.horse.date_of_birth)
+    },
+    computedDeathDateFormatted () {
+      return this.formatDate(this.horse.date_of_death)
     },
     horseLiving() {
       if (this.horse.death) return "Paard is gestorven";
@@ -175,11 +191,19 @@ export default {
   },
   methods: {
     async loadHorse(id) {
-      const horse = await horseAPI.getHorse(id);
-      this.horse = horse.data;
-      if (this.horse.owner) {
-        const owner = await customerAPI.getCustomer(this.horse.owner);
-        this.owner = owner.data;
+      this.loading = true;
+      try {
+        const horse = await horseAPI.getHorse(id);
+        this.horse = horse.data;
+        if (this.horse.owner) {
+          const owner = await customerAPI.getCustomer(this.horse.owner);
+          this.owner = owner.data;
+        }
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.loading = false;
       }
     },
     async createHorse() {
