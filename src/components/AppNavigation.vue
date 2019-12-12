@@ -99,7 +99,17 @@ export default {
             }
           ]
         },
-        // { text: 'Instellingen', url: "/settings", icon: 'mdi-settings'},
+        {
+          text: 'Instellingen',
+          icon: "mdi-settings",
+          submenu: [
+            {
+              text: "Locaties",
+              url: "/settings/location",
+              icon: "mdi-map-marker"
+            },
+          ]
+        },
       ],
     };
   },
