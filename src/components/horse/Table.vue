@@ -13,7 +13,7 @@
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.father }} & {{ props.item.grandfather }}</td>
           <td>{{ props.item.type }}</td>
-          <td>{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
+          <td align="right">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
         </tr>
       </template>
     </v-data-table>
@@ -47,8 +47,9 @@ export default {
         },
         {
           text: 'Aangemaakt op',
+          align: 'right',
           value: 'create_date',
-          sortable: true
+          sortable: false
         },
       ],
     };
