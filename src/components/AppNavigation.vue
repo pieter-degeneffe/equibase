@@ -35,28 +35,13 @@
             </v-list-item-content>
           </v-list-item>
         </template>
+        <template v-slot:append>
+          <div class="pa-2">
+            <v-btn block v-show="isLoggedIn()" @click="handleLogout()">Logout</v-btn>
+          </div>
+        </template>
       </v-list>
     </v-navigation-drawer>
-    <!-- <v-navigation-drawer v-if="isLoggedIn()" v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app>
-      <template v-for="(item, i) in menu">
-        <v-list-item v-if="!item.submenu" :key="i" :to="item.url">
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>
-              {{ item.text }}
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </template>
-      <template v-slot:append>
-        <div class="pa-2">
-          <v-btn block v-show="isLoggedIn()" @click="handleLogout()">Logout</v-btn>
-          <v-btn block v-show="!isLoggedIn()" @click="handleLogin()">Login</v-btn>
-        </div>
-      </template>
-    </v-navigation-drawer> -->
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-show="isLoggedIn()"></v-app-bar-nav-icon>
       <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
@@ -76,7 +61,8 @@ export default {
   name: "Navigation",
   data() {
     return {
-      drawer: true,
+      dialog: false,
+      drawer: null,
       menu: [
         {
           text: "Klanten",
