@@ -118,8 +118,7 @@ export default {
         v => !!v || 'Dit veld is verplicht'
       ],
       emailRules: [
-        v => !!v || 'Dit veld is verplicht',
-        v => (v && v.length <= 64) || 'Mag maximum 64 tekens bevatten',
+        v => (v || '').length <= 64 || 'Mag maximum 64 tekens bevatten',
         v => /.+@.+\..+/.test(v) || 'Geef een geldig e-mail adres',
       ],
       phoneRules: [
