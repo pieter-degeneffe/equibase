@@ -10,7 +10,7 @@
       hide-selected
       item-text="Description"
       item-value="_id"
-      label="Eigenaar*"
+      label="Eigenaar"
       return-object
       outlined
     >
