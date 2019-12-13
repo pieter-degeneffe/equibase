@@ -13,7 +13,14 @@
       label="Eigenaar*"
       return-object
       outlined
-    ></v-autocomplete>
+    >
+      <template v-slot:item="{ item }">
+        <v-list-item-content>
+          <v-list-item-title>{{ item.first_name }} {{ item.last_name }}</v-list-item-title>
+          <v-list-item-subtitle>{{ item.company }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </template>
+  </v-autocomplete>
   </div>
 </template>
 <script>
@@ -32,8 +39,13 @@ export default {
   computed: {
     items () {
       return this.entries.map(entry => {
-        const Description = entry.first_name + " " + entry.last_name
-        return Object.assign({}, entry, { Description })
+        if(entry.company) {
+          const Description = entry.company + " - " + entry.first_name + " " + entry.last_name
+          return Object.assign({}, entry, { Description })
+        } else {
+          const Description = entry.first_name + " " + entry.last_name
+          return Object.assign({}, entry, { Description })
+        }
       })
     },
     fullName () {
@@ -55,7 +67,7 @@ export default {
       this.isLoading = true
 
       // Lazily load input items
-      fetch('http://localhost:8081/api/customer')
+      fetch(process.env.VUE_APP_API_BASE_URL + '/api/customer')
         .then(res => res.json())
         .then(res => {
           this.entries = res
