@@ -1,34 +1,30 @@
 <template>
   <v-form ref="form" v-model="valid">
     <v-container fluid>
-      <v-row>
-        <v-col cols="12" md="4" sm="6">
+      <v-row dense>
+        <v-col cols="12" md="12" sm="12">
           <v-radio-group row v-model="customer.type" :rules="required" required>
             <v-radio label="Particulier" value="particulier"></v-radio>
             <v-radio label="Bedrijf" value="bedrijf"></v-radio>
           </v-radio-group>
         </v-col>
       </v-row>
-      <v-row v-if="customer.type === 'bedrijf'">
-        <v-col cols="12" md="4" sm="6">
+      <v-row dense>
+        <v-col cols="12" md="4" sm="6" v-if="customer.type === 'bedrijf'">
           <v-text-field v-model="customer.company" :counter="64" :rules="nameRules" label="Naam bedrijf" required outlined :loading="loading"></v-text-field>
         </v-col>
-        <v-col cols="12" md="4" sm="6">
-          <v-text-field v-model="customer.tva" :counter="14" :rules="tvaRules" validate-on-blur label="BTW-nummer" persistent-hint hint="voorbeeld: BE0123456789" required outlined :loading="loading"></v-text-field>
-        </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.first_name" :counter="64" :rules="nameRules" label="Voornaam klant" required outlined :loading="loading"></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.last_name" :counter="64" :rules="nameRules" label="Achternaam klant" required outlined :loading="loading"></v-text-field>
         </v-col>
+        <v-col cols="12" md="4" sm="6" v-if="customer.type === 'bedrijf'">
+          <v-text-field v-model="customer.tva" :counter="14" :rules="tvaRules" validate-on-blur label="BTW-nummer" persistent-hint hint="voorbeeld: BE0123456789" required outlined :loading="loading"></v-text-field>
+        </v-col>
         <v-col cols="12" md="4" sm="6">
           <v-select v-model="customer.language" :rules="required" :items="languages" label="Taal klant" outlined :loading="loading"></v-select>
         </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.email" :counter="64" :rules="emailRules" label="E-mail adres" required outlined :loading="loading"></v-text-field>
         </v-col>
@@ -38,16 +34,12 @@
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.telephone_fixed" :counter="16" label="Telefoonnummer - vast" persistent-hint hint="voorbeeld: +3211781113" outlined :loading="loading"></v-text-field>
         </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.street" :counter="32" :rules="length32" label="Straatnaam" outlined :loading="loading"></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.house_number" :counter="16" :rules="length16" label="Huisnummer" outlined :loading="loading"></v-text-field>
         </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12" md="4" sm="6">
           <v-text-field v-model="customer.zip" :counter="8" :rules="length8" label="Postcode" outlined :loading="loading"></v-text-field>
         </v-col>
