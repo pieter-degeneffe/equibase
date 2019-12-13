@@ -75,7 +75,7 @@ export default {
         { text: 'Telefoon', align: 'left', sortable: false, value: 'telephone' },
         { text: 'Email', align: 'left', sortable: false, value: 'email' },
         { text: 'Rol', align: 'left', sortable: false, value: 'role' },
-        { text: 'Bewerken', value: 'action', sortable: false },
+        { text: 'Bewerken', align: 'right', value: 'action', sortable: false },
       ],
       contacts: [],
       editedIndex: -1,
