@@ -33,7 +33,10 @@
           <v-text-field v-model="customer.email" :counter="64" :rules="emailRules" label="E-mail adres" required outlined :loading="loading"></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
-          <v-text-field v-model="customer.telephone" :counter="16" label="Telefoonnummer" persistent-hint hint="voorbeeld: +32486688502" outlined :loading="loading"></v-text-field>
+          <v-text-field v-model="customer.telephone_mobile" :counter="16" label="Telefoonnummer - mobiel" persistent-hint hint="voorbeeld: +32486688502" outlined :loading="loading"></v-text-field>
+        </v-col>
+        <v-col cols="12" md="4" sm="6">
+          <v-text-field v-model="customer.telephone_fixed" :counter="16" label="Telefoonnummer - vast" persistent-hint hint="voorbeeld: +3211781113" outlined :loading="loading"></v-text-field>
         </v-col>
       </v-row>
       <v-row>
