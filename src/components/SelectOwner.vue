@@ -49,7 +49,9 @@ export default {
       })
     },
     fullName () {
-      if (this.owner.first_name && this.owner.last_name){
+      if (this.owner.company){
+        return (this.owner.company);
+      } else if (this.owner.first_name && this.owner.last_name){
         return this.owner.first_name + ' ' + this.owner.last_name;
       }
       return "Eigenaar";
