@@ -44,19 +44,20 @@
     </v-navigation-drawer>
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-show="isLoggedIn()"></v-app-bar-nav-icon>
-      <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+      <v-toolbar-title style="width: 170px" class="ml-0 pl-3">
         <router-link to="/" id="homelink">
           {{ this.$appName }}
         </router-link>
       </v-toolbar-title>
-      <!-- <v-text-field flat solo-inverted hide-details prepend-inner-icon="mdi-magnify" label="Search" class="hidden-sm-and-down"></v-text-field> -->
-      <!-- <v-spacer></v-spacer> -->
+      <v-spacer></v-spacer>
+      <search v-if="isLoggedIn()"></search>
     </v-app-bar>
   </div>
 </template>
 
 <script>
 import { isLoggedIn, login, logout } from '@/services/auth';
+import search from "@/components/Search";
 export default {
   name: "Navigation",
   data() {
@@ -109,7 +110,10 @@ export default {
     isLoggedIn() {
       return isLoggedIn();
     },
-  }
+  },
+  components: {
+    search
+  },
 };
 </script>
 <style lang="css">
