@@ -5,7 +5,6 @@
     :loading="loading"
     :items="items"
     :search-input.sync="search"
-    cache-items
     prepend-inner-icon="mdi-magnify"
     flat
     dense
@@ -18,6 +17,7 @@
     autocomplete="off"
     solo-inverted
     return-object
+    no-filter
   >
   <template v-slot:item="{ item }">
     <v-list-item @click="openPage(item.url)">
@@ -76,11 +76,13 @@ export default {
       this.loading = true
       try {
         const respons = await searchAPI.getSearch(v);
-        this.entries = respons.data;
+        const filteredRespons = respons.data.filter(e => e.confidenceScore > 30)
+        this.entries = filteredRespons;
       } catch (err) {
         console.log(err);
       } finally {
         this.loading = false;
+        console.log(this.entries);
       }
     },
     openPage(url){
