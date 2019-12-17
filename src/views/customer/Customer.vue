@@ -48,6 +48,11 @@ export default {
       loading: null
     };
   },
+  watch: {
+    '$route.params.id'(newId) {
+        this.loadCustomer(newId);
+    }
+  },
   mounted() {
     if (this.id !== "undefined") this.loadCustomer(this.id);
     else this.customer = {};

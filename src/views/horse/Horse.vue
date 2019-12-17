@@ -185,6 +185,9 @@ export default {
     date() {
       this.dateFormatted = this.formatDate(this.horse.date_of_birth)
     },
+    '$route.params.id'(newId) {
+        this.loadHorse(newId);
+    }
   },
   mounted() {
     if (this.id !== "undefined") this.loadHorse(this.id);
