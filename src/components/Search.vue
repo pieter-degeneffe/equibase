@@ -76,7 +76,7 @@ export default {
       this.loading = true
       try {
         const respons = await searchAPI.getSearch(v);
-        const filteredRespons = respons.data.filter(e => e.confidenceScore > 30)
+        const filteredRespons = respons.data.filter(e => e.confidenceScore > 6)
         this.entries = filteredRespons;
       } catch (err) {
         console.log(err);
