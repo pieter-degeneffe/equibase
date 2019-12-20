@@ -14,10 +14,10 @@
           <v-text-field v-model="customer.company" :counter="64" :rules="nameRules" label="Naam bedrijf*" required outlined :loading="loading"></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
-          <v-text-field v-model="customer.last_name" :counter="64" :rules="nameRules" label="Achternaam klant*" required outlined :loading="loading"></v-text-field>
+          <v-text-field v-model="customer.last_name" :counter="64" :rules="nameRules" label="Achternaam klant" outlined :loading="loading"></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6">
-          <v-text-field v-model="customer.first_name" :counter="64" :rules="nameRules" label="Voornaam klant*" required outlined :loading="loading"></v-text-field>
+          <v-text-field v-model="customer.first_name" :counter="64" :rules="nameRules" label="Voornaam klant" outlined :loading="loading"></v-text-field>
         </v-col>
         <v-col cols="12" md="4" sm="6" v-if="customer.type === 'bedrijf'">
           <v-text-field v-model="customer.tva" :counter="14" :rules="tvaRules" validate-on-blur label="BTW-nummer" persistent-hint hint="voorbeeld: BE0123456789" required outlined :loading="loading"></v-text-field>
@@ -100,8 +100,7 @@ export default {
       valid: false,
       snackbar: false,
       nameRules: [
-        v => !!v || 'Dit veld is verplicht',
-        v => (v && v.length <= 64) || 'Mag maximum 64 tekens bevatten',
+        v => (v || '').length <= 64 || 'Mag maximum 64 tekens bevatten'
       ],
       tvaRules: [
         v => (v || '').length <= 14 || 'Mag maximum 14 tekens bevatten'
