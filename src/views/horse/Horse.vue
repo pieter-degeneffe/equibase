@@ -24,7 +24,7 @@
                   <v-select v-model="horse.type" :rules="required" :items="horseType" label="Geslacht*" :disabled="horse.death" :loading="loading" outlined></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.surrogate_location" :items="surrogateLocation" label="Locatie" :disabled="horse.death" :loading="loading" outlined></v-select>
+                  <v-select v-model="horse.surrogate_location" :items="location" label="Locatie" :disabled="horse.death" :loading="loading" outlined></v-select>
                 </v-col>
               </v-row>
               <v-row dense>
@@ -135,6 +135,7 @@
 <script>
 import horseAPI from "@/services/HorseAPI.js";
 import customerAPI from "@/services/CustomerAPI.js";
+import locationAPI from "@/services/LocationAPI.js";
 import selectOwner from "@/components/SelectOwner";
 import horsePassport from "@/components/horse/Passport";
 export default {
@@ -142,11 +143,11 @@ export default {
   data: vm => ({
     loading: null,
     horse: {},
+    location: {},
     owner: "",
     horseType: ['hengst', 'merrie'],
     horseStudbook: ['Arabische volbloed (Arab)','American Quarter Horse (AQH)','Belgisch Warmbloedpaard (BWP)','SBS','SF','Trotteur Francais (TF)','Belgische Draver','Studbook Zangersheide (Z)','Studbook Du Cheval de Selle Luxembourgeois (SCSL)','Westfalen','Hannover','Oldenburg (OLD)','Anglo European Studbook (AES)','Koninklijk Nederlands Warmbloedpaard (KWPN)','Lusitana','Equipas','Andere'],
     horseCoatColor: ['Bruin','Donkerbruin','Vos','Donkervos','Zwart','Schimmel','Wit','Bont','Palomino'],
-    surrogateLocation: ['locatie 1','locatie 2','locatie 3'],
     valid: false,
     snackbar: false,
     errored: false,
@@ -250,6 +251,16 @@ export default {
       } finally {
         this.$router.go(-1);
         this.dialog = false;
+      }
+    },
+    async loadLocations() {
+      try {
+        const response = await locationAPI.getLocations();
+        this.locations = response.data;
+      } catch (e) {
+        this.errored = true;
+      } finally {
+        this.loading = false;
       }
     },
     updateOwner(newOwner) {
