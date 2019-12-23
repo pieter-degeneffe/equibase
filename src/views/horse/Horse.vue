@@ -40,10 +40,10 @@
                   <select-owner :owner="owner" @update-owner="updateOwner" :disabled="horse.death" :loading="loading"></select-owner>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.ueln" type="number" :counter="15" label="UELN" :disabled="horse.death" outlined :loading="loading"></v-text-field>
+                  <v-text-field v-model="horse.ueln" :counter="15" label="UELN" :disabled="horse.death" outlined :loading="loading"></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-text-field v-model="horse.microchip" :counter="15" type="number" label="Microchip*" :disabled="horse.death" outlined :loading="loading"></v-text-field>
+                  <v-text-field v-model="horse.microchip" :counter="15" type="number" label="Microchip" :disabled="horse.death" outlined :loading="loading"></v-text-field>
                 </v-col>
               </v-row>
               <v-row dense>
