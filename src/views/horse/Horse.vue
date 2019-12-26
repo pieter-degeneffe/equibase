@@ -24,7 +24,7 @@
                   <v-select v-model="horse.type" :rules="required" :items="horseType" label="Geslacht*" :disabled="horse.death" :loading="loading" outlined></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.surrogate_location" :items="location" label="Locatie" :disabled="horse.death" :loading="loading" outlined></v-select>
+                  <v-select v-model="horse.location" :items="locations" item-value="_id" item-text="name" label="Locatie" :disabled="horse.death" :loading="loading" outlined></v-select>
                 </v-col>
               </v-row>
               <v-row dense>
@@ -143,7 +143,7 @@ export default {
   data: vm => ({
     loading: null,
     horse: {},
-    location: {},
+    locations: null,
     owner: "",
     horseType: ['hengst', 'merrie'],
     horseStudbook: ['Arabische volbloed (Arab)','American Quarter Horse (AQH)','Belgisch Warmbloedpaard (BWP)','SBS','SF','Trotteur Francais (TF)','Belgische Draver','Studbook Zangersheide (Z)','Studbook Du Cheval de Selle Luxembourgeois (SCSL)','Westfalen','Hannover','Oldenburg (OLD)','Anglo European Studbook (AES)','Koninklijk Nederlands Warmbloedpaard (KWPN)','Lusitana','Equipas','Andere'],
@@ -192,6 +192,7 @@ export default {
   },
   mounted() {
     if (this.id !== "undefined") this.loadHorse(this.id);
+    this.loadLocations();
   },
   methods: {
     async loadHorse(id) {
