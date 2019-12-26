@@ -43,6 +43,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/report/location",
+    name: "location report",
+    component: () => import("@/views/report/Location"),
+    beforeEnter: requireAuth
+  },
+  {
     path: "/settings/location",
     name: "location",
     component: () => import("@/views/settings/Location"),
