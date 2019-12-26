@@ -117,7 +117,6 @@ export default {
       this.dialog = true
     },
     async deleteItem (item) {
-      console.log(item);
       try {
         this.loading = true;
         this.errored = false;
@@ -132,9 +131,6 @@ export default {
       } finally {
         this.loading = false;
       }
-      // console.log(item);
-      // const index = this.locations.indexOf(item)
-      // confirm('Are you sure you want to delete this item?') && this.locations.splice(index, 1)
     },
     close () {
       this.dialog = false
