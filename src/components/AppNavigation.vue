@@ -87,6 +87,17 @@ export default {
           ]
         },
         {
+          text: "Rapporten",
+          icon: "mdi-google-analytics",
+          submenu: [
+            {
+              text: "Paarden per locatie",
+              url: "/report/location",
+              icon: "mdi-map-marker"
+            },
+          ]
+        },
+        {
           text: 'Instellingen',
           icon: "mdi-settings",
           submenu: [
