@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table :headers="tableHeader" :items="horses" :loading="loading" loading-text="Bezig met laden..." class="ma-4">
+    <v-data-table :headers="tableHeader" :items="horses" :loading="loading" loading-text="Bezig met laden..." class="ma-4" :sort-by="['name']">
       <template v-slot:no-data>
           Geen {{ tableName }} in de database
       </template>
@@ -10,6 +10,7 @@
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
+          <td><span v-if="props.item.location">{{ props.item.location.name }}</span></td>
           <td v-if="props.item.type === 'merrie'">
             <v-icon v-if="props.item.surrogate" class="green--text">mdi-check</v-icon>
           </td>
@@ -23,7 +24,6 @@
       {{ $route.name }} toevoegen
       <v-icon right dark>mdi-plus</v-icon>
     </v-btn>
-    {{ horses }}
   </div>
 </template>
 <script>
@@ -57,6 +57,11 @@ export default {
               sortable: true
             },
             {
+              text: 'Locatie',
+              align: 'left',
+              sortable: false
+            },
+            {
               text: 'Stamboom',
               align: 'left',
               sortable: false
@@ -83,10 +88,15 @@ export default {
               sortable: true
             },
             {
+              text: 'Locatie',
+              align: 'left',
+              sortable: false
+            },
+            {
               text: 'Draagmoeder',
               value: 'name',
               align: 'left',
-              sortable: true
+              sortable: false
             },
             {
               text: 'Stamboom',
