@@ -21,6 +21,21 @@ export default {
       } else {
         return "Merries"
       }
+    },
+    URLParameters () {
+      if (this.$route.name === 'hengst') {
+        return ({
+          'type': 'hengst',
+          'death': false
+        })
+      } else if (this.$route.name === 'merrie') {
+        return ({
+          'type': 'merrie',
+          'death': false
+        })
+      } else {
+        return {};
+      }
     }
   },
   created() {
@@ -32,7 +47,7 @@ export default {
   methods: {
     async loadHorses() {
       try {
-        const response = await horseAPI.getHorses(this.$route.name);
+        const response = await horseAPI.getHorses(this.URLParameters);
         this.horses = response.data;
       } catch (e) {
         this.errored = true;
