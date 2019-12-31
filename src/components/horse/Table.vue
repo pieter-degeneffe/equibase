@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden..." class="ma-4">
+    <v-data-table :headers="tableHeader" :items="horses" :loading="loading" loading-text="Bezig met laden..." class="ma-4">
       <template v-slot:no-data>
           Geen {{ tableName }} in de database
       </template>
@@ -11,8 +11,11 @@
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
-          <td>{{ props.item.father }} & {{ props.item.grandfather }}</td>
-          <td>{{ props.item.type }}</td>
+          <td v-if="props.item.type === 'merrie'">
+            <v-icon v-if="props.item.surrogate" class="green--text">mdi-check</v-icon>
+          </td>
+          <td>{{ familyTree(props.item) }}</td>
+          <td>{{ props.item.ueln }}</td>
           <td align="right">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
         </tr>
       </template>
@@ -21,6 +24,7 @@
       {{ $route.name }} toevoegen
       <v-icon right dark>mdi-plus</v-icon>
     </v-btn>
+    {{ horses }}
   </div>
 </template>
 <script>
@@ -29,29 +33,6 @@ export default {
   data() {
     return {
       errored: false,
-      headers: [
-        {
-          text: 'Naam paard',
-          value: 'name',
-          align: 'left',
-          sortable: true
-        },
-        {
-          text: 'Stamboom',
-          align: 'left',
-          sortable: false
-        },
-        {
-          text: 'Geslacht',
-          sortable: false
-        },
-        {
-          text: 'Aangemaakt op',
-          align: 'right',
-          value: 'create_date',
-          sortable: false
-        },
-      ],
     };
   },
   methods: {
@@ -60,7 +41,74 @@ export default {
     },
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
+    },
+    familyTree(horse) {
+      if (horse.father && horse.grandfather) return (horse.father + " & " + horse.grandfather);
     }
   },
+  computed: {
+    tableHeader() {
+      if (this.$route.name === "hengst") {
+        return (
+          [
+            {
+              text: 'Naam hengst',
+              value: 'name',
+              align: 'left',
+              sortable: true
+            },
+            {
+              text: 'Stamboom',
+              align: 'left',
+              sortable: false
+            },
+            {
+              text: 'UELN',
+              sortable: false
+            },
+            {
+              text: 'Aangemaakt op',
+              align: 'right',
+              value: 'create_date',
+              sortable: false
+            },
+          ]
+        )
+      } else if (this.$route.name === "merrie") {
+        return (
+          [
+            {
+              text: 'Naam merrie',
+              value: 'name',
+              align: 'left',
+              sortable: true
+            },
+            {
+              text: 'Draagmoeder',
+              value: 'name',
+              align: 'left',
+              sortable: true
+            },
+            {
+              text: 'Stamboom',
+              align: 'left',
+              sortable: false
+            },
+            {
+              text: 'UELN',
+              sortable: false
+            },
+            {
+              text: 'Aangemaakt op',
+              align: 'right',
+              value: 'create_date',
+              sortable: false
+            },
+          ]
+        )
+      }
+      return "problem"
+    }
+  }
 }
 </script>
