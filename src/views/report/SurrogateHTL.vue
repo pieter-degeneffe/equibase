@@ -41,7 +41,7 @@ export default {
         'type': 'merrie',
         'surrogate': true,
         'death': false,
-        'owner': '5e0afbbc97066e784ae7b888'
+        'owner': '5df7eb3745870a4d585e20af'
       }
     };
   },
