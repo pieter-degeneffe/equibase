@@ -1,7 +1,7 @@
 <template>
   <v-card class="ma-5" outlined>
     <v-toolbar flat color="primary" dark>
-      <v-toolbar-title>{{ horse.name }}</v-toolbar-title>
+      <v-toolbar-title>{{ horse.name }} <v-icon v-if="horse.death">mdi-christianity</v-icon></v-toolbar-title>
     </v-toolbar>
     <v-tabs>
       <v-tab>
