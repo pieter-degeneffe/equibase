@@ -1,6 +1,6 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :items="locations" :loading="loading" loading-text="Bezig met laden...">
+    <v-data-table :headers="headers" :items="locations" :loading="loading" loading-text="Bezig met laden..." :sort-by="['stable', 'name']" multi-sort>
         <template v-slot:top>
           <v-toolbar flat color="white">
             <v-spacer></v-spacer>
@@ -16,6 +16,9 @@
                   <v-container>
                     <v-form ref="form" v-model="valid">
                       <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-select v-model="editedItem.stable" :items="stables" label="Stal" outlined></v-select>
+                        </v-col>
                         <v-col cols="12" sm="12" md="12">
                           <v-text-field v-model="editedItem.name" :rules="required" label="Naam locatie*" outlined></v-text-field>
                         </v-col>
@@ -70,11 +73,13 @@ export default {
         v => !!v || 'Dit veld is verplicht'
       ],
       headers: [
+        { text: 'Stal', align: 'left', sortable: false, value: 'stable' },
         { text: 'Naam locatie', align: 'left', sortable: false, value: 'name' },
         { text: '# Plaatsen', align: 'left', sortable: false, value: 'places' },
         { text: '# Paarden', align: 'left', sortable: false, value: 'horses.length' },
         { text: 'Bewerken', align: 'right', value: 'action', sortable: false },
       ],
+      stables: ['Stal Zoutleeuw','Stal Dormaal','Wei'],
       locations: [],
       editedIndex: -1,
       editedItem: {
