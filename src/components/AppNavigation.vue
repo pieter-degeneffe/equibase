@@ -96,8 +96,13 @@ export default {
               icon: "mdi-map-marker"
             },
             {
-              text: "Draagmoeders",
+              text: "Alle draagmoeders",
               url: "/report/surrogate",
+              icon: "mdi-horseshoe"
+            },
+            {
+              text: "Draagmoeders van HTL",
+              url: "/report/surrogate-htl",
               icon: "mdi-horseshoe"
             },
             {
