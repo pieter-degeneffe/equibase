@@ -99,6 +99,11 @@ export default {
               text: "Draagmoeders",
               url: "/report/surrogate",
               icon: "mdi-horseshoe"
+            },
+            {
+              text: "Overleden paarden",
+              url: "/report/death-horses",
+              icon: "mdi-christianity"
             }
           ]
         },
