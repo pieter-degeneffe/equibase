@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="d-print-none">
     <v-navigation-drawer v-if="isLoggedIn()" v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app>
       <v-list dense>
         <template v-for="item in menu">
@@ -94,7 +94,7 @@ export default {
               text: "Paarden per locatie",
               url: "/report/location",
               icon: "mdi-map-marker"
-            },
+            }
           ]
         },
         {

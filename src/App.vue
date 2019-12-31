@@ -19,3 +19,11 @@ export default {
   })
 };
 </script>
+
+<style scoped>
+@media print {
+  main {
+    padding: 0px !important;
+  }
+}
+</style>

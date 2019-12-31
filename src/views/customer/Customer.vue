@@ -4,15 +4,15 @@
       <v-toolbar-title>{{ customer.first_name | capitalize }} {{ customer.last_name | capitalize }}</v-toolbar-title>
     </v-toolbar>
     <v-tabs>
-      <v-tab>
+      <v-tab class="d-print-none">
         <v-icon left>mdi-book-open-variant</v-icon>
         Algemene gegevens
       </v-tab>
-      <v-tab v-if="customer.type === 'bedrijf'">
+      <v-tab v-if="customer.type === 'bedrijf'" class="d-print-none">
         <v-icon left>mdi-account-box</v-icon>
         Contacten
       </v-tab>
-      <v-tab>
+      <v-tab class="d-print-none">
         <v-icon left>mdi-horseshoe</v-icon>
         Paarden
       </v-tab>
@@ -78,4 +78,11 @@ export default {
 };
 </script>
 
-<style lang="css"></style>
+<style lang="css">
+@media print {
+  .v-tabs-bar {
+    display: none !important;
+    height: 0px !important;
+  }
+}
+</style>
