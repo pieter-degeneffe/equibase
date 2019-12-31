@@ -1,6 +1,6 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :items="horses" :loading="loading" class="ma-4">
+    <v-data-table :headers="headers" :items="horses" :loading="loading" class="ma-4" :sort-by="['name']">
       <template v-slot:no-data>
           Geen paarden gevonden
       </template>
@@ -10,9 +10,11 @@
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
-          <td>{{ props.item.microchip }}</td>
-          <td>{{ props.item.surrogate_uid }}</td>
-          <td align="right">{{ new Date(props.item.date_of_death) | dateFormat('DD/MM/YY')}}</td>
+          <td align="right">{{ props.item.microchip }}</td>
+          <td align="right">{{ props.item.surrogate_uid }}</td>
+          <td align="right"><span v-if="props.item.location">{{ props.item.location.name }}</span></td>
+          <td align="right"><span v-if="props.item.date_of_birth">{{ new Date(props.item.date_of_birth) | dateFormat('DD/MM/YY') }}</span></td>
+          <td align="right">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY') }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -29,8 +31,10 @@ export default {
       horses: [],
       headers: [
         { text: 'Naam Paard', align: 'left', sortable: false, value: 'name' },
-        { text: 'Brandnummer', align: 'left', sortable: false, value: 'ueln' },
-        { text: 'Chipnummer', align: 'left', sortable: false, value: 'ueln' },
+        { text: 'Brandnummer', align: 'right', sortable: false, value: 'ueln' },
+        { text: 'Chipnummer', align: 'right', sortable: false, value: 'ueln' },
+        { text: 'Locatie', align: 'right', sortable: false, value: 'location.name' },
+        { text: 'Geboortedatum', align: 'right', sortable: false },
         { text: 'Aangemaakt op', align: 'right', value: 'create_date', sortable: false },
       ],
       URLParameters: {
