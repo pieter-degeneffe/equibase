@@ -94,6 +94,11 @@ export default {
               text: "Paarden per locatie",
               url: "/report/location",
               icon: "mdi-map-marker"
+            },
+            {
+              text: "Draagmoeders",
+              url: "/report/surrogate",
+              icon: "mdi-horseshoe"
             }
           ]
         },
