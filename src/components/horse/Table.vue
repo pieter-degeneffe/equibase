@@ -5,8 +5,7 @@
           Geen {{ tableName }} in de database
       </template>
       <template v-slot:top>
-        <v-toolbar-title>{{ tableName }}</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-toolbar-title class="mb-4">{{ tableName }}</v-toolbar-title>
       </template>
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
