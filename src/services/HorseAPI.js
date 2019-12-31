@@ -5,23 +5,10 @@ export default {
       horse
     });
   },
-  getHorses(type, death) {
-    console.log(death + type);
-    if (type && death) {
-      return API().get("/api/horse", {
-        params: {
-          type: type,
-          death: death
-        }
-      });
-    } else if (!type && death) {
-      return API().get("/api/horse", {
-        params: {
-          death: death
-        }
-      });
-    }
-    return API().get("/api/horse");
+  getHorses(parameters) {
+    return API().get("/api/horse", {
+      params: parameters
+    });
   },
   getHorseCount() {
     return API().get("/api/horse/count");
