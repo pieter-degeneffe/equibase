@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden...">
+    <v-select class="d-print-none" v-model="horseFilter" outlined label="Filter op type paard" :items="horseTypes"></v-select>
+    <v-data-table :headers="headers" :items="filteredHorses" :loading="loading" loading-text="Bezig met laden...">
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
@@ -9,7 +10,7 @@
         </tr>
       </template>
       <template v-slot:no-data>
-        Deze klant heeft nog geen paarden
+        Geen paarden gevonden
       </template>
     </v-data-table>
   </div>
@@ -21,6 +22,8 @@ export default {
   data() {
     return {
       loading: false,
+      horseFilter: '',
+      horseTypes: ['Alle paarden','Hengsten','Merries','Draagmoeders'],
       horses: [],
       headers: [
         {
@@ -44,6 +47,24 @@ export default {
   mounted() {
     this.getCustomerHorses(this.customer._id);
   },
+  computed: {
+    filteredHorses () {
+      if (!this.horseFilter || this.horseFilter === 'Alle paarden') return this.horses;
+      return this.horses.filter((horse) => {
+        if (this.horseFilter === "Hengsten") {
+            return horse.type === "hengst";
+        } else if (this.horseFilter === "Merries") {
+          if (horse.type === "merrie" && horse.surrogate !== true) {
+            return horse
+          }
+        } else if (this.horseFilter === "Draagmoeders") {
+          if (horse.type === "merrie" && horse.surrogate === true) {
+            return horse
+          }
+        }
+      })
+    }
+  },
   methods: {
     async getCustomerHorses(id) {
       try {
@@ -60,7 +81,7 @@ export default {
     },
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
-    }
+    },
   }
 }
 </script>
