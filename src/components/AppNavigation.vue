@@ -35,12 +35,12 @@
             </v-list-item-content>
           </v-list-item>
         </template>
-        <template v-slot:append>
-          <div class="pa-2">
-            <v-btn block v-show="isLoggedIn()" @click="handleLogout()">Logout</v-btn>
-          </div>
-        </template>
       </v-list>
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn block v-show="isLoggedIn()" @click="handleLogout()">Logout</v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
     <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="blue darken-3" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" v-show="isLoggedIn()"></v-app-bar-nav-icon>
