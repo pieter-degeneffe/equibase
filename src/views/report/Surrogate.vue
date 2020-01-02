@@ -18,7 +18,6 @@
         </tr>
       </template>
     </v-data-table>
-    {{ horses }}
   </v-card>
 </template>
 <script>
