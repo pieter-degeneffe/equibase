@@ -10,14 +10,15 @@
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
-          <td align="right">{{ props.item.microchip }}</td>
           <td align="right">{{ props.item.surrogate_uid }}</td>
+          <td align="right">{{ props.item.microchip }}</td>
           <td align="right"><span v-if="props.item.location">{{ props.item.location.name }}</span></td>
           <td align="right"><span v-if="props.item.date_of_birth">{{ new Date(props.item.date_of_birth) | dateFormat('DD/MM/YY') }}</span></td>
           <td align="right">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY') }}</td>
         </tr>
       </template>
     </v-data-table>
+    {{ horses }}
   </v-card>
 </template>
 <script>
@@ -30,11 +31,11 @@ export default {
       death: true,
       horses: [],
       headers: [
-        { text: 'Naam Paard', align: 'left', sortable: false, value: 'name' },
-        { text: 'Brandnummer', align: 'right', sortable: false, value: 'ueln' },
-        { text: 'Chipnummer', align: 'right', sortable: false, value: 'ueln' },
+        { text: 'Naam Paard', align: 'left', sortable: true, value: 'name' },
+        { text: 'Brandnummer', align: 'right', sortable: true, value: 'surrogate_uid' },
+        { text: 'Chipnummer', align: 'right', sortable: true, value: 'microchip' },
         { text: 'Locatie', align: 'right', sortable: false, value: 'location.name' },
-        { text: 'Geboortedatum', align: 'right', sortable: false },
+        { text: 'Geboortedatum', align: 'right', sortable: true, value: 'date_of_birth' },
         { text: 'Aangemaakt op', align: 'right', value: 'create_date', sortable: false },
       ],
       URLParameters: {
