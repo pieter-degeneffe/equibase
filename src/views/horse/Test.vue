@@ -199,7 +199,7 @@
         return this.headers.find(header => header.value === col).selected
       },
       ownerName(owner){
-        return owner.type === "particulier" ? `${owner.first_name} ${owner.last_name}` : `${owner.copany}`
+        return owner.type === "particulier" ? `${owner.first_name} ${owner.last_name}` : `${owner.company}`
       },
       async getHorses() {
         this.loading = true;
