@@ -187,18 +187,19 @@ export default {
       this.dateFormatted = this.formatDate(this.horse.date_of_birth)
     },
     '$route.params.id'(newId) {
-        this.loadHorse(newId);
+        this.getHorses(newId);
     }
   },
   mounted() {
-    if (this.id !== "undefined") this.loadHorse(this.id);
+    if (this.id !== "undefined") this.getHorses(this.id);
     this.loadLocations();
   },
   methods: {
-    async loadHorse(id) {
+    async getHorses(id) {
       this.loading = true;
       try {
         const horse = await horseAPI.getHorse(id);
+        console.log(horse);
         this.horse = horse.data;
         if (this.horse.owner) {
           const owner = await customerAPI.getCustomer(this.horse.owner);

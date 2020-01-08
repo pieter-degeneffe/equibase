@@ -39,16 +39,16 @@ export default {
     }
   },
   created() {
-    this.loadHorses();
+    this.getHorses();
   },
   watch: {
-    '$route': 'loadHorses'
+    '$route': 'getHorses'
   },
   methods: {
-    async loadHorses() {
+    async getHorses() {
       try {
         const response = await horseAPI.getHorses(this.URLParameters);
-        this.horses = response.data;
+        this.horses = response.data.horses;
       } catch (e) {
         this.errored = true;
       } finally {

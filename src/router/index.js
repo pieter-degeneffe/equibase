@@ -76,6 +76,10 @@ const routes = [
     path: '/callback',
     component: () => import('@/components/Callback')
   },
+  {
+    path: '/test',
+    component: () => import('@/views/horse/Test')
+  },
 ]
 
 const router = new VueRouter({

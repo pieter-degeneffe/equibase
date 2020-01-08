@@ -123,6 +123,11 @@ export default {
             },
           ]
         },
+        {
+          text: "Testpagina",
+          url: "/test",
+          icon: "mdi-test-tube",
+        },
       ],
     };
   },
