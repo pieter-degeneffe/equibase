@@ -24,7 +24,7 @@
                   <v-select v-model="horse.type" :rules="required" :items="horseType" label="Geslacht*" :disabled="horse.death" :loading="loading" outlined></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.location" :items="locations" item-value="_id" item-text="name" label="Locatie" :disabled="horse.death" :loading="loading" outlined></v-select>
+                  <v-select v-model="horse.location" :items="locations" item-value="_id" item-text="name" label="Locatie" :disabled="horse.death" :loading="loading" outlined clearable></v-select>
                 </v-col>
               </v-row>
               <v-row dense>
@@ -192,6 +192,8 @@ export default {
   },
   mounted() {
     if (this.id !== "undefined") this.getHorses(this.id);
+    if (this.id === "undefined" && this.$route.query.type) this.horse.type = this.$route.query.type
+    if (this.id === "undefined" && this.$route.query.surrogate) this.horse.surrogate = this.$route.query.surrogate
     this.loadLocations();
   },
   methods: {

@@ -83,6 +83,11 @@ export default {
               text: "Merries",
               url: "/horse/mare",
               icon: "mdi-gender-female"
+            },
+            {
+              text: "Draagmoeders",
+              url: "/horse/surrogate",
+              icon: "mdi-cached"
             }
           ]
         },
@@ -91,19 +96,9 @@ export default {
           icon: "mdi-google-analytics",
           submenu: [
             {
-              text: "Paarden per locatie",
+              text: "Draagmoeders per locatie",
               url: "/report/location",
               icon: "mdi-map-marker"
-            },
-            {
-              text: "Alle draagmoeders",
-              url: "/report/surrogate",
-              icon: "mdi-horseshoe"
-            },
-            {
-              text: "Draagmoeders van HTL",
-              url: "/report/surrogate-htl",
-              icon: "mdi-horseshoe"
             },
             {
               text: "Overleden paarden",
@@ -122,12 +117,7 @@ export default {
               icon: "mdi-map-marker"
             },
           ]
-        },
-        {
-          text: "Testpagina",
-          url: "/test",
-          icon: "mdi-test-tube",
-        },
+        }
       ],
     };
   },

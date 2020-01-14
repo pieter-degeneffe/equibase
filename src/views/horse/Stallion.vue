@@ -1,5 +1,11 @@
 <template>
-  <horse-table :headers="headers" :filters="filters"></horse-table>
+  <div>
+    <horse-table :headers="headers" :filters="filters"></horse-table>
+    <v-btn bottom color="primary" class="ma-2 white--text" depressed dark @click="openHorsePage()" fixed right>
+      {{ $route.name }} toevoegen
+      <v-icon right dark>mdi-plus</v-icon>
+    </v-btn>
+  </div>
 </template>
 <script>
 import horseTable from "@/components/horse/Table";
@@ -21,7 +27,7 @@ export default {
       filters: {
         type: {
           options: ["hengst", "merrie"],
-          value: null
+          value: "hengst"
         },
         surrogate: {
           value: null,
@@ -29,10 +35,15 @@ export default {
         },
         location: null,
         owner: null,
-        death: true
+        death: false
       },
       sortBy: 'updatedAt'
     }
+  },
+  methods: {
+    openHorsePage(id){
+      this.$router.push({ path: `/horse/${id}`, query: { type: "hengst"  } })
+    },
   },
   components: {
     horseTable

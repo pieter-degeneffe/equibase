@@ -11,16 +11,28 @@ const routes = [
     component: () => import('@/views/Home'),
     //beforeEnter: requireAuth
   },
+  // {
+  //   path: "/horse/stallion",
+  //   name: "hengst",
+  //   component: () => import("@/views/horse/Table"),
+  //   beforeEnter: requireAuth
+  // },
   {
     path: "/horse/stallion",
     name: "hengst",
-    component: () => import("@/views/horse/Table"),
+    component: () => import("@/views/horse/Stallion"),
     beforeEnter: requireAuth
   },
   {
     path: "/horse/mare",
     name: "merrie",
-    component: () => import("@/views/horse/Table"),
+    component: () => import("@/views/horse/Mare"),
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/horse/surrogate",
+    name: "draagmoeder",
+    component: () => import("@/views/horse/Surrogate"),
     beforeEnter: requireAuth
   },
   {
