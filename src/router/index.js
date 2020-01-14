@@ -11,12 +11,6 @@ const routes = [
     component: () => import('@/views/Home'),
     //beforeEnter: requireAuth
   },
-  // {
-  //   path: "/horse/stallion",
-  //   name: "hengst",
-  //   component: () => import("@/views/horse/Table"),
-  //   beforeEnter: requireAuth
-  // },
   {
     path: "/horse/stallion",
     name: "hengst",
@@ -61,18 +55,6 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
-    path: "/report/surrogate",
-    name: "Surrogate report",
-    component: () => import("@/views/report/Surrogate"),
-    beforeEnter: requireAuth
-  },
-  {
-    path: "/report/surrogate-htl",
-    name: "HTL Surrogate report",
-    component: () => import("@/views/report/SurrogateHTL"),
-    beforeEnter: requireAuth
-  },
-  {
     path: "/report/death-horses",
     name: "death horses report",
     component: () => import("@/views/report/DeathHorse"),
@@ -87,10 +69,6 @@ const routes = [
   {
     path: '/callback',
     component: () => import('@/components/Callback')
-  },
-  {
-    path: '/test',
-    component: () => import('@/views/horse/Test')
   },
 ]
 
