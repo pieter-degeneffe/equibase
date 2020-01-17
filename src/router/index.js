@@ -30,6 +30,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/horse/studhorse",
+    name: "dekhengsten",
+    component: () => import("@/views/horse/Studhorse"),
+    beforeEnter: requireAuth
+  },
+  {
     path: "/horse/:id",
     props: true,
     component: () => import("@/views/horse/Horse"),
