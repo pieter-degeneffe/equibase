@@ -5,12 +5,16 @@
     </v-toolbar>
     <v-tabs>
       <v-tab>
-        <v-icon left>mdi-book-open-variant</v-icon>
+        <v-icon left>mdi-alpha-a-circle</v-icon>
         Algemene gegevens
       </v-tab>
       <v-tab v-if="horse._id">
-        <v-icon left>mdi-passport</v-icon>
+        <v-icon left>mdi-alpha-p-circle</v-icon>
         Paspoort
+      </v-tab>
+      <v-tab v-if="horse._id && horse.stud_horse">
+        <v-icon left>mdi-alpha-s-circle</v-icon>
+        Sperma afname
       </v-tab>
       <v-tab-item class="ma-5">
         <v-card flat>
@@ -21,13 +25,16 @@
                   <v-text-field v-model="horse.name" :counter="64" :rules="nameRules" label="Naam paard*" :disabled="horse.death" :loading="loading" outlined></v-text-field>
                 </v-col>
                 <v-col cols="12" md="4">
-                  <v-select v-model="horse.type" :rules="required" :items="horseType" label="Geslacht*" :disabled="horse.death" :loading="loading" outlined></v-select>
+                  <v-select v-model="horse.type" :rules="required" :items="horseType" label="Geslacht*" :disabled="horse.death" :loading="loading" outlined value="merrie"></v-select>
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-select v-model="horse.location" :items="locations" item-value="_id" item-text="name" label="Locatie" :disabled="horse.death" :loading="loading" outlined clearable></v-select>
                 </v-col>
               </v-row>
               <v-row dense>
+                <v-col cols="12" md="4" v-if="horse.type === 'hengst'">
+                  <v-switch outlined v-model="horse.stud_horse" label="Dekhengst" flat></v-switch>
+                </v-col>
                 <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
                   <v-switch outlined v-model="horse.surrogate" label="Draagmoeder" flat></v-switch>
                 </v-col>
@@ -129,6 +136,12 @@
           <horse-passport :horse="horse"></horse-passport>
         </v-card>
       </v-tab-item>
+      <v-tab-item v-if="horse.stud_horse" class="ma-5">
+        <v-card flat>
+          <p>Tabblad sperma afname</p>
+          <semen-collection :horse="horse"></semen-collection>
+        </v-card>
+      </v-tab-item>
     </v-tabs>
   </v-card>
 </template>
@@ -138,6 +151,7 @@ import customerAPI from "@/services/CustomerAPI.js";
 import locationAPI from "@/services/LocationAPI.js";
 import selectOwner from "@/components/SelectOwner";
 import horsePassport from "@/components/horse/Passport";
+import semenCollection from "@/components/horse/SemenCollection";
 export default {
   props: ["id"],
   data: vm => ({
@@ -192,8 +206,8 @@ export default {
   },
   mounted() {
     if (this.id !== "undefined") this.getHorses(this.id);
-    if (this.id === "undefined" && this.$route.query.type) this.horse.type = this.$route.query.type
-    if (this.id === "undefined" && this.$route.query.surrogate) this.horse.surrogate = this.$route.query.surrogate
+    //if (this.id === "undefined" && this.$route.query.type) this.horse.type = this.$route.query.type;
+    //if (this.id === "undefined" && this.$route.query.surrogate) this.horse.surrogate = this.$route.query.surrogate
     this.loadLocations();
   },
   methods: {
@@ -284,7 +298,8 @@ export default {
   },
   components: {
     selectOwner,
-    horsePassport
+    horsePassport,
+    semenCollection
   },
 };
 </script>
