@@ -88,6 +88,11 @@ export default {
               text: "Draagmoeders",
               url: "/horse/surrogate",
               icon: "mdi-cached"
+            },
+            {
+              text: "Dekhengsten",
+              url: "/horse/studhorse",
+              icon: "mdi-arm-flex"
             }
           ]
         },
