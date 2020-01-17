@@ -1,6 +1,6 @@
 <template>
   <v-card class="mx-5 mt-5 mb-12" outlined>
-    <v-data-table :headers="filteredHeaders" :items="filteredHorses" :options.sync="options" :server-items-length="totalHorses" :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc" loading-text="Bezig met laden...">
+    <v-data-table :headers="filteredHeaders" :items="filteredHorses" :options.sync="options" :server-items-length="totalHorses" :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc" loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:top>
        <v-row dense class="mx-1">
          <v-col cols="8" sm="6">
@@ -41,9 +41,10 @@
             <v-col cols="12">
               <v-select v-model="filters.type.value" outlined label="Filter op type paard" :items="filters.type.options" hide-details></v-select>
               <v-checkbox v-if="filters.type.value === 'merrie'" label="Toon enkel draagmoeders" v-model="filters.surrogate.value" class="mb-O"></v-checkbox>
+              <v-checkbox v-if="filters.type.value === 'hengst'" label="Toon enkel dekhengsten" v-model="filters.stud_horse.value" class="mb-O"></v-checkbox>
             </v-col>
             <v-col cols="12">
-              <v-select v-model="filters.location" outlined label="Filter op locatie" :items="locations" :item-text="item => item.stable +' - '+ item.name" return-object item-value="_id" multiple :loading="loadingLocations" hide-details></v-select>
+              <v-select v-model="filters.location.options" outlined label="Filter op locatie" :items="locations" :item-text="item => item.stable +' - '+ item.name" return-object item-value="_id" multiple :loading="loadingLocations" hide-details></v-select>
             </v-col>
             <v-col cols="12">
               <v-autocomplete v-model="filters.owner" outlined label="Filter op eigenaar" :items="owners" :item-text="ownerName" return-object item-value="_id" multiple hide-details></v-autocomplete>
@@ -78,7 +79,6 @@
     <v-alert type="error" v-if="errored" >
       {{ errorMessage }}
     </v-alert>
-
   </v-card>
 </template>
 <script>
@@ -130,7 +130,11 @@
               title += 'Merries'
             }
           } else if (this.filters.type.value === 'hengst') {
-            title += 'Hengsten'
+            if (this.filters.stud_horse.value) {
+              title += 'Dekhengsten'
+            } else {
+              title += 'Hengsten'
+            }
           }
         } else {
           title += 'Paarden'
@@ -139,10 +143,10 @@
           let ownerNames = this.filters.owner.map(owner => this.ownerName(owner));
           title += ' van ' + ownerNames.join(' en ');
         }
-        if(this.filters.location && this.filters.location !== true) {
-          let locationNames = this.filters.location.map(location => location.stable + " - " + location.name);
-          title += ' op locatie ' + locationNames.join(' en ');
-        }
+        // if(this.filters.location && this.filters.location[0] !== true) {
+        //   let locationNames = this.filters.location.map(location => location.stable + " - " + location.name);
+        //   title += ' op locatie ' + locationNames.join(' en ');
+        // }
         return (title);
       },
       filteredHeaders(){
@@ -166,14 +170,11 @@
         }
         if (this.filters.death !== null) URLParameters.death = this.filters.death;
         if (this.filters.type.value) URLParameters.type = this.filters.type.value;
-        if (this.filters.location) {
-          if (this.filters.location !== true) URLParameters.location = this.filters.location.map(location => location._id);
-          else {
-            URLParameters.location = this.filters.location;
-          }
-        }
+        if (this.filters.location.value) URLParameters.location = this.filters.location.value;
+        if (this.filters.location.options) URLParameters.location = this.filters.location.options.map(location => location._id);
         if (this.filters.owner) URLParameters.owner = this.filters.owner.map(owner => owner._id);
         if (this.filters.surrogate.value !== null) URLParameters.surrogate = this.filters.surrogate.value;
+        if (this.filters.stud_horse.value !== null) URLParameters.stud_horse = this.filters.stud_horse.value;
         return (URLParameters)
       }
     },
@@ -199,7 +200,6 @@
         this.loading = true;
         try {
           const response = await horseAPI.getHorses(this.URLParameters);
-          console.log(response);
           this.horses = response.data.horses;
           this.totalHorses = response.data.total
         } catch (e) {
