@@ -52,7 +52,7 @@ export default {
   computed: {
     items () {
       return this.entries.map(entry => {
-        if(entry.microchip) {
+        if(entry.type === "hengst" || entry.type === "merrie") {
           const Description = entry.name
           const url = "/horse/" + entry._id
           const icon = "mdi-horseshoe";
