@@ -27,6 +27,10 @@ export default {
           value: null,
           label: null
         },
+        stud_horse: {
+          value: false,
+          label: null
+        },
         location: null,
         owner: null,
         death: true

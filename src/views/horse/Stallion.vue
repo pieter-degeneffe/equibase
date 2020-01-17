@@ -30,10 +30,17 @@ export default {
           value: "hengst"
         },
         surrogate: {
-          value: null,
+          value: false,
           label: null
         },
-        location: null,
+        stud_horse: {
+          value: false,
+          label: null
+        },
+        location: {
+          options: null,
+          value: null
+        },
         owner: null,
         death: false
       },
