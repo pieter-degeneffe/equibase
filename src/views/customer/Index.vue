@@ -18,9 +18,9 @@
       </template>
     </v-data-table>
     <v-btn bottom color="primary" class="ma-2 white--text" dark depressed @click="openCustomerPage()" fixed right>
-        Klant toevoegen
-        <v-icon right dark>mdi-plus</v-icon>
-      </v-btn>
+      Klant toevoegen
+      <v-icon right dark>mdi-plus</v-icon>
+    </v-btn>
   </v-card>
 </template>
 
