@@ -31,10 +31,13 @@ export default {
           value: false,
           label: null
         },
-        location: null,
+        location: {
+          options: null,
+          value: null
+        },
         owner: null,
         death: true
-      },
+      },      
       sortBy: 'updatedAt'
     }
   },
