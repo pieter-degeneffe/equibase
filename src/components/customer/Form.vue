@@ -137,49 +137,36 @@ export default {
       }
     },
     async createCustomer() {
+      this.errored = false;
       try {
-        this.loading = true;
-        await customerAPI.postCustomer(this.customer);
-      } catch (e) {
+        const response = await customerAPI.postCustomer(this.customer);
+        this.$emit('update-horse', response.data);
+        this.$router.push("/customer/" + response.data._id);
+        this.snackbar = true;
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
-      } finally {
-        if (!this.errored) {
-          this.snackbar = true;
-          this.errored = false;
-        }
-        this.loading = false;
+        this.errorMessage = err.response.data.message;
       }
     },
     async updateCustomer() {
+      this.errored = false;
       try {
-        this.loading = true;
-        await customerAPI.putCustomer(this.customer);
-      } catch (e) {
+        const response = await customerAPI.putCustomer(this.customer);
+        this.$emit('update-customer', response.data);
+        this.snackbar = true;
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
-      } finally {
-        if (!this.errored) {
-          this.snackbar = true;
-          this.errored = false;
-        }
-        this.loading = false;
+        this.errorMessage = err.response.data.message;
       }
     },
     async deleteCustomer() {
+      this.errored = false;
       try {
-        this.loading = true;
         await customerAPI.deleteCustomer(this.customer._id);
-      } catch(e) {
+        this.$router.push({ path: '/customer' });
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
-      } finally {
-        if (!this.errored) {
-          this.$router.push({ path: '/customer' });
-          this.errored = false;
-          this.deleteDialog = false;
-        }
-        this.loading = false;
+        this.errorMessage = err.response.data.message;
       }
     },
   }
