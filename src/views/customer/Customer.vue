@@ -18,7 +18,7 @@
       </v-tab>
       <v-tab-item class="ma-5">
         <v-card flat>
-          <customer-form :customer="customer" :loading="loading"></customer-form>
+          <customer-form :customer="customer" :loading="loading" @update-customer="updateCustomer"></customer-form>
         </v-card>
       </v-tab-item>
       <v-tab-item class="ma-5" v-if="customer.type === 'bedrijf'">
@@ -68,6 +68,9 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    updateCustomer(customer) {
+      this.customer = customer;
     },
   },
   components: {
