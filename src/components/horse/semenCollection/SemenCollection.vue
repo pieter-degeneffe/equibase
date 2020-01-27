@@ -30,6 +30,7 @@
                         <v-select v-if="editedItem.location" v-model="editedItem.tube" :items="tubesAvailable(editedItem.location)" label="Locatie - stikstof vat - koker" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
                         <v-select v-if="editedItem.location" v-model="editedItem.position" :items="nitrogenContainerPosition" label="Locatie - stikstof vat - koker - positie" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
                         <v-text-field v-model="editedItem.inventory" :rules="required" type="number" label="Aantal rietjes" outlined></v-text-field>
+                        <v-select v-model="editedItem.color" :items="semenCollectionColor" label="Kleur rietjes" outlined></v-select>
                       </v-col>
                     </v-row>
                   </v-form>
@@ -87,6 +88,7 @@ export default {
       editedItem: {},
       owner: "",
       semenCollectionType: ['Productie','Import'],
+      semenCollectionColor: ['Rood','Oranje','Geel','Groen','Blauw','Indigo','Violet'],
       nitrogenContainers: [],
       nitrogenContainerPosition: ['Boven', 'Onder'],
       productionDateMenu: false,
@@ -130,11 +132,11 @@ export default {
         },
         type: this.editedItem.type,
         initial_inventory: parseInt(this.editedItem.inventory),
-        current_inventory: parseInt(this.editedItem.inventory)
+        current_inventory: parseInt(this.editedItem.inventory),
+        color: this.editedItem.color
       }
       try {
         const response = await semenCollectionAPI.postSemenCollection(semenCollection);
-        console.log(response.data);
         this.semenCollections.push(response.data);
       } catch (err) {
         this.errored = true;
