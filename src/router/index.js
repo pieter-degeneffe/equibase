@@ -73,6 +73,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/settings/nitrogen-container",
+    name: "Stikstof vaten",
+    component: () => import("@/views/settings/NitrogenContainer"),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/callback',
     component: () => import('@/components/Callback')
   },
