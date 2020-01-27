@@ -121,6 +121,11 @@ export default {
               url: "/settings/location",
               icon: "mdi-map-marker"
             },
+            {
+              text: "Stikstof vaten",
+              url: "/settings/nitrogen-container",
+              icon: "mdi-battery-outline"
+            },
           ]
         }
       ],
