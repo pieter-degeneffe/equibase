@@ -6,7 +6,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">Container toevoegen</v-btn>
+                <v-btn color="primary" dark class="mb-2" v-on="on">Vat toevoegen</v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -17,10 +17,8 @@
                     <v-form ref="form" v-model="valid">
                       <v-row>
                         <v-col cols="12" sm="12" md="12">
-                          <v-text-field v-model="editedItem.name" :rules="required" label="Naam container*" outlined></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field v-model="editedItem.available_places" :rules="required" type="number" label="Aantal plaatsen*" outlined></v-text-field>
+                          <v-text-field v-model="editedItem.name" :rules="required" label="Naam vat" outlined></v-text-field>
+                          <v-text-field v-model="editedItem.available_places" :rules="required" type="number" label="Aantal kokers" outlined></v-text-field>
                         </v-col>
                       </v-row>
                     </v-form>
@@ -70,8 +68,8 @@ export default {
         v => !!v || 'Dit veld is verplicht'
       ],
       headers: [
-        { text: 'Naam container', align: 'left', sortable: false, value: 'name' },
-        { text: '# Plaatsen', align: 'left', sortable: false, value: 'available_places' },
+        { text: 'Naam vat', align: 'left', sortable: false, value: 'name' },
+        { text: 'Aantal kokers', align: 'left', sortable: false, value: 'available_places' },
         { text: 'Bewerken', align: 'right', value: 'action', sortable: false },
       ],
       stables: ['Stal Zoutleeuw','Stal Dormaal','Wei'],
