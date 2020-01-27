@@ -13,8 +13,6 @@
             <v-col cols="12" md="4">
               <v-select v-model="horse.location" :items="locations" item-value="_id" item-text="name" label="Locatie" :disabled="horse.death" :loading="loading" outlined clearable></v-select>
             </v-col>
-          <!-- </v-row>
-          <v-row dense> -->
             <v-col cols="12" md="4" v-if="horse.type === 'hengst'">
               <v-switch outlined v-model="horse.stud_horse" label="Dekhengst" flat></v-switch>
             </v-col>
@@ -24,8 +22,6 @@
             <v-col v-if="horse.surrogate" cols="12" md="4">
               <v-text-field v-model="horse.surrogate_uid" :counter="64" :rules="length64" label="Draagmoeder brandnummer" :disabled="horse.death" outlined></v-text-field>
             </v-col>
-          <!-- </v-row>
-          <v-row dense> -->
             <v-col cols="12" md="4">
               <select-owner :owner="owner" @update-owner="updateOwner" :disabled="horse.death" :loading="loading"></select-owner>
             </v-col>
@@ -35,8 +31,6 @@
             <v-col cols="12" md="4">
               <v-text-field v-model="horse.microchip" :counter="15" type="number" label="Microchip" :disabled="horse.death" outlined :loading="loading"></v-text-field>
             </v-col>
-          <!-- </v-row>
-          <v-row dense> -->
             <v-col cols="12" md="4">
               <v-menu v-model="birthDateMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
                 <template v-slot:activator="{ on }">
@@ -51,8 +45,6 @@
             <v-col cols="12" md="4">
               <v-select v-model="horse.coat_color" :items="horseCoatColor" label="Vachtkleur" :disabled="horse.death" outlined :loading="loading"></v-select>
             </v-col>
-          <!-- </v-row>
-          <v-row dense> -->
             <v-col cols="12" md="4">
               <v-text-field v-model="horse.father" :counter="64" :rules="length64" label="Vader" :disabled="horse.death" outlined :loading="loading"></v-text-field>
             </v-col>
@@ -113,7 +105,6 @@
         </v-container>
       </v-form>
     </v-card>
-    {{ horse }}
   </div>
 </template>
 <script>
