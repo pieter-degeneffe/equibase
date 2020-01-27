@@ -12,7 +12,7 @@
                <v-btn color="primary" dark @click="openFilterDialog" class="mr-2 d-print-none"><v-icon left>mdi-filter</v-icon>Filters</v-btn>
                <v-btn color="primary" dark @click.stop="columnDialog = true" class="d-print-none"><v-icon left>mdi-settings</v-icon>Kolommen</v-btn>
             </div>
-          </DIV>
+          </div>
          </v-col>
        </v-row>
     </template>
