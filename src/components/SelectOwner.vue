@@ -3,7 +3,7 @@
     <v-autocomplete
       v-model="model"
       :items="items"
-      :loading="isLoading"
+      :loading="loading"
       :placeholder="fullName"
       :search-input.sync="search"
       hide-no-data
@@ -24,14 +24,14 @@
   </div>
 </template>
 <script>
-// import customerAPI from "@/services/CustomerAPI.js";
+import customerAPI from "@/services/CustomerAPI.js";
 export default {
   props: ['owner'],
   data() {
     return {
       descriptionLimit: 60,
       entries: [],
-      isLoading: false,
+      loading: false,
       model: null,
       search: null,
     };
@@ -57,31 +57,24 @@ export default {
       return "Eigenaar";
     }
   },
-
   watch: {
-    search () {
-      // Items have already been loaded
-      if (this.items.length > 0) return
-
-      // Items have already been requested
-      if (this.isLoading) return
-
-      this.isLoading = true
-
-      // Lazily load input items
-      fetch(process.env.VUE_APP_API_BASE_URL + '/api/customer')
-        .then(res => res.json())
-        .then(res => {
-          this.entries = res
-        })
-        .catch(err => {
-          console.log(err)
-        })
-        .finally(() => (this.isLoading = false))
+    search (val) {
+      val && val !== this.select && this.querySelections(val)
     },
-    model() {
-      this.$emit('update-owner', this.model);
-    }
   },
+  methods: {
+    async querySelections (v) {
+      this.loading = true
+      try {
+        const respons = await customerAPI.getCustomerSearch(v);
+        const filteredRespons = respons.data.filter(e => e.confidenceScore > 6)
+        this.entries = filteredRespons;
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
 }
 </script>
