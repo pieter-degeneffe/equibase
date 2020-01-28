@@ -8,6 +8,9 @@ export default {
   getCustomers() {
     return API().get("/api/customer");
   },
+  getCustomerSearch(id) {
+    return API().get("/api/customer/search/" + id);
+  },
   getCustomerCount() {
     return API().get("/api/customer/count");
   },
