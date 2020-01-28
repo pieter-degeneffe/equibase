@@ -34,7 +34,7 @@
 </template>
 <script>
 import horseAPI from "@/services/HorseAPI.js";
-import customerAPI from "@/services/CustomerAPI.js";
+//import customerAPI from "@/services/CustomerAPI.js";
 import horseForm from "@/components/horse/Form";
 import horsePassport from "@/components/horse/Passport";
 import semenCollection from "@/components/horse/semenCollection/SemenCollection";
@@ -66,10 +66,10 @@ export default {
       try {
         const horse = await horseAPI.getHorse(id);
         this.horse = horse.data;
-        if (this.horse.owner) {
-          const owner = await customerAPI.getCustomer(this.horse.owner);
-          this.owner = owner.data;
-        }
+        // if (this.horse.owner) {
+        //   const owner = await customerAPI.getCustomer(this.horse.owner);
+        //   this.owner = owner.data;
+        // }
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;

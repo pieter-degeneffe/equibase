@@ -4,7 +4,7 @@
       v-model="model"
       :items="items"
       :loading="loading"
-      :placeholder="fullName"
+      :placeholder="fullname"
       :search-input.sync="search"
       hide-no-data
       hide-selected
@@ -14,13 +14,27 @@
       return-object
       outlined
     >
+    <!-- <v-autocomplete
+      v-model="model"
+      :items="items"
+      :loading="loading"
+      :placeholder="fullName"
+      :search-input.sync="search"
+      hide-no-data
+      hide-selected
+      item-text="Description"
+      item-value="_id"
+      label="Eigenaar"
+      return-object
+      outlined
+    > -->
       <template v-slot:item="{ item }">
         <v-list-item-content>
           <v-list-item-title>{{ item.first_name }} {{ item.last_name }}</v-list-item-title>
-          <v-list-item-subtitle>{{ item.company }}</v-list-item-subtitle>
+          <v-list-item-subtitle v-if="item.company">{{ item.company }}</v-list-item-subtitle>
         </v-list-item-content>
       </template>
-  </v-autocomplete>
+    </v-autocomplete>
   </div>
 </template>
 <script>
@@ -34,6 +48,7 @@ export default {
       loading: false,
       model: null,
       search: null,
+      fullname: "Eigenaar"
     };
   },
   computed: {
@@ -48,19 +63,17 @@ export default {
         }
       })
     },
-    fullName () {
-      if (this.owner.company){
-        return (this.owner.company);
-      } else if (this.owner.first_name && this.owner.last_name){
-        return this.owner.first_name + ' ' + this.owner.last_name;
-      }
-      return "Eigenaar";
-    }
   },
   watch: {
     search (val) {
-      val && val !== this.select && this.querySelections(val)
+      this.querySelections(val);
     },
+    model() {
+      this.$emit('update-owner', this.model);
+    },
+    owner() {
+      this.calculateFullName(this.owner);
+    }
   },
   methods: {
     async querySelections (v) {
@@ -74,6 +87,10 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    calculateFullName() {
+      if (this.owner.company) this.fullname = this.owner.company;
+      if (this.owner.first_name && this.owner.last_name) this.fullname = this.owner.first_name + ' ' + this.owner.last_name;
     }
   }
 }
