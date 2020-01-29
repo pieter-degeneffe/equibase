@@ -52,7 +52,7 @@
           Geen sperma loten gevonden
       </template>
       <template v-slot:item="props">
-        <tr>
+        <tr :style="{ backgroundColor: backgroundColor(props.item.color)}">
           <td>{{ props.item.stallion.name }}</td>
           <td>{{ ownerName(props.item.owner) }}</td>
           <td>{{ props.item.initial_inventory }}</td>
@@ -197,6 +197,24 @@ export default {
       const [year, month, day] = date.split('-')
       return `${day}/${month}/${year}`
     },
+    backgroundColor (color) {
+      switch(color) {
+        case 'Rood':
+          return "rgba(255,0,0,0.5)";
+        case 'Oranje':
+          return "rgba(255,165,0,0.5)";
+        case 'Geel':
+          return "rgba(255,255,0,0.5)";
+        case 'Groen':
+          return "rgba(0,255,0,0.5)";
+        case 'Blauw':
+          return "rgba(0,0,255,0.5)";
+        case 'Indigo':
+          return "rgba(75,0,130,0.5)";
+        case 'Violet':
+          return "rgba(143,0,255,0.5)";
+      }
+    }
   },
   components: {
     selectOwner
