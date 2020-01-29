@@ -18,7 +18,7 @@
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field v-model="horse.name" label="Hengst" outlined disabled></v-text-field>
-                        <select-owner :owner="owner" @update-owner="updateOwner" required></select-owner>
+                        <select-owner :owner="horse.owner" @update-owner="updateOwner" required></select-owner>
                         <v-menu v-model="productionDateMenu" :close-on-content-click="false"  transition="scale-transition" offset-y min-width="290px">
                           <template v-slot:activator="{ on }">
                             <v-text-field v-model="computedProductionDateFormatted" label="Datum productie sperma" v-on="on" readonly outlined></v-text-field>
