@@ -95,6 +95,8 @@ export default {
       nitrogenContainers: [],
       nitrogenContainerPosition: ['Boven', 'Onder'],
       productionDateMenu: false,
+      errored: false,
+      errorMessage: '',
     };
   },
   mounted() {
@@ -141,6 +143,7 @@ export default {
       try {
         const response = await semenCollectionAPI.postSemenCollection(semenCollection);
         this.semenCollections.push(response.data);
+        this.dialog = false;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
