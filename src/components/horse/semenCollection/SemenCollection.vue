@@ -126,6 +126,7 @@ export default {
       }
     },
     async saveSemenCollection() {
+      if(!this.editedItem.owner) this.editedItem.owner = this.horse.owner._id;
       const semenCollection = {
         stallion: this.horse._id,
         owner: this.editedItem.owner,
