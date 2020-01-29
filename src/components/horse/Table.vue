@@ -21,7 +21,7 @@
       </template>
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
-          <td v-if="showColumn('name')">{{ props.item.name }} <v-icon v-if="filters.death" class="grey--text" small>mdi-christianity</v-icon></td>
+          <td v-if="showColumn('name')">{{ props.item.name }} <v-icon v-if="props.item.stud_horse === true" small>mdi-arm-flex</v-icon> <v-icon v-if="filters.death" class="grey--text" small>mdi-christianity</v-icon></td>
           <td v-if="showColumn('type')">{{ props.item.type }}</td>
           <td v-if="showColumn('surrogate_uid')">{{ props.item.surrogate_uid }}</td>
           <td v-if="showColumn('microchip')">{{ props.item.microchip }}</td>
