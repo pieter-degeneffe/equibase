@@ -54,7 +54,7 @@ export default {
         this.getHorses(newId);
     }
   },
-  mounted() {
+  beforeMount() {
     if (this.id !== "undefined") this.getHorses(this.id);
     //if (this.id === "undefined" && this.$route.query.type) this.horse.type = this.$route.query.type;
     //if (this.id === "undefined" && this.$route.query.surrogate) this.horse.surrogate = this.$route.query.surrogate
