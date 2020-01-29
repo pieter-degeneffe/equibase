@@ -31,6 +31,9 @@
                         <v-select v-if="editedItem.location" v-model="editedItem.position" :items="nitrogenContainerPosition" label="Locatie - stikstof vat - koker - positie" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
                         <v-text-field v-model="editedItem.inventory" :rules="required" type="number" label="Aantal rietjes" outlined></v-text-field>
                         <v-select v-model="editedItem.color" :items="semenCollectionColor" label="Kleur rietjes" outlined></v-select>
+                        <v-alert type="error" v-if="errored" >
+                          {{ errorMessage }}
+                        </v-alert>
                       </v-col>
                     </v-row>
                   </v-form>
