@@ -34,7 +34,7 @@ export default {
           label: null
         },
         stud_horse: {
-          value: false,
+          value: null,
           label: null
         },
         location: {
