@@ -37,7 +37,7 @@ import horseAPI from "@/services/HorseAPI.js";
 //import customerAPI from "@/services/CustomerAPI.js";
 import horseForm from "@/components/horse/Form";
 import horsePassport from "@/components/horse/Passport";
-import semenCollection from "@/components/horse/semenCollection/SemenCollection";
+import semenCollection from "@/components/horse/semenCollection/Table";
 export default {
   props: ["id"],
   data () {
