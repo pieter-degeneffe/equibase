@@ -14,9 +14,9 @@
               </v-list-item>
             </template>
             <v-list-item v-for="(child, i) in item.submenu" :key="i" :to="child.url">
-              <v-list-item-action v-if="child.icon">
+              <!-- <v-list-item-action v-if="child.icon">
                 <v-icon>{{ child.icon }}</v-icon>
-              </v-list-item-action>
+              </v-list-item-action> -->
               <v-list-item-content>
                 <v-list-item-title>
                   {{ child.text }}
@@ -25,9 +25,9 @@
             </v-list-item>
           </v-list-group>
           <v-list-item v-else :key="item.text" :to="item.url">
-            <v-list-item-action>
+            <!-- <v-list-item-action>
               <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
+            </v-list-item-action> -->
             <v-list-item-content>
               <v-list-item-title>
                 {{ item.text }}
@@ -68,63 +68,76 @@ export default {
         {
           text: "Klanten",
           url: "/customer",
-          icon: "mdi-contacts",
+          //icon: "mdi-alpha-k-circle"
+          //icon: "mdi-contacts",
         },
         {
           text: "Paarden",
-          icon: "mdi-horseshoe",
+          //icon: "mdi-alpha-p-circle",
+          //icon: "mdi-horseshoe",
           submenu: [
             {
               text: "Hengsten",
               url: "/horse/stallion",
-              icon: "mdi-gender-male"
+              //icon: "mdi-alpha-h-circle"
+              //icon: "mdi-gender-male"
             },
             {
               text: "Merries",
               url: "/horse/mare",
-              icon: "mdi-gender-female"
+              //icon: "mdi-alpha-m-circle"
+              //icon: "mdi-gender-female"
             },
             {
               text: "Draagmoeders",
               url: "/horse/surrogate",
-              icon: "mdi-cached"
+              //icon: "mdi-alpha-d-circle"
+              //icon: "mdi-cached"
             },
             {
               text: "Dekhengsten",
               url: "/horse/studhorse",
-              icon: "mdi-arm-flex"
+              //icon: "mdi-alpha-d-circle",
+              //icon: "mdi-arm-flex"
             }
           ]
         },
         {
           text: "Rapporten",
-          icon: "mdi-google-analytics",
+          //icon: "mdi-alpha-r-circle",
+          //icon: "mdi-google-analytics",
           submenu: [
             {
               text: "Draagmoeders per locatie",
               url: "/report/location",
-              icon: "mdi-map-marker"
+              //icon: "mdi-map-marker"
             },
             {
               text: "Overleden paarden",
               url: "/report/death-horses",
-              icon: "mdi-christianity"
+              //icon: "mdi-christianity"
+            },
+            {
+              text: "Stock sperma",
+              url: "/report/stock-semen",
+              //icon: "mdi-christianity"
             }
           ]
         },
         {
           text: 'Instellingen',
-          icon: "mdi-settings",
+          //icon: "mdi-alpha-i-circle",
+          //icon: "mdi-settings",
           submenu: [
             {
               text: "Locaties",
               url: "/settings/location",
-              icon: "mdi-map-marker"
+              //icon: "mdi-map-marker"
             },
             {
               text: "Stikstof vaten",
               url: "/settings/nitrogen-container",
-              icon: "mdi-battery-outline"
+              //icon: "mdi-battery-outline"
             },
           ]
         }
