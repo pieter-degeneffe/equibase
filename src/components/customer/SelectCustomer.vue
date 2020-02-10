@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-autocomplete v-model="model" :items="items" :loading="loading" :placeholder="placeholder" :search-input.sync="search" hide-no-data hide-selected item-text="Description" item-value="_id" label="Eigenaar" return-object outlined>
+    <v-autocomplete v-model="model" :items="items" :loading="loading" :placeholder="placeholder" :search-input.sync="search" hide-no-data hide-selected item-text="Description" item-value="_id" :label="label" return-object outlined>
       <template v-slot:item="{ item }">
         <v-list-item-content>
           <v-list-item-title>{{ item.first_name }} {{ item.last_name }}</v-list-item-title>
@@ -13,7 +13,7 @@
 <script>
 import customerAPI from "@/services/CustomerAPI.js";
 export default {
-  props: ['owner'],
+  props: ['owner','label'],
   data() {
     return {
       descriptionLimit: 60,
@@ -48,7 +48,7 @@ export default {
       this.querySelections(val);
     },
     model() {
-      this.$emit('update-owner', this.model);
+      this.$emit('update-customer', this.model);
     }
   },
   methods: {
