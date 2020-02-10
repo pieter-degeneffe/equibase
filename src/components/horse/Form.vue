@@ -23,7 +23,7 @@
               <v-text-field v-model="horse.surrogate_uid" :counter="64" :rules="length64" label="Draagmoeder brandnummer" :disabled="horse.death" outlined></v-text-field>
             </v-col>
             <v-col cols="12" md="4">
-              <select-owner :owner="horse.owner" @update-owner="updateOwner" :disabled="horse.death" :loading="loading"></select-owner>
+              <select-customer :owner="horse.owner" @update-customer="updateCustomer" :disabled="horse.death" :loading="loading" label="Eigenaar"></select-customer>
             </v-col>
             <v-col cols="12" md="4">
               <v-text-field v-model="horse.ueln" :counter="15" label="UELN" :disabled="horse.death" outlined :loading="loading"></v-text-field>
@@ -109,7 +109,7 @@
 </template>
 <script>
 import horseAPI from "@/services/HorseAPI.js";
-import selectOwner from "@/components/SelectOwner";
+import selectCustomer from "@/components/customer/SelectCustomer";
 import locationAPI from "@/services/LocationAPI.js";
 export default {
   props: ['horse', 'loading'],
@@ -189,8 +189,8 @@ export default {
         this.dialog = false;
       }
     },
-    updateOwner(newOwner) {
-      this.horse.owner = newOwner._id;
+    updateCustomer(customer) {
+      this.horse.owner = customer._id;
     },
     formatDate (date) {
       if (!date) return null
@@ -217,8 +217,7 @@ export default {
     }
   },
   components: {
-    selectOwner
+    selectCustomer
   },
-
 }
 </script>
