@@ -1,6 +1,6 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table  :items="semenCollections" item-key="name" :headers="headers" :items-per-page="10" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
+    <v-data-table :items="semenCollections" item-key="name" :headers="headers" :items-per-page="10" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:top>
         <v-row dense>
           <v-col cols="8" sm="6">
@@ -19,14 +19,25 @@
           Geen paarden gevonden
       </template>
       <template v-slot:item="props">
+        <!-- {{ props.item }} -->
         <tr @click="openHorsePage(props.item.stallion._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
-          <td>{{ props.item.stallion.name }}</td>
-          <td>{{ props.item.initial_inventory }}</td>
+          <td><b>{{ props.item.stallion.name }}</b></td>
+          <td>{{ calculateStartStock(props.item) }}</td>
+          <!-- <td>{{ props.item.current_inventory }} {{ calculateEndStock(props.item) }}</td> -->
           <td>{{ props.item.current_inventory }}</td>
           <td>{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
           <td>{{ props.item.type }}</td>
-          <td>{{ props.item.location.container.name }} - Koker {{ props.item.location.tube }} - {{ props.item.location.position }}</td>
         </tr>
+        <template v-if="showModifications">
+          <tr v-for="modification in filteredModifications(props.item.modifications)" v-bind:key="modification._id">
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px" class="pl-8">Stockwijziging</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">&nbsp;</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ modification.amount}}</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ new Date(modification.createdAt) | dateFormat('DD/MM/YY')}}</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ modification.type }}</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">&nbsp;</td>
+          </tr>
+        </template>
       </template>
     </v-data-table>
     <v-dialog v-model="filterDialog" max-width="490">
@@ -34,9 +45,13 @@
         <v-card-text class="pt-5">
           <v-row dense>
             <v-col cols="12">
-              <p>Type:</p>
-              <v-checkbox v-model="type" label="Productie" value="Productie"></v-checkbox>
-              <v-checkbox v-model="type" label="Import" value="Import"></v-checkbox>
+              <v-select v-model="filters.year.value" outlined label="Filter op jaar" :items="filters.year.options" hide-details></v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-select v-model="filters.type.value" outlined label="Filter op type lot" :items="filters.type.options" hide-details></v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-switch v-model="showModifications" label="Toon stockwijzigingen"></v-switch>
             </v-col>
           </v-row>
         </v-card-text>
@@ -49,26 +64,35 @@
   </v-card>
 </template>
 <script>
-import semenCollectionAPI from "@/services/SemenCollectionAPI.js";
+import semenAPI from "@/services/SemenAPI.js";
 export default {
   data() {
     return {
       semenCollections: [],
-      type: ['Productie','Import'],
+      filters: {
+        type: {
+          options: ['Productie','Import'],
+          value: null
+        },
+        year: {
+          options: [2020, 2019, 2018, 2017, 2016, 2015],
+          value: null,
+        }
+      },
       loading: true,
       headers: [
         { text: 'Hengst'},
-        { text: 'Initiële stock'},
-        { text: 'Beschikbare stock'},
-        { text: 'In stock sinds'},
-        { text: 'Type'},
-        { text: 'Locatie'}
+        { text: 'Start stock'},
+        { text: 'Eind stock'},
+        { text: 'Datum'},
+        { text: 'Type'}
       ],
       filterDialog: false,
+      showModifications: false
     };
   },
   watch: {
-    type: {
+    filters: {
       handler() {
         this.getSemenCollections()
       },
@@ -82,7 +106,7 @@ export default {
     async getSemenCollections() {
       this.loading = true;
       try {
-        const response = await semenCollectionAPI.getSemenCollection(this.URLParameters);
+        const response = await semenAPI.getSemenCollection(this.URLParameters);
         this.semenCollections = response.data;
       } catch (err) {
         this.errored = true;
@@ -91,10 +115,6 @@ export default {
         this.loading = false;
       }
     },
-    // totalIventoryOfStallion(stallion) {
-    //   let collectionsOfStallion = this.semenCollections.filter(semenCollection => semenCollection.stallion.id === stallion._id);
-    //   return collectionsOfStallion.reduce((acc, semenCollection) => acc + semenCollection.current_inventory, 0);
-    // },
     openHorsePage(id){
       this.$router.push("/horse/" + id);
     },
@@ -104,21 +124,34 @@ export default {
     openFilterDialog() {
       this.filterDialog = true;
     },
+    calculateStartStock(semenCollection) {
+      if(this.filters.year.value) {
+        const createdAfter = new Date(this.filters.year.value+"-01-01").toISOString();
+        const filteredModifications = semenCollection.modifications.filter(modification => modification.createdAt <= createdAfter)
+        const filteredModificationsAmount = filteredModifications.reduce((acc, modification) => acc + modification.amount, 0);
+        return semenCollection.initial_inventory + filteredModificationsAmount
+      }
+      return semenCollection.initial_inventory
+    },
+    filteredModifications(modifications){
+      if(this.filters.year.value) {
+        const createdAfter = new Date(this.filters.year.value+"-01-01").toISOString();
+        const createdBefore = new Date(this.filters.year.value+"-12-31").toISOString();
+        const filteredModifications = modifications.filter(modification => modification.createdAt >= createdAfter && modification.createdAt <= createdBefore)
+        return filteredModifications;
+      }
+      return modifications
+    }
   },
   computed: {
     URLParameters () {
       const URLParameters = {};
-      if (this.type) URLParameters.type = this.type;
+      if(this.filters.year.value) URLParameters.createdBefore = new Date(this.filters.year.value+"-12-31").toISOString();
+      if(this.filters.year.value) URLParameters.createdAfter = new Date(this.filters.year.value+"-01-01").toISOString();
+      //URLParameters.current_inventory
+      if (this.filters.type.value) URLParameters.type = this.filters.type.value;
       return (URLParameters)
     }
-  //   uniqueStallions() {
-  //     return this.semenCollections.filter((semenCollection, index) => {
-  //       const _semenCollection = JSON.stringify(semenCollection.stallion);
-  //       return index === this.semenCollections.findIndex(semenCollection => {
-  //         return JSON.stringify(semenCollection.stallion) === _semenCollection;
-  //       })
-  //     });
-  //   }
   }
 };
 </script>
