@@ -4,15 +4,15 @@
       <v-toolbar-title>{{ horse.name }} <v-icon v-if="horse.death">mdi-christianity</v-icon></v-toolbar-title>
     </v-toolbar>
     <v-tabs>
-      <v-tab>
+      <v-tab class="d-print-none">
         <v-icon left>mdi-alpha-a-circle</v-icon>
         Algemene gegevens
       </v-tab>
-      <v-tab v-if="horse._id">
+      <v-tab v-if="horse._id" class="d-print-none">
         <v-icon left>mdi-alpha-p-circle</v-icon>
         Paspoort
       </v-tab>
-      <v-tab v-if="horse._id && horse.stud_horse">
+      <v-tab v-if="horse._id && horse.stud_horse" class="d-print-none">
         <v-icon left>mdi-alpha-s-circle</v-icon>
         Sperma
       </v-tab>

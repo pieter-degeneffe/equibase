@@ -3,7 +3,7 @@
     <v-dialog v-model="editDialog" persistent max-width="600px">
       <v-card>
         <v-card-title class="mb-4">
-          <span class="headline">Stockwijziging aan lot toevoegen</span>
+          <span class="headline">Stockwijziging aan dit lot toevoegen</span>
         </v-card-title>
         <v-card-text>
           <v-form ref="form" v-model="valid">

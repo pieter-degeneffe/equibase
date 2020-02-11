@@ -3,7 +3,7 @@
     <v-dialog v-model="detailDialog" persistent max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="headline">Details van het lot</span>
+          <span class="headline">Details van de stockwijzigingen aan dit lot</span>
         </v-card-title>
         <v-card-text>
           <v-data-table :headers="headers" :items="semenCollection.modifications">

@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-btn color="primary" dark  @click="openCreateDialog">Sperma lot toevoegen</v-btn>
+    <v-btn color="primary" dark  @click="openCreateDialog" class="d-print-none">Sperma lot toevoegen</v-btn>
     <v-dialog v-model="createDialog" persistent max-width="500px">
       <v-card>
         <v-card-title>
-          <span class="headline">Gegevens van het lot</span>
+          <span class="headline">Gegevens van het nieuwe lot</span>
         </v-card-title>
         <v-card-text>
           <v-container>

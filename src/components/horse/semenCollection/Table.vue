@@ -11,14 +11,17 @@
           Geen sperma loten gevonden
       </template>
       <template v-slot:item="props">
-        <tr :style="{ backgroundColor: backgroundColor(props.item.color)}">
+        <tr>
           <td>{{ props.item.stallion.name }}</td>
           <td>{{ ownerName(props.item.owner) }}</td>
           <td>{{ props.item.initial_inventory }}</td>
           <td>{{ props.item.current_inventory }}</td>
           <td>{{ new Date(props.item.production_date) | dateFormat('DD/MM/YY')}}</td>
-          <td>{{ props.item.location.container.name }} - Koker {{ props.item.location.tube }} - {{ props.item.location.position }}</td>
-          <td align='right'>
+          <td>
+            <v-icon v-if="props.item.color" small class="mr-2" :class="strawColor(props.item.color)">mdi-checkbox-blank-circle</v-icon>
+            {{ props.item.location.container.name }} - Koker {{ props.item.location.tube }} - {{ props.item.location.position }}
+          </td>
+          <td align='right' class="d-print-none">
             <v-icon small @click="openDetailDialog(props.item)" class="mr-2">mdi-magnify</v-icon>
             <v-icon small @click="openEditDialog(props.item)">mdi-pencil</v-icon>
           </td>
@@ -34,7 +37,6 @@
 </template>
 <script>
 import semenAPI from "@/services/SemenAPI.js";
-// import nitrogenContainerAPI from "@/services/NitrogenContainerAPI.js";
 import editDialog from "@/components/horse/semenCollection/EditDialog";
 import createDialog from "@/components/horse/semenCollection/CreateDialog";
 import detailDialog from "@/components/horse/semenCollection/DetailDialog";
@@ -50,8 +52,8 @@ export default {
         { text: 'Beginwaarde'},
         { text: 'Beschikbaar'},
         { text: 'Productiedatum'},
-        { text: 'locatie'},
-        { text: 'Bewerken', align: 'right', value: 'action', sortable: false }
+        { text: 'locatie & kleur'},
+        { text: 'Bewerken', align: 'right', value: 'action', sortable: false, class: "d-print-none"}
       ],
       loading: false,
       semenCollections: [],
@@ -68,7 +70,7 @@ export default {
       const URLParameters = {};
       if (this.horse._id) URLParameters.stallion = this.horse.id;
       return (URLParameters)
-    }
+    },
   },
   methods: {
     async getSemenCollections() {
@@ -109,22 +111,23 @@ export default {
     ownerName(owner){
       return owner.type === "particulier" ? `${owner.first_name} ${owner.last_name}` : `${owner.company}`
     },
-    backgroundColor (color) {
+    strawColor(color) {
+      //return 'red--text';
       switch(color) {
         case 'Rood':
-          return "rgba(255,0,0,0.5)";
+          return "red--text";
         case 'Oranje':
-          return "rgba(255,165,0,0.5)";
+          return "orange--text";
         case 'Geel':
-          return "rgba(255,255,0,0.5)";
+          return "yellow--text";
         case 'Groen':
-          return "rgba(0,255,0,0.5)";
+          return "green--text";
         case 'Blauw':
-          return "rgba(0,0,255,0.5)";
+          return "blue--text";
         case 'Indigo':
-          return "rgba(75,0,130,0.5)";
+          return "indigo--text";
         case 'Violet':
-          return "rgba(143,0,255,0.5)";
+          return "purple-color";
       }
     }
   },
