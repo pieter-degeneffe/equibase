@@ -89,7 +89,7 @@ export default {
       try {
         const response = await semenAPI.postSemenCollection(this.editSemenCollection);
         this.$emit('created-semen-collection', response.data);
-        this.closeCreateDialog();
+        this.closeDialog();
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
@@ -99,7 +99,7 @@ export default {
       try {
         const response = await semenAPI.putSemenCollection(this.editSemenCollection);
         this.$emit('update-semen-collection', response.data);
-        this.closeCreateDialog();
+        this.closeDialog();
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
