@@ -21,7 +21,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeEditDialog">Annuleer</v-btn>
+          <v-btn color="blue darken-1" text @click="closeDialog">Annuleer</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -40,8 +40,8 @@ export default {
     }
   },
   methods: {
-    closeEditDialog() {
-      this.$emit('close-edit-dialog', false);
+    closeDialog() {
+      this.$emit('close-dialog',false)
     }
   },
 }
