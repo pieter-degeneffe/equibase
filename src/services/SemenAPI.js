@@ -23,4 +23,7 @@ export default {
       semenCollectionModification
     });
   },
+  deleteSemenCollectionModification(semenCollection, semenCollectionModification) {
+    return API().delete("/api/semen/" + semenCollection._id + "/modification/" + semenCollectionModification._id);
+  },
 };
