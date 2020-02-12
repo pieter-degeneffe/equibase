@@ -4,7 +4,8 @@
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark  @click="openCreateDialog()" class="d-print-none">Sperma lot toevoegen</v-btn>
+          <v-btn color="primary" dark  @click="openDialog('create')" class="mr-2 d-print-none">Sperma lot toevoegen</v-btn>
+          <v-btn color="primary" dark @click="filterDialog = true" class="d-print-none"><v-icon left>mdi-filter</v-icon>Filters</v-btn>
         </v-toolbar>
       </template>
       <template v-slot:no-data>
@@ -12,7 +13,7 @@
       </template>
       <template v-slot:item="props">
         <tr>
-          <td>{{ props.item.stallion.name }}</td>
+          <td><b>{{ props.item.stallion.name }}</b></td>
           <td>{{ ownerName(props.item.owner) }}</td>
           <td>{{ props.item.initial_inventory }}</td>
           <td>{{ props.item.current_inventory }}</td>
@@ -48,15 +49,40 @@
             </v-tooltip>
           </td>
         </tr>
+        <template v-if="showModifications">
+          <tr v-for="modification in props.item.modifications" v-bind:key="modification._id">
+            <td colspan="2" style="border-bottom: 1px dotted #E0E0E0; height: 24px" class="pl-8">Stockwijziging</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">&nbsp;</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ modification.amount}}</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ new Date(modification.createdAt) | dateFormat('DD/MM/YY')}}</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ modification.type }}</td>
+            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">&nbsp;</td>
+          </tr>
+        </template>
       </template>
     </v-data-table>
     <create-dialog v-if="dialogs.create" :horse="horse" :semenCollection="semenCollection" :createDialog="dialogs.create" @created-semen-collection="addSemenCollection" @update-semen-collection="updateSemenCollection" @close-dialog="dialogs.create = false"></create-dialog>
     <edit-dialog v-if="semenCollection" @update-semen-collection="updateSemenCollection" :semenCollection="semenCollection" :editDialog="dialogs.edit" @close-dialog="dialogs.edit = false"></edit-dialog>
-    <detail-dialog v-if="semenCollection" :semenCollection="semenCollection" :detailDialog="dialogs.detail" @close-dialog="dialogs.detail = false"></detail-dialog>
-    <delete-dialog v-if="semenCollection" @delete-semen-collection="deleteSemenCollection" :semenCollection="semenCollection" :deleteDialog="dialogs.delete" @close-dialog="dialogs.delete = false"></delete-dialog>
+    <detail-dialog v-if="semenCollection" @update-semen-collection="updateSemenCollection" :semenCollection="semenCollection" :detailDialog="dialogs.detail" @close-dialog="dialogs.detail = false"></detail-dialog>
+    <delete-dialog v-if="semenCollection" @update-semen-collection="updateSemenCollection" @delete-semen-collection="deleteSemenCollection" :semenCollection="semenCollection" :deleteDialog="dialogs.delete" @close-dialog="dialogs.delete = false"></delete-dialog>
     <v-alert type="error" v-if="errored" >
       {{ errorMessage }}
     </v-alert>
+    <v-dialog v-model="filterDialog" max-width="490">
+      <v-card>
+        <v-card-text class="pt-5">
+          <v-row dense>
+            <v-col cols="12">
+              <v-switch v-model="showModifications" label="Toon stockwijzigingen"></v-switch>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -84,6 +110,8 @@ export default {
       semenCollection: null,
       errored: false,
       errorMessage: '',
+      filterDialog: false,
+      showModifications: false
     };
   },
   beforeMount() {
@@ -115,6 +143,7 @@ export default {
     updateSemenCollection(semenCollection) {
       const index = this.semenCollections.findIndex(x => x._id === semenCollection._id);
       this.semenCollections.splice(index, 1, semenCollection);
+      this.semenCollection = this.semenCollections[index];
     },
     deleteSemenCollection(semenCollection) {
       const index = this.semenCollections.findIndex(x => x._id === semenCollection._id);
