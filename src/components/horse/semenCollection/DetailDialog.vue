@@ -15,19 +15,28 @@
                 <td>{{ props.item.type }}</td>
                 <td>{{ props.item.amount }}</td>
                 <td>{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
+                <td align='right' class="d-print-none">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon dark color="primary" @click="deleteModification(props.item)" v-on="on">mdi-delete</v-icon>
+                    </template>
+                    <span>Stockwijziging verwijderen</span>
+                  </v-tooltip>
+                </td>
               </tr>
             </template>
           </v-data-table>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeDialog">Annuleer</v-btn>
+          <v-btn color="blue darken-1" text @click="closeDialog">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
 </template>
 <script>
+import semenAPI from "@/services/SemenAPI.js";
 export default {
   props: ['semenCollection','detailDialog'],
   data() {
@@ -36,12 +45,23 @@ export default {
         { text: 'Type'},
         { text: 'Aantal rietjes'},
         { text: 'Datum'},
+        { text: '', align: 'right', value: 'action', sortable: false, class: "d-print-none"}
       ],
+      deleteSnackbar: false
     }
   },
   methods: {
     closeDialog() {
       this.$emit('close-dialog',false)
+    },
+    async deleteModification(modification) {
+      try {
+        const response = await semenAPI.deleteSemenCollectionModification(this.semenCollection, modification);
+        this.$emit('update-semen-collection', response.data);
+      } catch (err) {
+          this.errored = true;
+          this.errorMessage = err.response.data.message;
+        }
     }
   },
 }
