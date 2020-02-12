@@ -9,7 +9,7 @@
           <v-col cols="4" sm="6">
             <div fixed right>
               <div class="float-right">
-                <v-btn color="primary" dark @click="openFilterDialog" class="mr-2 d-print-none"><v-icon left>mdi-filter</v-icon>Filters</v-btn>
+                <v-btn color="primary" dark @click="filterDialog = true;" class="mr-2 d-print-none"><v-icon left>mdi-filter</v-icon>Filters</v-btn>
              </div>
            </div>
           </v-col>
@@ -120,9 +120,6 @@ export default {
     },
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
-    },
-    openFilterDialog() {
-      this.filterDialog = true;
     },
     calculateStartStock(semenCollection) {
       if(this.filters.year.value) {
