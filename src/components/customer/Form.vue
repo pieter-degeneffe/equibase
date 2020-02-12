@@ -163,7 +163,7 @@ export default {
       this.errored = false;
       try {
         await customerAPI.deleteCustomer(this.customer._id);
-        this.$router.push({ path: '/customer' });
+        this.$emit('close-dialog',false)
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
