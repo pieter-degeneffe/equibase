@@ -17,7 +17,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeDetailDialog">Annuleer</v-btn>
+          <v-btn color="blue darken-1" text @click="closeDialog">Annuleer</v-btn>
           <v-btn :disabled="!valid" color="success" class="mr-4" @click="createSemenCollectionModification()" depressed>
             Opslaan
           </v-btn>
@@ -48,8 +48,8 @@ export default {
     }
   },
   methods: {
-    closeDetailDialog() {
-      this.$emit('close-edit-dialog', false);
+    closeDialog() {
+      this.$emit('close-dialog',false)
     },
     updateCustomer(customer) {
       this.semenCollectionModification.owner = customer._id;
@@ -59,7 +59,7 @@ export default {
         const response = await semenAPI.postSemenCollectionModification(this.semenCollection, this.semenCollectionModification);
         //console.log(response);
         this.$emit('update-semen-collection', response.data);
-        this.$emit('close-edit-dialog', false);
+        this.$emit('close-dialog', false);
       //   //this.semenCollections.push(response.data);
       //   this.createDialog = false;
       // } catch (err) {
