@@ -11,9 +11,9 @@ export default {
   getCustomerSearch(id) {
     return API().get("/api/customer/search/" + id);
   },
-  getCustomerCount() {
-    return API().get("/api/customer/count");
-  },
+  // getCustomerCount() {
+  //   return API().get("/api/customer/count");
+  // },
   getCustomer(id) {
     return API().get("/api/customer/" + id);
   },
