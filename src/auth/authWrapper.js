@@ -29,7 +29,6 @@ export const useAuth0 = ({
     methods: {
       async loginWithPopup(o) {
         this.popupOpen = true;
-
         try {
           await this.auth0Client.loginWithPopup(o);
           this.user = await this.auth0Client.getUser();
@@ -78,7 +77,6 @@ export const useAuth0 = ({
         audience: options.audience,
         redirect_uri: redirectUri
       });
-
       try {
         if (
           window.location.search.includes("code=") &&
@@ -97,7 +95,6 @@ export const useAuth0 = ({
       }
     }
   });
-
   return instance;
 };
 
