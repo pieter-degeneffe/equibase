@@ -10,7 +10,6 @@
 <script>
 import AppNavigation from "@/components/AppNavigation";
 export default {
-  name: "Equibase",
   components: {
     AppNavigation
   },
