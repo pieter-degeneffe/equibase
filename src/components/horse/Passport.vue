@@ -45,7 +45,6 @@ export default {
         let formData = new FormData();
         formData.append('file', this.file);
         const response = await horseAPI.postPassport(this.horse._id, formData);
-        console.log(response.data);
         this.horse = response.data;
       } catch (e) {
         console.log(e);
@@ -54,7 +53,6 @@ export default {
     async deletePassport() {
       try {
         const response = await horseAPI.deletePassport(this.horse);
-        console.log(response.data);
         this.horse = response.data;
       } catch (e) {
         console.log(e);
@@ -63,7 +61,7 @@ export default {
   },
   computed: {
     passportLink () {
-      return `${this.baseURL}/${this.horse.passport}`;
+      return `${this.baseURL}/public/${this.horse.passport}`;
     },
   }
 }
