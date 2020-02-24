@@ -13,18 +13,26 @@
             <v-col cols="12" md="4">
               <v-select v-model="horse.location" :items="locations" item-value="_id" item-text="name" label="Locatie" :disabled="horse.death" :loading="loading" outlined clearable></v-select>
             </v-col>
-            <v-col cols="12" md="4" v-if="horse.type === 'hengst'">
-              <v-switch outlined v-model="horse.stud_horse" label="Dekhengst" flat></v-switch>
-            </v-col>
-            <v-col cols="12" md="4" v-if="horse.stud_horse">
-              <v-text-field v-model="horse.stud_fee" label="Dekgeld" :disabled="horse.death" :loading="loading" outlined></v-text-field>
-            </v-col>
-            <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
-              <v-switch outlined v-model="horse.surrogate" label="Draagmoeder" flat></v-switch>
-            </v-col>
-            <v-col v-if="horse.surrogate" cols="12" md="4">
-              <v-text-field v-model="horse.surrogate_uid" :counter="64" :rules="length64" label="Draagmoeder brandnummer" :disabled="horse.death" outlined></v-text-field>
-            </v-col>
+            <v-slide-x-transition>
+              <v-col cols="12" md="4" v-if="horse.type === 'hengst'">
+                <v-switch outlined v-model="horse.stud_horse" label="Dekhengst" flat></v-switch>
+              </v-col>
+            </v-slide-x-transition>
+            <v-slide-x-transition>
+              <v-col cols="12" md="4" v-if="horse.stud_horse">
+                <v-text-field v-model="horse.stud_fee" label="Dekgeld" :disabled="horse.death" :loading="loading" outlined></v-text-field>
+              </v-col>
+            </v-slide-x-transition>
+            <v-slide-x-transition>
+              <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
+                <v-switch outlined v-model="horse.surrogate" label="Draagmoeder" flat></v-switch>
+              </v-col>
+            </v-slide-x-transition>
+            <v-slide-x-transition>
+              <v-col v-if="horse.surrogate" cols="12" md="4">
+                <v-text-field v-model="horse.surrogate_uid" :counter="64" :rules="length64" label="Draagmoeder brandnummer" :disabled="horse.death" outlined></v-text-field>
+              </v-col>
+            </v-slide-x-transition>
             <v-col cols="12" md="4">
               <select-customer :owner="horse.owner" @update-customer="updateCustomer" :disabled="horse.death" :loading="loading" label="Eigenaar"></select-customer>
             </v-col>
@@ -65,14 +73,16 @@
             <v-col cols="12" md="4">
               <v-switch color="red" dense v-model="horse.death" :label="horseLiving" flat></v-switch>
             </v-col>
-            <v-col cols="12" md="4" v-if="horse.death">
-              <v-menu v-model="deathDateMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
-                <template v-slot:activator="{ on }">
-                  <v-text-field v-model="computedDeathDateFormatted" label="Overlijdensdatum" v-on="on" readonly outlined></v-text-field>
-                </template>
-                <v-date-picker v-model="horse.date_of_death" no-title @input="deathDateMenu = false"></v-date-picker>
-              </v-menu>
-            </v-col>
+            <v-slide-x-transition>
+              <v-col cols="12" md="4" v-if="horse.death">
+                <v-menu v-model="deathDateMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
+                  <template v-slot:activator="{ on }">
+                    <v-text-field v-model="computedDeathDateFormatted" label="Overlijdensdatum" v-on="on" readonly outlined></v-text-field>
+                  </template>
+                  <v-date-picker v-model="horse.date_of_death" no-title @input="deathDateMenu = false"></v-date-picker>
+                </v-menu>
+              </v-col>
+            </v-slide-x-transition>
           </v-row>
           <v-alert type="error" v-if="errored" >
             {{ errorMessage }}
