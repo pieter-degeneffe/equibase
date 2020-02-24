@@ -56,12 +56,7 @@ export default {
           value: 'company',
           align: 'right',
           sortable: false
-        },
-        // {
-        //   text: 'Paarden',
-        //   align: 'left',
-        //   sortable: false
-        // }
+        }
       ],
     };
   },
