@@ -16,6 +16,9 @@
             <v-col cols="12" md="4" v-if="horse.type === 'hengst'">
               <v-switch outlined v-model="horse.stud_horse" label="Dekhengst" flat></v-switch>
             </v-col>
+            <v-col cols="12" md="4" v-if="horse.stud_horse">
+              <v-text-field v-model="horse.stud_fee" label="Dekgeld" :disabled="horse.death" :loading="loading" outlined></v-text-field>
+            </v-col>
             <v-col cols="12" md="4" v-if="horse.type === 'merrie'">
               <v-switch outlined v-model="horse.surrogate" label="Draagmoeder" flat></v-switch>
             </v-col>
