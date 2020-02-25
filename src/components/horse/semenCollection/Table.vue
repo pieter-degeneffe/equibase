@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="semenCollections" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
+    <v-data-table :headers="headers" :items="filteredSemenCollections()" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-spacer></v-spacer>
@@ -17,11 +17,12 @@
           <td>{{ ownerName(props.item.owner) }}</td>
           <td>{{ props.item.initial_inventory }}</td>
           <td>{{ props.item.current_inventory }}</td>
-          <td>{{ new Date(props.item.production_date) | dateFormat('DD/MM/YY')}}</td>
+          <td><span v-if="props.item.production_date">{{ new Date(props.item.production_date) | dateFormat('DD/MM/YY')}}</span></td>
           <td>
             <v-icon v-if="props.item.color" small class="mr-2" :class="strawColor(props.item.color)">mdi-checkbox-blank-circle</v-icon>
             {{ props.item.location.container.name }} - Koker {{ props.item.location.tube }} - {{ props.item.location.position }}
           </td>
+          <td>{{ props.item.type }}</td>
           <td align='right' class="d-print-none">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -50,13 +51,14 @@
           </td>
         </tr>
         <template v-if="showModifications">
-          <tr v-for="modification in props.item.modifications" v-bind:key="modification._id">
-            <td colspan="2" style="border-bottom: 1px dotted #E0E0E0; height: 24px" class="pl-8">Stockwijziging</td>
-            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">&nbsp;</td>
-            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ modification.amount}}</td>
-            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ new Date(modification.createdAt) | dateFormat('DD/MM/YY')}}</td>
-            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ modification.type }}</td>
-            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">&nbsp;</td>
+          <tr class="modification" v-for="modification in props.item.modifications" v-bind:key="modification._id">
+            <td colspan="2" class="pl-8">Stockwijziging</td>
+            <td>{{ modification.amount }}</td>
+            <td>&nbsp;</td>
+            <td>{{ new Date(modification.createdAt) | dateFormat('DD/MM/YY')}}</td>
+            <td>&nbsp;</td>
+            <td>{{ modification.type }}</td>
+            <td>&nbsp;</td>
           </tr>
         </template>
       </template>
@@ -74,6 +76,12 @@
           <v-row dense>
             <v-col cols="12">
               <v-switch v-model="showModifications" label="Toon stockwijzigingen"></v-switch>
+            </v-col>
+            <v-col cols="12">
+              <v-select clearable v-model="filters.type.value" outlined label="Filter op type lot" :items="filters.type.options" hide-details></v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-select clearable v-model="filters.modificationType.value" outlined label="Filter op type stockwijzigingen" :items="filters.modificationType.options" hide-details></v-select>
             </v-col>
           </v-row>
         </v-card-text>
@@ -99,12 +107,23 @@ export default {
       headers: [
         { text: 'Hengst', align: 'left', sortable: false},
         { text: 'Eigenaar sperma lot'},
-        { text: 'Start stock'},
-        { text: 'Eind stock'},
-        { text: 'Productiedatum'},
-        { text: 'locatie & kleur'},
+        { text: 'Start'},
+        { text: 'Eind'},
+        { text: 'Datum'},
+        { text: 'Locatie & kleur'},
+        { text: 'Type'},
         { text: '', align: 'right', value: 'action', sortable: false, class: "d-print-none"}
       ],
+      filters: {
+        type: {
+          options: ['Productie','Import'],
+          value: null
+        },
+        modificationType: {
+          options: ['Export','Controle'],
+          value: null
+        }
+      },
       loading: false,
       semenCollections: [],
       semenCollection: null,
@@ -114,6 +133,14 @@ export default {
       showModifications: false
     };
   },
+  watch: {
+    filters: {
+      handler() {
+        this.getSemenCollections()
+      },
+      deep: true
+    }
+  },
   beforeMount() {
     this.getSemenCollections();
   },
@@ -121,6 +148,8 @@ export default {
     URLParameters () {
       const URLParameters = {};
       if (this.horse._id) URLParameters.stallion = this.horse.id;
+      if (this.filters.type.value) URLParameters.type = this.filters.type.value;
+      if (this.filters.modificationType.value) URLParameters.modificationType = this.filters.modificationType.value;
       return (URLParameters)
     },
   },
@@ -166,6 +195,12 @@ export default {
         case 'Indigo': return "indigo--text";
         case 'Violet': return "purple-color";
       }
+    },
+    filteredSemenCollections() {
+      if(this.filters.modificationType.value) {
+        return this.semenCollections.filter(collection => collection.modifications.length > 0)
+      }
+      return this.semenCollections
     }
   },
   components: {
@@ -176,3 +211,13 @@ export default {
   }
 }
 </script>
+<style>
+tr.collection td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+tr.modification td {
+  border-bottom: 1px dashed #E0E0E0 !important;
+  height: 24px !important;
+  color: grey;
+}
+</style>
