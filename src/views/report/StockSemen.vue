@@ -35,7 +35,6 @@
             <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ modification.amount}}</td>
             <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ new Date(modification.createdAt) | dateFormat('DD/MM/YY')}}</td>
             <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">{{ modification.type }}</td>
-            <td style="border-bottom: 1px dotted #E0E0E0; height: 24px">&nbsp;</td>
           </tr>
         </template>
       </template>
