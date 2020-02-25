@@ -8,10 +8,8 @@ const ACCESS_TOKEN_KEY = 'access_token';
 const CLIENT_ID = 'ikWVRx69KalfttdwTkW5lzcMy71Q9he7';
 const CLIENT_DOMAIN = 'equibase.eu.auth0.com';
 const REDIRECT = process.env.VUE_APP_AUTH0_REDIRECT;
-// const SCOPE = 'full_access';
-const SCOPE = 'read:current_user';
-// const AUDIENCE = 'https://api.equibase.app';
-const AUDIENCE = 'https://equibase.eu.auth0.com/api/v2/';
+const SCOPE = 'full_access';
+const AUDIENCE = 'https://api.equibase.app';
 
 var auth = new auth0.WebAuth({
   clientID: CLIENT_ID,
