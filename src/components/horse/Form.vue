@@ -47,7 +47,7 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field v-model="computedBirthDateFormatted" label="Geboortedatum" v-on="on" readonly :disabled="horse.death" outlined :loading="loading"></v-text-field>
                 </template>
-                <v-date-picker v-model="horse.date_of_birth" no-title @input="birthDateMenu = false"></v-date-picker>
+                <v-date-picker v-model="horse.date_of_birth" locale="nl" first-day-of-week="1" no-title @input="birthDateMenu = false"></v-date-picker>
               </v-menu>
             </v-col>
             <v-col cols="12" md="4">
@@ -79,7 +79,7 @@
                   <template v-slot:activator="{ on }">
                     <v-text-field v-model="computedDeathDateFormatted" label="Overlijdensdatum" v-on="on" readonly outlined></v-text-field>
                   </template>
-                  <v-date-picker v-model="horse.date_of_death" no-title @input="deathDateMenu = false"></v-date-picker>
+                  <v-date-picker v-model="horse.date_of_death" locale="nl" first-day-of-week="1" no-title @input="deathDateMenu = false"></v-date-picker>
                 </v-menu>
               </v-col>
             </v-slide-x-transition>
