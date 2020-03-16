@@ -109,7 +109,7 @@ export default {
         { text: 'Eigenaar sperma lot'},
         { text: 'Start'},
         { text: 'Eind'},
-        { text: 'Datum'},
+        { text: 'Productiedatum'},
         { text: 'Locatie & kleur'},
         { text: 'Type'},
         { text: '', align: 'right', value: 'action', sortable: false, class: "d-print-none"}
