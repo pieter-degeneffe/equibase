@@ -4,7 +4,7 @@
       <template v-slot:top>
         <v-row dense>
           <v-col cols="8" sm="6">
-            <v-toolbar-title class="float-left">Rapport sperma dekhengsten</v-toolbar-title>
+            <v-toolbar-title class="float-left">Rapport sperma dekhengsten  - type productie</v-toolbar-title>
           </v-col>
           <v-col cols="4" sm="6">
             <div fixed right>
@@ -47,10 +47,10 @@
             <v-col cols="12">
               <v-switch v-model="showModifications" label="Toon stockwijzigingen"></v-switch>
             </v-col>
-            <v-col cols="12">
+            <!-- <v-col cols="12">
               <v-select v-model="filters.type.value" outlined label="Filter op type lot" :items="filters.type.options" hide-details></v-select>
-            </v-col>
-            <v-col cols="12">
+            </v-col> -->
+            <v-col cols="12" class="mb-5">
               <v-select clearable v-model="filters.modificationType.value" outlined label="Filter op type stockwijzigingen" :items="filters.modificationType.options" hide-details></v-select>
             </v-col>
             <v-col cols="12">
@@ -92,7 +92,7 @@ export default {
         { text: 'Hengst'},
         { text: 'Start stock'},
         { text: 'Eind stock'},
-        { text: 'Datum'},
+        { text: 'Productiedatum'},
         { text: 'Type'}
       ],
       filterDialog: false,
@@ -179,9 +179,9 @@ export default {
       //if(this.filters.year.value) URLParameters.createdBefore = new Date(this.filters.year.value+"-12-31").toISOString();
       // if(this.filters.year.value) URLParameters.createdAfter = new Date(this.filters.year.value+"-01-01").toISOString();
       //URLParameters.current_inventory
-
+      URLParameters.type = "Productie"
       if (this.filters.dates.filteredValue) URLParameters.dates = this.filters.dates.filteredValue;
-      if (this.filters.type.value) URLParameters.type = this.filters.type.value;
+      //if (this.filters.type.value) URLParameters.type = this.filters.type.value;
       if (this.filters.modificationType.value) URLParameters.modificationType = this.filters.modificationType.value;
       return (URLParameters)
     }
