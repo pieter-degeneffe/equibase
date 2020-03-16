@@ -118,8 +118,13 @@ export default {
               //icon: "mdi-christianity"
             },
             {
-              text: "Stock sperma",
-              url: "/report/stock-semen",
+              text: "Stock sperma productie",
+              url: "/report/stock-semen-production",
+              //icon: "mdi-christianity"
+            },
+            {
+              text: "Stock sperma import",
+              url: "/report/stock-semen-import",
               //icon: "mdi-christianity"
             }
           ]
