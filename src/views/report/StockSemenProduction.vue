@@ -54,6 +54,7 @@
               <v-select clearable v-model="filters.modificationType.value" outlined label="Filter op type stockwijzigingen" :items="filters.modificationType.options" hide-details></v-select>
             </v-col>
             <v-col cols="12">
+              <h3 class="mb-2 text-center">Filter beschikbare stock in bepaalde periode</h3>
               <v-date-picker v-model="filters.dates.value" @change="formatDate(filters.dates.value[0], filters.dates.value[1])" show-current="false" locale="nl" range full-width no-title></v-date-picker>
             </v-col>
           </v-row>
