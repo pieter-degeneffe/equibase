@@ -13,13 +13,19 @@
                 <v-col cols="12" sm="12" md="12">
                   <v-text-field v-model="horse.name" label="Hengst" outlined disabled></v-text-field>
                   <select-customer :owner="horse.owner" @update-customer="updateCustomer" label="Eigenaar lot" required></select-customer>
-                  <v-menu v-model="productionDateMenu" :close-on-content-click="false"  transition="scale-transition" offset-y min-width="290px">
+                  <v-select v-model="editSemenCollection.type" :items="semenCollectionType" label="Type sperma lot" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']" :disabled="editSemenCollection._id ? true : false"></v-select>
+                  <v-menu v-if="editSemenCollection.type === 'Productie'" v-model="productionDateMenu" :close-on-content-click="false"  transition="scale-transition" offset-y min-width="290px">
+                    <template v-slot:activator="{ on }">
+                      <v-text-field v-model="computedProductionDateFormatted" label="Datum productie sperma" v-on="on" readonly outlined required :rules="required"></v-text-field>
+                    </template>
+                    <v-date-picker v-model="editSemenCollection.production_date" no-title @input="productionDateMenu = false"></v-date-picker>
+                  </v-menu>
+                  <v-menu v-if="editSemenCollection.type === 'Import'" v-model="productionDateMenu" :close-on-content-click="false"  transition="scale-transition" offset-y min-width="290px">
                     <template v-slot:activator="{ on }">
                       <v-text-field v-model="computedProductionDateFormatted" label="Datum productie sperma" v-on="on" readonly outlined></v-text-field>
                     </template>
                     <v-date-picker v-model="editSemenCollection.production_date" no-title @input="productionDateMenu = false"></v-date-picker>
                   </v-menu>
-                  <v-select v-model="editSemenCollection.type" :items="semenCollectionType" label="Type sperma lot" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']" :disabled="editSemenCollection._id ? true : false"></v-select>
                   <v-select v-if="editSemenCollection.location" v-model="editSemenCollection.location.container" :items="nitrogenContainers" item-text="name" item-value="_id" label="Locatie - stikstof vat" outlined return-object required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
                   <v-select v-if="editSemenCollection.location.container" v-model="editSemenCollection.location.tube" :items="tubesAvailable(editSemenCollection.location.container)" label="Locatie - stikstof vat - koker" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
                   <v-select v-if="editSemenCollection.location.container" v-model="editSemenCollection.location.position" :items="nitrogenContainerPosition" label="Locatie - stikstof vat - koker - positie" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
