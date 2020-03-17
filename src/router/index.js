@@ -91,6 +91,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/settings/research-sheets",
+    name: "Onderzoeksfiches",
+    component: () => import("@/views/settings/ResearchSheets"),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/callback',
     component: () => import('@/components/Callback')
   },
