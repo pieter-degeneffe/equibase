@@ -226,12 +226,25 @@ export default {
       researchSheet.line(25, 0, 25, 297);
       researchSheet.setFontSize(14);
       researchSheet.text(new Date().getFullYear().toString(), 6, 26);
-      researchSheet.text("Geboortejaar: " + new Date(this.horse.date_of_birth).getFullYear().toString(), 205, 10, {'align': 'right'});
-      researchSheet.text("Microchip: " + this.horse.microchip, 205, 18, {'align': 'right'});
-      researchSheet.text("brandnummer: " + this.horse.surrogate_uid, 205, 26, {'align': 'right'});
+      researchSheet.text(new Date(this.horse.date_of_birth).getFullYear().toString(), 205, 10, {'align': 'right'});
+      researchSheet.text(this.horse.microchip, 205, 18, {'align': 'right'});
+      researchSheet.text(this.horse.surrogate_uid, 205, 26, {'align': 'right'});
       researchSheet.setFontSize(20);
       researchSheet.setFontStyle("bold");
       researchSheet.text(this.horse.name.toUpperCase(), 30, 26);
+      researchSheet.setFontStyle("normal");
+      researchSheet.addPage();
+      researchSheet.line(0, 30, 210, 30 );
+      researchSheet.line(25, 0, 25, 297);
+      researchSheet.setFontSize(14);
+      researchSheet.text(new Date().getFullYear().toString(), 6, 26);
+      researchSheet.text(new Date(this.horse.date_of_birth).getFullYear().toString(), 205, 10, {'align': 'right'});
+      researchSheet.text(this.horse.microchip, 205, 18, {'align': 'right'});
+      researchSheet.text(this.horse.surrogate_uid, 205, 26, {'align': 'right'});
+      researchSheet.setFontSize(20);
+      researchSheet.setFontStyle("bold");
+      researchSheet.text(this.horse.name.toUpperCase(), 30, 26);
+      researchSheet.setFontStyle("normal");
       researchSheet.save(this.horse.name.replace(/\s+/g, '-').toLowerCase() + '.pdf');
     }
   },
