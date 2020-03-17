@@ -91,7 +91,7 @@
             <v-btn v-if="!horse._id" :disabled="!valid" color="success" class="mr-4" @click="createHorse()" depressed>
               Paard opslaan
             </v-btn>
-            <v-btn v-if="horse._id && horse.surrogate && horse.name && horse.date_of_birth" color="primary" depressed class="mr-4" @click="downloadResearchSheet()">
+            <v-btn v-if="horse._id && horse.surrogate && horse.name && horse.date_of_birth && horse.surrogate_uid && horse.microchip" color="primary" depressed class="mr-4" @click="downloadResearchSheet()">
               onderzoeksfiche downloaden
             </v-btn>
             <v-btn v-if="horse._id" :disabled="!valid" color="success" depressed class="mr-4" @click="updateHorse()">
