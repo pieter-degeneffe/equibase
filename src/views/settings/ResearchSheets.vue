@@ -2,6 +2,9 @@
   <div>
     <v-card class="mx-5 mt-5 mb-12" outlined>
       <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
+        <template v-slot:no-data>
+            Geen draagmoeders gevonden
+        </template>
         <template v-slot:item="props">
           <tr>
             <td>{{ props.item.name }}</td>
