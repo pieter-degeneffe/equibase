@@ -130,7 +130,7 @@ export default {
           ]
         },
         {
-          text: 'Instellingen',
+          text: 'Beheer',
           //icon: "mdi-alpha-i-circle",
           //icon: "mdi-settings",
           submenu: [
@@ -142,6 +142,11 @@ export default {
             {
               text: "Stikstof vaten",
               url: "/settings/nitrogen-container",
+              //icon: "mdi-battery-outline"
+            },
+            {
+              text: "Onderzoeksfiches downloaden",
+              url: "/settings/research-sheets",
               //icon: "mdi-battery-outline"
             },
           ]
