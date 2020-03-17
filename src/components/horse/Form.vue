@@ -91,6 +91,9 @@
             <v-btn v-if="!horse._id" :disabled="!valid" color="success" class="mr-4" @click="createHorse()" depressed>
               Paard opslaan
             </v-btn>
+            <v-btn v-if="horse._id && horse.surrogate && horse.name && horse.date_of_birth" color="primary" depressed class="mr-4" @click="downloadResearchSheet()">
+              onderzoeksfiche downloaden
+            </v-btn>
             <v-btn v-if="horse._id" :disabled="!valid" color="success" depressed class="mr-4" @click="updateHorse()">
               {{ horse.type }} bijwerken
             </v-btn>
@@ -124,6 +127,7 @@
 import horseAPI from "@/services/HorseAPI.js";
 import selectCustomer from "@/components/customer/SelectCustomer";
 import locationAPI from "@/services/LocationAPI.js";
+import jsPDF from 'jspdf';
 export default {
   props: ['horse', 'loading'],
   data () {
@@ -215,6 +219,20 @@ export default {
       if (this.$refs.form.validate()) {
         this.snackbar = true
       }
+    },
+    downloadResearchSheet () {
+      const researchSheet = new jsPDF();
+      researchSheet.line(0, 30, 210, 30 );
+      researchSheet.line(25, 0, 25, 297);
+      researchSheet.setFontSize(14);
+      researchSheet.text(new Date().getFullYear().toString(), 6, 26);
+      researchSheet.text("Geboortejaar: " + new Date(this.horse.date_of_birth).getFullYear().toString(), 205, 10, {'align': 'right'});
+      researchSheet.text("Microchip: " + this.horse.microchip, 205, 18, {'align': 'right'});
+      researchSheet.text("brandnummer: " + this.horse.surrogate_uid, 205, 26, {'align': 'right'});
+      researchSheet.setFontSize(20);
+      researchSheet.setFontStyle("bold");
+      researchSheet.text(this.horse.name.toUpperCase(), 30, 26);
+      researchSheet.save(this.horse.name.replace(/\s+/g, '-').toLowerCase() + '.pdf');
     }
   },
   computed: {
