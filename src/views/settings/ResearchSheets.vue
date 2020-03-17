@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-card class="mx-5 mt-5 mb-12" outlined>
-      {{ horses }}
       <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
         <template v-slot:item="props">
           <tr>
@@ -14,7 +13,7 @@
         </template>
       </v-data-table>
       <v-btn bottom color="primary" class="ma-2 white--text" depressed dark @click="downloadResearchSheet()" fixed right>
-        onderzoeksfiche downloaden
+        onderzoeksfiches downloaden
         <v-icon right dark>mdi-arrow-collapse-down</v-icon>
       </v-btn>
     </v-card>
@@ -67,7 +66,6 @@ export default {
     },
     downloadResearchSheet () {
       const researchSheet = new jsPDF();
-      // researchSheet.line(0, 30, 210, 30 );
       for (let i=0; i < this.horses.length; i++) {
         researchSheet.line(0, 30, 210, 30 );
         researchSheet.line(25, 0, 25, 297);
