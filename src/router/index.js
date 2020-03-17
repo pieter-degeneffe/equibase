@@ -68,13 +68,13 @@ const routes = [
   },
   {
     path: "/report/stock-semen-production",
-    name: "Stock semen",
+    name: "Stock semen production",
     component: () => import("@/views/report/StockSemenProduction"),
     beforeEnter: requireAuth
   },
   {
     path: "/report/stock-semen-import",
-    name: "Stock semen",
+    name: "Stock semen import",
     component: () => import("@/views/report/StockSemenImport"),
     beforeEnter: requireAuth
   },
