@@ -16,6 +16,10 @@
         <v-icon left>mdi-alpha-s-circle</v-icon>
         Sperma
       </v-tab>
+      <v-tab v-if="horse._id && horse.stud_horse" class="d-print-none">
+        <v-icon left>mdi-alpha-v-circle</v-icon>
+        Verblijven
+      </v-tab>
       <v-tab-item class="ma-5">
         <horse-form :horse="horse" :loading="loading" @update-horse="updateHorse"></horse-form>
       </v-tab-item>
@@ -29,6 +33,11 @@
           <semen-collection :horse="horse"></semen-collection>
         </v-card>
       </v-tab-item>
+      <v-tab-item v-if="horse.stud_horse" class="ma-5">
+        <v-card flat>
+          <lodging :horse="horse"></lodging>
+        </v-card>
+      </v-tab-item>
     </v-tabs>
   </v-card>
 </template>
@@ -38,6 +47,7 @@ import horseAPI from "@/services/HorseAPI.js";
 import horseForm from "@/components/horse/Form";
 import horsePassport from "@/components/horse/Passport";
 import semenCollection from "@/components/horse/semenCollection/Table";
+import lodging from "@/components/horse/Lodging";
 export default {
   props: ["id"],
   data () {
@@ -84,7 +94,8 @@ export default {
   components: {
     horseForm,
     horsePassport,
-    semenCollection
+    semenCollection,
+    lodging
   },
 };
 </script>
