@@ -17,7 +17,6 @@ export default {
     return API().get("/api/horse/" + id);
   },
   putHorse(horse) {
-    console.log(' API update request received');
     return API().put("/api/horse/" + horse._id, {
       horse
     });
@@ -37,5 +36,13 @@ export default {
   },
   deletePassport(horse) {
     return API().delete("/api/horse/" + horse._id + "/passport");
+  },
+  postLodging(horse) {
+    return API().post("/api/horse/" + horse._id + "/lodging", {
+      horse
+    });
+  },
+  deleteLodging(horse, lodging) {
+    return API().delete("/api/horse/" + horse._id + "/lodging/" + lodging._id);
   }
 };
