@@ -22,7 +22,7 @@ export default {
 <style scoped>
 @media print {
   main {
-    padding: 0px !important;
+    padding: 0 !important;
   }
 }
 </style>

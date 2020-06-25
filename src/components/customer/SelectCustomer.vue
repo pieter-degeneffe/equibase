@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import customerAPI from "@/services/CustomerAPI.js";
+import { customerAPI } from "@/services";
 export default {
   props: ['owner','label'],
   data() {

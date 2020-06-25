@@ -72,6 +72,10 @@ export default {
           //icon: "mdi-contacts",
         },
         {
+          text: "ICSI",
+          url: "/icsi",
+        },
+        {
           text: "Paarden",
           //icon: "mdi-alpha-p-circle",
           //icon: "mdi-horseshoe",

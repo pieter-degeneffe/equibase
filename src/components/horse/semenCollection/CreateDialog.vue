@@ -13,7 +13,7 @@
                 <v-col cols="12" sm="12" md="12">
                   <v-text-field v-model="horse.name" label="Hengst" outlined disabled></v-text-field>
                   <select-customer :owner="horse.owner" @update-customer="updateCustomer" label="Eigenaar lot" required></select-customer>
-                  <v-select v-model="editSemenCollection.type" :items="semenCollectionType" label="Type sperma lot" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']" :disabled="editSemenCollection._id ? true : false"></v-select>
+                  <v-select v-model="editSemenCollection.type" :items="semenCollectionType" label="Type sperma lot" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']" :disabled="!!editSemenCollection._id"></v-select>
                   <v-menu v-if="editSemenCollection.type === 'Productie'" v-model="productionDateMenu" :close-on-content-click="false"  transition="scale-transition" offset-y min-width="290px">
                     <template v-slot:activator="{ on }">
                       <v-text-field v-model="computedProductionDateFormatted" label="Datum productie sperma" v-on="on" readonly outlined required :rules="required"></v-text-field>
@@ -29,7 +29,7 @@
                   <v-select v-if="editSemenCollection.location" v-model="editSemenCollection.location.container" :items="nitrogenContainers" item-text="name" item-value="_id" label="Locatie - stikstof vat" outlined return-object required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
                   <v-select v-if="editSemenCollection.location.container" v-model="editSemenCollection.location.tube" :items="tubesAvailable(editSemenCollection.location.container)" label="Locatie - stikstof vat - koker" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
                   <v-select v-if="editSemenCollection.location.container" v-model="editSemenCollection.location.position" :items="nitrogenContainerPosition" label="Locatie - stikstof vat - koker - positie" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
-                  <v-text-field v-model="editSemenCollection.initial_inventory" :rules="required" type="number" label="Aantal rietjes" outlined :disabled="editSemenCollection._id ? true : false"></v-text-field>
+                  <v-text-field v-model="editSemenCollection.initial_inventory" :rules="required" type="number" label="Aantal rietjes" outlined :disabled="!!editSemenCollection._id"></v-text-field>
                   <v-select v-model="editSemenCollection.color" :items="semenCollectionColor" label="Kleur rietjes" outlined></v-select>
                   <v-alert type="error" v-if="errored" >
                     {{ errorMessage }}
@@ -53,6 +53,8 @@
 import selectCustomer from "@/components/customer/SelectCustomer";
 import semenAPI from "@/services/SemenAPI.js";
 import nitrogenContainerAPI from "@/services/NitrogenContainerAPI.js";
+import {colors} from '@/consts';
+
 export default {
   props: {
     createDialog: Boolean,
@@ -72,8 +74,8 @@ export default {
       },
       productionDateMenu: false,
       nitrogenContainers: [],
-      semenCollectionType: ['Productie','Import'],
-      semenCollectionColor: ['Rood','Oranje','Geel','Groen','Blauw','Indigo','Violet'],
+      semenCollectionType: ['Productie', 'Import'],
+      semenCollectionColor: colors,
       nitrogenContainerPosition: ['Boven', 'Onder'],
       errored: false,
       errorMessage: ''

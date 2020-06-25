@@ -82,9 +82,9 @@
   </v-card>
 </template>
 <script>
-  import horseAPI from "@/services/HorseAPI.js";
-  import locationAPI from "@/services/LocationAPI.js";
-  import customerAPI from "@/services/CustomerAPI.js";
+  import { ownerName } from '@/Helpers';
+  import { customerAPI, horseAPI, locationAPI } from '@/services';
+
   export default {
     props: ['headers', 'filters', 'sortBy'],
     data () {
@@ -179,6 +179,7 @@
       }
     },
     methods: {
+      ownerName,
       openHorsePage(id){
         this.$router.push("/horse/" + id);
       },
@@ -192,9 +193,6 @@
       },
       showColumn(col){
         return this.headers.find(header => header.value === col).selected
-      },
-      ownerName(owner){
-        return owner.type === "particulier" ? `${owner.first_name} ${owner.last_name}` : `${owner.company}`
       },
       async getHorses() {
         this.loading = true;
