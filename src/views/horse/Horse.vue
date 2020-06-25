@@ -12,6 +12,10 @@
         <v-icon left>mdi-alpha-p-circle</v-icon>
         Paspoort
       </v-tab>
+      <v-tab v-if="horse._id && horse.surrogate" class="d-print-none">
+        <v-icon left>mdi-sprout</v-icon>
+        Embryos
+      </v-tab>
       <v-tab v-if="horse._id && horse.stud_horse" class="d-print-none">
         <v-icon left>mdi-alpha-s-circle</v-icon>
         Sperma
@@ -28,6 +32,9 @@
           <horse-passport :horse="horse"></horse-passport>
         </v-card>
       </v-tab-item>
+      <v-tab-item v-if="horse.surrogate" class="ma-5">
+        <embryo-table :horse-id="$route.params.id" showDonors="true"></embryo-table>
+      </v-tab-item>
       <v-tab-item v-if="horse.stud_horse" class="ma-5">
         <v-card flat>
           <semen-collection :horse="horse"></semen-collection>
@@ -42,12 +49,14 @@
   </v-card>
 </template>
 <script>
+  //import customerAPI from "@/services/CustomerAPI.js";
 import horseAPI from "@/services/HorseAPI.js";
-//import customerAPI from "@/services/CustomerAPI.js";
 import horseForm from "@/components/horse/Form";
 import horsePassport from "@/components/horse/Passport";
 import semenCollection from "@/components/horse/semenCollection/Table";
 import lodging from "@/components/horse/Lodging";
+import EmbryoTable from '../../components/icsi/EmbryoTable';
+
 export default {
   props: ["id"],
   data () {
@@ -92,6 +101,7 @@ export default {
     },
   },
   components: {
+    EmbryoTable,
     horseForm,
     horsePassport,
     semenCollection,
