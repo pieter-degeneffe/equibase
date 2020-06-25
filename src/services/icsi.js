@@ -22,4 +22,10 @@ export default {
   getICSI(id) {
     return API().get(`/api/icsi/${ id }`);
   },
+  getEmbryosByCustomer(id) {
+    return API().get(`/api/customer/${ id }/embryos`);
+  },
+  getEmbryosByHorse(id) {
+    return API().get(`/api/horse/${ id }/embryos`);
+  }
 };

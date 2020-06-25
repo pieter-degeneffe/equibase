@@ -16,6 +16,10 @@
         <v-icon left>mdi-horseshoe</v-icon>
         Paarden
       </v-tab>
+      <v-tab class="d-print-none">
+        <v-icon left>mdi-sprout</v-icon>
+        Embryos
+      </v-tab>
       <v-tab-item class="ma-5">
         <v-card flat>
           <customer-form :customer="customer" :loading="loading" @update-customer="updateCustomer"></customer-form>
@@ -31,6 +35,11 @@
           <customer-horses :customer="customer"></customer-horses>
         </v-card>
       </v-tab-item>
+      <v-tab-item class="ma-5">
+      <v-card flat>
+        <embryo-table :customer-id="$route.params.id" showDonors="true"></embryo-table>
+      </v-card>
+    </v-tab-item>
     </v-tabs>
   </v-card>
 </template>
@@ -40,6 +49,7 @@ import customerAPI from "@/services/CustomerAPI.js";
 import CustomerForm from "@/components/customer/Form";
 import CustomerHorses from "@/components/customer/Horses";
 import CustomerContacts from "@/components/customer/Contacts";
+import EmbryoTable from '../../components/icsi/EmbryoTable';
 export default {
   props: ["id"],
   data() {
@@ -74,6 +84,7 @@ export default {
     },
   },
   components: {
+    EmbryoTable,
     CustomerForm,
     CustomerHorses,
     CustomerContacts

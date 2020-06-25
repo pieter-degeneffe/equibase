@@ -14,10 +14,10 @@
       <template v-slot:top>
         <v-row dense class="mx-1">
           <v-col cols="4" sm="4">
-            <v-toolbar-title class="float-left">{{ id }} - {{ title }}</v-toolbar-title>
+            <v-toolbar-title class="float-left">Embryos {{ id? `- ${id}`:'' }} </v-toolbar-title>
           </v-col>
           <v-col cols="4" sm="4">
-            <v-toolbar-title class="float-left">
+            <v-toolbar-title class="float-left" v-if="!showDonors">
               <v-icon medium>mdi-gender-female</v-icon>
               {{horseName(data.donor_mare) }} -
               <v-icon medium>mdi-gender-male</v-icon>
@@ -105,12 +105,13 @@
     </v-alert>
   </v-card>
 </template>
+
 <script>
   import { ownerName } from '@/Helpers';
   import { horseAPI, icsiAPI } from '@/services';
 
   export default {
-    props: ['id', 'title', 'headers', 'filters', 'sortBy'],
+    props: ['id', 'title','showDonors', 'customerId', 'horseId'],
     data() {
       return {
         sortDesc: true,
@@ -128,6 +129,23 @@
         options: {},
         errored: false,
         errorMessage: '',
+        headers: [
+          { text: 'Code', value: 'code', align: 'left', sortable: true, selected: true },
+          { text: 'Donor Merrie', value: 'donor_mare', align: 'left', sortable: true, selected: this.showDonors },
+          { text: 'Donor Hengst', value: 'donor_stallion', align: 'left', selected: this.showDonors },
+          { text: 'Stikstof vat', value: 'container', sortable: true, selected: true },
+          { text: 'Koker', value: 'tube', sortable: true, selected: true },
+          { text: 'Kleur', value: 'color', sortable: true, selected: false },
+          { text: 'Eigenaar', value: 'owner', sortable: true, selected: true },
+          { text: 'Geïmporteerd op', value: 'importedAt', sortable: true, selected: true },
+          { text: 'Gewijzigd op', value: 'updatedAt', sortable: true, selected: true },
+          { text: 'Aangemaakt op', value: 'createdAt', sortable: true, selected: true },
+        ],
+        filters: {
+          donor_mare: null,
+          donor_stallion: null,
+        },
+        sortBy: 'amount'
       };
     },
     watch: {
@@ -178,7 +196,17 @@
       async getEmbryos() {
         this.loading = true;
         try {
-          const response = await icsiAPI.getICSI(this.id);
+          let request;
+          if(this.id){
+            request = icsiAPI.getICSI(this.id);
+          }
+          if(this.customerId){
+            request = icsiAPI.getEmbryosByCustomer(this.customerId);
+          }
+          if(this.horseId){
+            request = icsiAPI.getEmbryosByHorse(this.horseId);
+          }
+          const response = await request;
           this.data = response.data;
           this.total = response.data.total;
         } catch (e) {
