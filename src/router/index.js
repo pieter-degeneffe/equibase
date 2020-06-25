@@ -12,6 +12,24 @@ const routes = [
     //beforeEnter: requireAuth
   },
   {
+    path: '/icsi',
+    name: 'ICSI',
+    component: () => import('@/views/icsi/index'),
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/icsi/create",
+    props: true,
+    component: () => import("@/views/icsi/Create"),
+    beforeEnter: requireAuth
+  },
+  {
+    path: "/icsi/:id",
+    props: true,
+    component: () => import("@/views/icsi/Embryos"),
+    beforeEnter: requireAuth
+  },
+  {
     path: "/horse/stallion",
     name: "hengst",
     component: () => import("@/views/horse/Stallion"),
