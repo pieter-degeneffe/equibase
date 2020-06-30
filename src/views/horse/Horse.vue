@@ -1,7 +1,9 @@
 <template>
   <v-card class="ma-5" outlined>
     <v-toolbar flat color="primary" dark>
-      <v-toolbar-title>{{ horse.name }} <v-icon v-if="horse.death">mdi-christianity</v-icon></v-toolbar-title>
+      <v-toolbar-title>{{ horse.name }}
+        <v-icon v-if="horse.death">mdi-christianity</v-icon>
+      </v-toolbar-title>
     </v-toolbar>
     <v-tabs>
       <v-tab class="d-print-none">
@@ -33,7 +35,7 @@
         </v-card>
       </v-tab-item>
       <v-tab-item v-if="horse.surrogate" class="ma-5">
-        <embryo-table :horse-id="$route.params.id" showDonors="true"></embryo-table>
+        <embryo-table :horse-id="$route.params.id" showDonors="true" show-inactive="true" :action="transferEmbryo" actionLabel="Transfer"/>
       </v-tab-item>
       <v-tab-item v-if="horse.stud_horse" class="ma-5">
         <v-card flat>
@@ -49,65 +51,64 @@
   </v-card>
 </template>
 <script>
-  //import customerAPI from "@/services/CustomerAPI.js";
-import horseAPI from "@/services/HorseAPI.js";
-import horseForm from "@/components/horse/Form";
-import horsePassport from "@/components/horse/Passport";
-import semenCollection from "@/components/horse/semenCollection/Table";
-import lodging from "@/components/horse/Lodging";
-import EmbryoTable from '../../components/icsi/EmbryoTable';
+  import horseForm from '@/components/horse/Form';
+  import lodging from '@/components/horse/Lodging';
+  import horsePassport from '@/components/horse/Passport';
+  import semenCollection from '@/components/horse/semenCollection/Table';
+  import { horseAPI, icsiAPI } from '@/services';
+  import EmbryoTable from '../../components/icsi/EmbryoTable';
 
-export default {
-  props: ["id"],
-  data () {
-    return {
-      horse: {},
-      loading: null
-    }
-  },
-  watch: {
-    date() {
-      this.dateFormatted = this.formatDate(this.horse.date_of_birth)
+  export default {
+    props: ['id'],
+    data() {
+      return {
+        horse: {},
+        loading: null,
+      };
     },
-    '$route.params.id'(newId) {
+    watch: {
+      '$route.params.id'(newId) {
         this.getHorses(newId);
-    }
-  },
-  beforeMount() {
-    if (this.id !== "undefined") this.getHorses(this.id);
-    //if (this.id === "undefined" && this.$route.query.type) this.horse.type = this.$route.query.type;
-    //if (this.id === "undefined" && this.$route.query.surrogate) this.horse.surrogate = this.$route.query.surrogate
-    //this.loadLocations();
-  },
-  methods: {
-    async getHorses(id) {
-      this.loading = true;
-      try {
-        const horse = await horseAPI.getHorse(id);
-        this.horse = horse.data;
-        // if (this.horse.owner) {
-        //   const owner = await customerAPI.getCustomer(this.horse.owner);
-        //   this.owner = owner.data;
-        // }
-      } catch (err) {
-        this.errored = true;
-        this.errorMessage = err.response.data.message;
-      } finally {
-        this.loading = false;
       }
     },
-    updateHorse(horse) {
-      this.horse = horse;
+    beforeMount() {
+      if (this.id !== 'undefined') {
+        this.getHorses(this.id);
+      }
     },
-  },
-  components: {
-    EmbryoTable,
-    horseForm,
-    horsePassport,
-    semenCollection,
-    lodging
-  },
-};
+    methods: {
+      async transferEmbryo(embryoId, transferDate) {
+        console.log(embryoId);
+        await icsiAPI.transferEmbryo({
+          embryoId,
+          surrogateId: this.id,
+          transferDate,
+        });
+      },
+      async getHorses(id) {
+        this.loading = true;
+        try {
+          const horse = await horseAPI.getHorse(id);
+          this.horse = horse.data;
+        } catch (err) {
+          this.errored = true;
+          this.errorMessage = err.response.data.message;
+        } finally {
+          this.loading = false;
+        }
+      },
+      updateHorse(horse) {
+        this.horse = horse;
+      },
+    },
+    components: {
+      EmbryoTable,
+      horseForm,
+      horsePassport,
+      semenCollection,
+      lodging
+    },
+  };
 </script>
 
 <style lang="css"></style>

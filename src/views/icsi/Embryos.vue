@@ -1,5 +1,5 @@
 <template>
-    <EmbryoTable :id="$route.params.id"></EmbryoTable>
+    <EmbryoTable :id="$route.params.id"/>
 </template>
 
 <script>
