@@ -22,22 +22,22 @@
       </v-tab>
       <v-tab-item class="ma-5">
         <v-card flat>
-          <customer-form :customer="customer" :loading="loading" @update-customer="updateCustomer"></customer-form>
+          <customer-form :customer="customer" :loading="loading" @update-customer="updateCustomer"/>
         </v-card>
       </v-tab-item>
       <v-tab-item class="ma-5" v-if="customer.type === 'bedrijf'">
         <v-card flat>
-          <customer-contacts :customer="customer"></customer-contacts>
+          <customer-contacts :customer="customer"/>
         </v-card>
       </v-tab-item>
       <v-tab-item class="ma-5">
         <v-card flat>
-          <customer-horses :customer="customer"></customer-horses>
+          <customer-horses :customer="customer"/>
         </v-card>
       </v-tab-item>
       <v-tab-item class="ma-5">
       <v-card flat>
-        <embryo-table :customer-id="$route.params.id" showDonors="true"></embryo-table>
+        <embryo-table :customer-id="$route.params.id" showDonors="true" show-inactive="true" :action="exportEmbryo" actionLabel="Export"/>
       </v-card>
     </v-tab-item>
     </v-tabs>
@@ -50,6 +50,7 @@ import CustomerForm from "@/components/customer/Form";
 import CustomerHorses from "@/components/customer/Horses";
 import CustomerContacts from "@/components/customer/Contacts";
 import EmbryoTable from '../../components/icsi/EmbryoTable';
+import { icsiAPI } from '../../services';
 export default {
   props: ["id"],
   data() {
@@ -81,6 +82,14 @@ export default {
     },
     updateCustomer(customer) {
       this.customer = customer;
+    },
+    async exportEmbryo(embryoId, exportDate) {
+      console.log(embryoId);
+      await icsiAPI.exportEmbryo({
+        embryoId,
+        customerId: this.id,
+        exportDate,
+      });
     },
   },
   components: {

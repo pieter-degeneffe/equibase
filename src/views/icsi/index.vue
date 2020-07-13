@@ -25,6 +25,11 @@
         filters: {
           donor_mare: null,
           donor_stallion: null,
+          location: {
+            container: null,
+            tube: null,
+          },
+          owner: null,
         },
         sortBy: 'amount'
       };

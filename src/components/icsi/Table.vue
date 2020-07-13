@@ -43,14 +43,68 @@
         <v-card-text class="pt-5">
           <v-row dense>
             <v-col cols="6">
-              <v-autocomplete v-model="filters.donor_mare" outlined label="Filter op merrie" :items="mares"
-                              :item-text="horseName" return-object item-value="_id" multiple
-                              hide-details></v-autocomplete>
+              <v-autocomplete
+                  v-model="filters.donor_mare"
+                  outlined
+                  label="Filter op merrie"
+                  :items="mares"
+                  :item-text="horseName"
+                  return-object
+                  item-value="_id"
+                  multiple
+                  hide-details
+              />
             </v-col>
             <v-col cols="6">
-              <v-autocomplete v-model="filters.donor_stallion" outlined label="Filter op hengst" :items="stallions"
-                              :item-text="horseName" return-object item-value="_id" multiple
-                              hide-details></v-autocomplete>
+              <v-autocomplete
+                  v-model="filters.donor_stallion"
+                  outlined
+                  label="Filter op hengst"
+                  :items="stallions"
+                  :item-text="horseName"
+                  return-object
+                  item-value="_id"
+                  multiple
+                  hide-details
+              />
+            </v-col>
+          </v-row>
+          <v-row dense>
+            <v-col cols="6">
+              <v-autocomplete
+                  v-model="filters.owner"
+                  outlined
+                  label="Filter op eigenaar"
+                  :items="owners"
+                  :item-text="ownerName"
+                  return-object
+                  item-value="_id"
+                  multiple
+                  hide-details
+              />
+            </v-col>
+            <v-col cols="3">
+              <v-autocomplete
+                  v-model="filters.location.container"
+                  outlined
+                  label="Container"
+                  :items="nitrogenContainers"
+                  :item-text="horseName"
+                  return-object
+                  item-value="_id"
+                  hide-details
+              />
+            </v-col>
+            <v-col cols="3" v-if="filters.location.container">
+              <v-autocomplete
+                  v-model="filters.location.tube"
+                  outlined
+                  label="Koker"
+                  :items="tubesAvailable(filters.location.container)"
+                  return-object
+                  item-value="_id"
+                  hide-details
+              />
             </v-col>
           </v-row>
         </v-card-text>
@@ -85,8 +139,8 @@
   </v-card>
 </template>
 <script>
-  import horseAPI from '@/services/HorseAPI.js';
-  import icsiAPI from '@/services/icsi.js';
+  import { ownerName } from '../../Helpers';
+  import { customerAPI, horseAPI, icsiAPI, nitrogenContainerAPI } from '../../services';
 
   export default {
     props: ['title', 'headers', 'filters', 'sortBy'],
@@ -99,6 +153,9 @@
         icsis: [],
         mares: [],
         stallions: [],
+        owners: [],
+        nitrogenContainers: [],
+        tubes: [],
         loading: true,
         options: {},
         errored: false,
@@ -130,20 +187,21 @@
         });
       },
       URLParameters() {
-        const URLParameters = {
+        return {
           'page': this.options.page,
           'limit': this.options.itemsPerPage,
           'sortBy': this.options.sortBy,
           'sortDesc': this.options.sortDesc,
-          donor_stallion: this.filters.donor_stallion !== null ? this.filters.donor_stallion.map(stallion => stallion._id) : undefined,
-          donor_mare: this.filters.donor_mare !== null ? this.filters.donor_mare.map(mare => mare._id) : undefined
+          donor_stallion: this.filters.donor_stallion !== null ? this.filters.donor_stallion.map(el => el._id) : undefined,
+          donor_mare: this.filters.donor_mare !== null ? this.filters.donor_mare.map(el => el._id) : undefined,
+          owner: this.filters.owner !== null ? this.filters.owner.map(el => el._id) : undefined,
+          container: this.filters.location.container !== null ? this.filters.location.container._id : undefined,
+          tube: this.filters.location.tube !== null ? this.filters.location.tube.value : undefined,
         };
-        // if (this.filters.donor_stallion !== null) URLParameters.donor_stallion = this.filters.donor_stallion.map(stallion => stallion._id);
-        // if (this.filters.donor_mare !== null) URLParameters.donor_mare = this.filters.donor_mare.map(mare => mare._id);
-        return (URLParameters);
       }
     },
     methods: {
+      ownerName,
       openICSIPage(id) {
         this.$router.push('/icsi/' + id);
       },
@@ -154,6 +212,8 @@
         this.filterDialog = true;
         this.getMares();
         this.getStallions();
+        this.getOwners();
+        this.getNitrogenContainers();
       },
       showColumn(col) {
         return this.headers.find(header => header.value === col).selected;
@@ -166,11 +226,11 @@
         try {
           const response = await icsiAPI.getAllICSI(this.URLParameters);
           this.icsis = response.data.icsis;
-          console.log('Arne: this.icsis= ', this.icsis);
           this.totalICSIs = response.data.total;
         } catch (e) {
           this.errored = true;
-          this.errorMessage = e.response.data.message;
+          console.log('Arne: e= ', e);
+          // this.errorMessage = e.response.data.message;
         } finally {
           this.loading = false;
         }
@@ -202,6 +262,36 @@
             type: 'hengst'
           });
           this.stallions = response.data.horses;
+        } catch (e) {
+          this.errored = true;
+          this.errorMessage = e.response.data.message;
+        }
+      },
+      tubesAvailable(container) {
+        if (container) {
+          let tubesAvailable = [{text: 'All', value: undefined}];
+          for (let i = 1; i <= container.available_places; i++) {
+            tubesAvailable.push({
+              text: `koker ${ i }`,
+              value: i
+            });
+          }
+          return tubesAvailable;
+        }
+      },
+      async getNitrogenContainers() {
+        try {
+          const { data } = await nitrogenContainerAPI.getNitrogenContainers();
+          this.nitrogenContainers = [{name: 'All', value: undefined}, ...data];
+        } catch (err) {
+          this.errored = true;
+          this.errorMessage = err.response.data.message;
+        }
+      },
+      async getOwners() {
+        try {
+          const { data } = await customerAPI.getCustomers();
+          this.owners = data;
         } catch (e) {
           this.errored = true;
           this.errorMessage = e.response.data.message;
