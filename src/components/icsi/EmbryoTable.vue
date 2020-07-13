@@ -128,17 +128,19 @@
       <v-card>
         <v-card-text class="pt-5">
           <v-row dense>
-            welke filters zouden hier interessant zijn?
-            <!--            <v-col cols="6">-->
-            <!--              <v-autocomplete v-model="filters.donor_mare" outlined label="Filter op merrie" :items="mares"-->
-            <!--                              :item-text="horseName" return-object item-value="_id" multiple-->
-            <!--                              hide-details></v-autocomplete>-->
-            <!--            </v-col>-->
-            <!--            <v-col cols="6">-->
-            <!--              <v-autocomplete v-model="filters.donor_stallion" outlined label="Filter op hengst" :items="stallions"-->
-            <!--                              :item-text="horseName" return-object item-value="_id" multiple-->
-            <!--                              hide-details></v-autocomplete>-->
-            <!--            </v-col>-->
+            <v-col cols="6">
+              <v-autocomplete
+                  v-model="filters.donor_mare"
+                  outlined
+                  label="Filter op merrie"
+                  :items="mares"
+                  :item-text="horseName"
+                  return-object
+                  item-value="_id"
+                  multiple
+                  hide-details
+              />
+            </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
@@ -253,13 +255,9 @@
         });
       },
       URLParameters() {
-        const URLParameters = {
-          'page': this.options.page,
-          'limit': this.options.itemsPerPage,
-          'sortBy': this.options.sortBy,
-          'sortDesc': this.options.sortDesc,
+        return {
+          donor_mare: this.filters.donor_mare !== null ? this.filters.donor_mare.map(el => el._id) : undefined,
         };
-        return (URLParameters);
       }
     },
     methods: {
@@ -283,6 +281,7 @@
       embryoCode: embryo => embryo.code || '',
       openFilterDialog() {
         this.filterDialog = true;
+        this.getMares();
       },
       async getAvailableEmbryos() {
         this.loading = true;
@@ -307,13 +306,13 @@
         try {
           let request;
           if (this.id) {
-            request = icsiAPI.getICSI(this.id);
+            request = icsiAPI.getICSI(this.id, this.URLParameters);
           }
           if (this.customerId) {
-            request = icsiAPI.getEmbryosByCustomer(this.customerId);
+            request = icsiAPI.getEmbryosByCustomer(this.customerId, this.URLParameters);
           }
           if (this.horseId) {
-            request = icsiAPI.getEmbryosByHorse(this.horseId);
+            request = icsiAPI.getEmbryosByHorse(this.horseId, this.URLParameters);
           }
           const response = await request;
           this.data = response.data;
@@ -328,14 +327,9 @@
       async getMares() {
         try {
           const response = await horseAPI.getHorses({
-            page: this.options.page,
-            limit: this.options.itemsPerPage,
-            sortBy: this.options.sortBy,
-            sortDesc: this.options.sortDesc,
             type: 'merrie'
           });
           this.mares = response.data.horses;
-          ``;
         } catch (e) {
           console.log('Arne: e= ', e);
           this.errored = true;

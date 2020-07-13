@@ -11,7 +11,7 @@ export default {
   transferEmbryo: (data) => API().post('/api/icsi/transfer', data),
   exportEmbryo: (data) => API().post('/api/icsi/export', data),
 
-  getEmbryosByCustomer: (id) => API().get(`/api/customer/${ id }/embryos`),
+  getEmbryosByCustomer: (id, parameters) => API().get(`/api/customer/${ id }/embryos`, { params: parameters }),
 
-  getEmbryosByHorse: (id) => API().get(`/api/horse/${ id }/embryos`),
+  getEmbryosByHorse: (id, parameters) => API().get(`/api/horse/${ id }/embryos`, { params: parameters }),
 };
