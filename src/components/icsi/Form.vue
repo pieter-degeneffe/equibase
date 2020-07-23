@@ -30,6 +30,7 @@
                 :rules="[(v) => !!v || 'Dit veld is verplicht']"
                 required
                 outlined
+                return-object
                 clearable
             />
           </v-col>
@@ -44,6 +45,7 @@
                 :rules="[(v) => !!v || 'Dit veld is verplicht']"
                 required
                 outlined
+                return-object
                 clearable
             />
           </v-col>
@@ -131,8 +133,16 @@
         </v-snackbar>
       </v-container>
     </v-form>
+    <v-container>
+      <v-row no-gutters>
+        <v-col cols="4" v-for="embryo in embryos" :key="embryo.code">
+          <v-switch v-model="embryoCodes" :label="embryo.code" :value="embryo.code"/>
+        </v-col>
+      </v-row>
+    </v-container>
   </v-card>
 </template>
+
 <script>
   import selectCustomer from '@/components/customer/SelectCustomer';
   import { colors } from '@/consts';
@@ -150,6 +160,8 @@
         locations: null,
         mares: [],
         stallions: [],
+        embryos: [],
+        embryoCodes: [],
         required: [
           v => !!v || 'Dit veld is verplicht'
         ],
@@ -164,6 +176,15 @@
       this.getLocations();
       this.getHorses();
       this.getNitrogenContainers();
+    },
+    watch: {
+      icsi: {
+        handler() {
+          this.createEmbryos();
+        },
+        deep: true,
+        immediate: true,
+      },
     },
     methods: {
       tubesAvailable(container) {
@@ -207,7 +228,7 @@
       async createICSI() {
         this.errored = false;
         try {
-          await icsiAPI.postICSI(this.icsi);
+          await icsiAPI.postICSI({ ...this.icsi, embryoCodes:this.embryoCodes });
           this.snackbar = true;
           await this.$router.push(`/icsi`);
           this.errored = false;
@@ -239,7 +260,7 @@
         }
       },
       updateCustomer(customer) {
-        this.icsi.owner = customer._id;
+        this.icsi.owner = customer;
       },
       formatDate(date) {
         if (!date) return null;
