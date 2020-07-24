@@ -268,6 +268,18 @@
         const [year, month, day] = date.split('-');
         return `${ day }/${ month }/${ year }`;
       },
+      createEmbryos() {
+        const { code, amount } = this.icsi;
+        const embryos = [];
+        for (let i = 0; i < amount; i++) {
+          embryos.push({
+            selected: true,
+            code: `${ i + 1 }-${ code }`,
+          });
+        }
+        this.embryos = embryos;
+        this.embryoCodes = embryos.map(emb => emb.code);
+      },
       validate() {
         if (this.$refs.form.validate()) {
           this.snackbar = true;
