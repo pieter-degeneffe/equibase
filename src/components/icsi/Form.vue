@@ -100,31 +100,6 @@
         <v-alert type="error" v-if="errored">
           {{ errorMessage }}
         </v-alert>
-        <v-row justify="end" dense>
-          <v-btn v-if="!icsi._id" :disabled="!valid" color="success" class="mr-4" @click="createICSI()" depressed>
-            ICSI opslaan
-          </v-btn>
-
-          <v-btn v-if="icsi._id" :disabled="!valid" color="success" depressed class="mr-4" @click="updateICSI()">
-            {{ icsi.type }} bijwerken
-          </v-btn>
-          <v-btn v-if="icsi._id" color="warning" depressed @click="deleteDialog = true">
-            {{ icsi.type }} verwijderen
-          </v-btn>
-          <v-dialog v-model="deleteDialog" persistent max-width="350">
-            <v-card>
-              <v-card-title class="headline">ICSI verwijderen?</v-card-title>
-              <v-card-text>Ben je zeker dat je het lot {{ icsi.code }} wilt verwijderen? Dit kan niet meer ongedaan
-                gemaakt worden
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer/>
-                <v-btn color="success" depressed @click="deleteDialog = false">Annuleren</v-btn>
-                <v-btn color="error" depressed @click="deleteICSI()">Verwijderen</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-row>
         <v-snackbar v-model="snackbar">
           ICSI is succesvol opgeslaan
           <v-btn color="pink" text @click="snackbar = false">
@@ -133,11 +108,42 @@
         </v-snackbar>
       </v-container>
     </v-form>
-    <v-container>
-      <v-row no-gutters>
+    <v-container v-if="valid">
+      <v-row>
+        <v-col cols="3" class="d-flex justify-space-between">
+          <v-btn text @click="selectAll">Alles selecteren</v-btn>
+          <v-btn text @click="deselectAll">Deselecteren</v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col cols="4" v-for="embryo in embryos" :key="embryo.code">
           <v-switch v-model="embryoCodes" :label="embryo.code" :value="embryo.code"/>
         </v-col>
+      </v-row>
+      <v-row justify="end" dense>
+        <v-btn v-if="!icsi._id" :disabled="!valid" color="success" class="mr-4" @click="createICSI()" depressed>
+          ICSI opslaan
+        </v-btn>
+
+        <v-btn v-if="icsi._id" :disabled="!valid" color="success" depressed class="mr-4" @click="updateICSI()">
+          {{ icsi.type }} bijwerken
+        </v-btn>
+        <v-btn v-if="icsi._id" color="warning" depressed @click="deleteDialog = true">
+          {{ icsi.type }} verwijderen
+        </v-btn>
+        <v-dialog v-model="deleteDialog" persistent max-width="350">
+          <v-card>
+            <v-card-title class="headline">ICSI verwijderen?</v-card-title>
+            <v-card-text>Ben je zeker dat je het lot {{ icsi.code }} wilt verwijderen? Dit kan niet meer ongedaan
+              gemaakt worden
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer/>
+              <v-btn color="success" depressed @click="deleteDialog = false">Annuleren</v-btn>
+              <v-btn color="error" depressed @click="deleteICSI()">Verwijderen</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-row>
     </v-container>
   </v-card>
@@ -162,9 +168,7 @@
         stallions: [],
         embryos: [],
         embryoCodes: [],
-        required: [
-          v => !!v || 'Dit veld is verplicht'
-        ],
+        required: [v => !!v || 'Dit veld is verplicht'],
         nitrogenContainers: [],
         collectionDateMenu: false,
         collectionColors: colors,
@@ -199,6 +203,12 @@
           return tubesAvailable;
         }
       },
+      selectAll() {
+        this.embryoCodes = this.embryos.map(em => em.code);
+      },
+      deselectAll() {
+        this.embryoCodes = [];
+      },
       async getNitrogenContainers() {
         try {
           const response = await nitrogenContainerAPI.getNitrogenContainers();
@@ -228,7 +238,7 @@
       async createICSI() {
         this.errored = false;
         try {
-          await icsiAPI.postICSI({ ...this.icsi, embryoCodes:this.embryoCodes });
+          await icsiAPI.postICSI({ ...this.icsi, embryoCodes: this.embryoCodes });
           this.snackbar = true;
           await this.$router.push(`/icsi`);
           this.errored = false;
