@@ -121,11 +121,11 @@
         </v-col>
       </v-row>
       <v-row justify="end" dense>
-        <v-btn v-if="!icsi._id" :disabled="!valid" color="success" class="mr-4" @click="createICSI()" depressed>
+        <v-btn v-if="!icsi._id" :disabled="!valid || !embryoCodes.length" color="success" class="mr-4" @click="createICSI()" depressed>
           ICSI opslaan
         </v-btn>
 
-        <v-btn v-if="icsi._id" :disabled="!valid" color="success" depressed class="mr-4" @click="updateICSI()">
+        <v-btn v-if="icsi._id" :disabled="!valid || !embryoCodes.length" color="success" depressed class="mr-4" @click="updateICSI()">
           {{ icsi.type }} bijwerken
         </v-btn>
         <v-btn v-if="icsi._id" color="warning" depressed @click="deleteDialog = true">
