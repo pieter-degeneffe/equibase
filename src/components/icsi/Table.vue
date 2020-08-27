@@ -163,6 +163,12 @@
       };
     },
     watch: {
+      options: {
+        handler() {
+          this.getICSIs();
+        },
+        deep:true
+      },
       filters: {
         handler() {
           this.getICSIs();
