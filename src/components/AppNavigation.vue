@@ -153,6 +153,11 @@ export default {
               url: "/settings/research-sheets",
               //icon: "mdi-battery-outline"
             },
+            {
+              text: "Producten",
+              url: "/settings/products",
+              //icon: ""
+            },
           ]
         }
       ],
