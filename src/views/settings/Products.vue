@@ -1,5 +1,6 @@
 <template>
-  <v-card class="ma-5" outlined>
+  <div>
+    <productsTable title="Productenlijst" :headers="headers"></productsTable>
     <v-data-table :headers="headers" :items="products" :loading="loading" loading-text="Bezig met laden...">
       <template v-slot:top>
         <v-toolbar flat color="white">
@@ -75,115 +76,119 @@
         </v-alert>
       </v-col>
     </v-row>
-  </v-card>
+  </div>
 </template>
 
 <script>
-import productsAPI from "@/services/ProductsAPI.js";
+  import productsAPI from '@/services/ProductsAPI.js';
+  import productsTable from '@/components/products/Table';
 
-export default {
-  data() {
-    return {
-      dialog: false,
-      loading: null,
-      valid: false,
-      errored: false,
-      errorMessage: '',
-      required: [
-        v => !!v || 'Dit veld is verplicht'
-      ],
-      headers: [
-        {text: 'Productnaam', align: 'left', sortable: true, value: 'name'},
-        {text: 'Type', align: 'left', sortable: true, value: 'type'},
-        {text: 'CNK', align: 'left', sortable: true, value: 'CNK'},
-        {text: 'Eenheid', align: 'left', sortable: false, value: 'outgoingUnit'},
-        {text: 'BTW', align: 'left', sortable: false, value: 'tax'},
-        {text: 'Verkoopsprijs', align: 'left', sortable: false, value: 'sellingPrice'},
-        {text: 'Verkoopsprijs/eenheid', align: 'left', sortable: false, value: 'sellingPricePerUnit'},
-        //{ text: 'supplementAdministration', align: 'left', sortable: false, value: 'supplementAdministration' },
-        //{ text: 'waitingTime', align: 'left', sortable: false, value: 'waitingTime' },
-        //{ text: 'unitSellingPrice', align: 'left', sortable: false, value: 'unitSellingPrice' },
-        //{ text: 'unitAdministrationPrice', align: 'left', sortable: false, value: 'unitAdministrationPrice' },
-        {text: 'Bewerken', align: 'right', sortable: false, value: 'action'},
-      ],
-      // te refactoren
-      types: ['Materiaal','Geneesmiddel','Voedingssupplement','Ontsmettingsmiddel'],
-      tax: ['6%','21'],
-      products: [],
-      editedIndex: -1,
-      editedItem: {
-        name: ''
-      },
-      defaultItem: {
-        name: ''
-      },
-    }
-  },
-  mounted() {
-    this.loadProducts();
-  },
-  watch: {
-    dialog(val) {
-      val || this.close()
-    }
-  },
-  methods: {
-    async loadProducts() {
-      this.loading = true;
-      try {
-        const response = await productsAPI.getProduct();
-        this.products = response.data.products;
-        //console.table(response.data.products);
-      } catch (e) {
-        console.log(e);
-        this.errored = true;
-        this.errorMessage = e.response.data.message;
-      } finally {
-        this.loading = false;
+  export default {
+    data() {
+      return {
+        dialog: false,
+        loading: null,
+        valid: false,
+        errored: false,
+        errorMessage: '',
+        required: [
+          v => !!v || 'Dit veld is verplicht'
+        ],
+        headers: [
+          {text: 'Productnaam', align: 'left', sortable: true, value: 'name'},
+          {text: 'Type', align: 'left', sortable: true, value: 'type'},
+          {text: 'CNK', align: 'left', sortable: true, value: 'CNK'},
+          {text: 'Eenheid', align: 'left', sortable: false, value: 'outgoingUnit'},
+          {text: 'BTW', align: 'left', sortable: false, value: 'tax'},
+          {text: 'Verkoopsprijs', align: 'left', sortable: false, value: 'sellingPrice'},
+          {text: 'Verkoopsprijs/eenheid', align: 'left', sortable: false, value: 'sellingPricePerUnit'},
+          //{ text: 'supplementAdministration', align: 'left', sortable: false, value: 'supplementAdministration' },
+          //{ text: 'waitingTime', align: 'left', sortable: false, value: 'waitingTime' },
+          //{ text: 'unitSellingPrice', align: 'left', sortable: false, value: 'unitSellingPrice' },
+          //{ text: 'unitAdministrationPrice', align: 'left', sortable: false, value: 'unitAdministrationPrice' },
+          {text: 'Bewerken', align: 'right', sortable: false, value: 'action'},
+        ],
+        // te refactoren
+        types: ['Materiaal','Geneesmiddel','Voedingssupplement','Ontsmettingsmiddel'],
+        tax: ['6%','21'],
+        products: [],
+        editedIndex: -1,
+        editedItem: {
+          name: ''
+        },
+        defaultItem: {
+          name: ''
+        },
       }
     },
-    async deleteItem(item) {
-      try {
-        this.loading = true;
-        this.errored = false;
-        await productsAPI.deleteProduct(item.id);
-        this.loadProducts();
-        /*if (response) {
-          const index = this.products.indexOf(item)
-          this.products.splice(index, 1)
-        }*/
-      } catch (e) {
-        console.log(e);
-        this.errored = true;
-        this.errorMessage = e.response.data.message;
-      } finally {
-        this.loading = false;
+    components: {
+      productsTable
+    },
+    mounted() {
+      this.loadProducts();
+    },
+    watch: {
+      dialog(val) {
+        val || this.close()
       }
     },
-    close() {
-      this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
-    },
-    async save() {
-      try {
+    methods: {
+      async loadProducts() {
         this.loading = true;
-        this.errored = false;
-        const response = await productsAPI.postProduct(this.editedItem);
-        console.log(response);
-        if (response) {
-          this.products.push(response.data);
+        try {
+          const response = await productsAPI.getProduct();
+          this.products = response.data.products;
+          //console.table(response.data.products);
+        } catch (e) {
+          console.log(e);
+          this.errored = true;
+          this.errorMessage = e.response.data.message;
+        } finally {
+          this.loading = false;
         }
-      } catch(e) {
-        this.errored = true;
-        this.errorMessage = e.response.data.message;
-      } finally {
-        this.close()
-        this.loading = false;
+      },
+      async deleteItem(item) {
+        try {
+          this.loading = true;
+          this.errored = false;
+          await productsAPI.deleteProduct(item.id);
+          this.loadProducts();
+          /*if (response) {
+            const index = this.products.indexOf(item)
+            this.products.splice(index, 1)
+          }*/
+        } catch (e) {
+          console.log(e);
+          this.errored = true;
+          this.errorMessage = e.response.data.message;
+        } finally {
+          this.loading = false;
+        }
+      },
+      close() {
+        this.dialog = false
+        setTimeout(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        }, 300)
+      },
+      async save() {
+        try {
+          this.loading = true;
+          this.errored = false;
+          const response = await productsAPI.postProduct(this.editedItem);
+          console.log(response);
+          if (response) {
+            this.products.push(response.data);
+          }
+        } catch(e) {
+          this.errored = true;
+          this.errorMessage = e.response.data.message;
+        } finally {
+          this.close()
+          this.loading = false;
+        }
       }
     }
   }
-}
 </script>
