@@ -1,7 +1,7 @@
 <template>
   <div>
     <productsTable title="Productenlijst" :headers="headers"></productsTable>
-    <v-data-table :headers="headers" :items="products" :loading="loading" loading-text="Bezig met laden...">
+    <!-- <v-data-table :headers="headers" :items="products" :loading="loading" loading-text="Bezig met laden...">
       <template v-slot:top>
         <v-toolbar flat color="white">
           <v-spacer></v-spacer>
@@ -68,14 +68,7 @@
           mdi-delete
         </v-icon>
       </template>
-    </v-data-table>
-    <v-row v-if="errored">
-      <v-col cols="12">
-        <v-alert type="error" v-if="errored" class="mx-5">
-          {{ errorMessage }}
-        </v-alert>
-      </v-col>
-    </v-row>
+    </v-data-table> -->
   </div>
 </template>
 
@@ -109,7 +102,7 @@
           {text: 'Bewerken', align: 'right', sortable: false, value: 'action'},
         ],
         // te refactoren
-        types: ['Materiaal','Geneesmiddel','Voedingssupplement','Ontsmettingsmiddel'],
+        /* types: ['Materiaal','Geneesmiddel','Voedingssupplement','Ontsmettingsmiddel'],
         tax: ['6%','21'],
         products: [],
         editedIndex: -1,
@@ -118,7 +111,7 @@
         },
         defaultItem: {
           name: ''
-        },
+        },*/
       }
     },
     components: {
