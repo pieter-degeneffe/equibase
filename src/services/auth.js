@@ -81,6 +81,9 @@ export function setIdToken() {
 }
 
 export function isLoggedIn() {
+  if(process.env.NODE_ENV === 'development') {
+    return true;
+  }
   const idToken = getIdToken();
   return !!idToken && !isTokenExpired(idToken);
 }
