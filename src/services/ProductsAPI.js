@@ -3,5 +3,6 @@ export default {
     postProduct: (product) => API().post("/api/product", { product }),
     getAllProducts: () => API().get("/api/product"),
     getProduct: (id) => API().get(`/api/product/${ id }`),
+    putProduct: (product) => API().put(`/api/product/${ product._id }`, { product }),
     deleteProduct: (id) => API().delete("/api/product/" + id)
 };
