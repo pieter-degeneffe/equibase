@@ -121,6 +121,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/settings/products/create",
+    props: true,
+    component: () => import("@/views/settings/Create"),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/callback',
     component: () => import('@/components/Callback')
   },
