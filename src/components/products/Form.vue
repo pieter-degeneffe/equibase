@@ -17,7 +17,7 @@
           </v-col>
           <v-col cols="12" md="4">
             <v-select
-              :rules="required" :items="tax"
+              :rules="required" :items="taxes"
               v-model="product.tax" label="Product tax"
               :loading="loading" outlined></v-select>
           </v-col>
@@ -109,9 +109,12 @@
         valid: false,
         snackbar: false,
         required: [v => !!v || 'Dit veld is verplicht'],
-        types: ['Materiaal','Geneesmiddel','Voedingssupplement','Ontsmettingsmiddel'],
-        tax: ['6%','21'],
+        types: [],
+        taxes: []
       }
+    },
+    mounted() {
+      this.getConfig();
     },
     methods: {
       async createProduct() {
@@ -126,6 +129,17 @@
           this.errorMessage = err.response.data.message;
         }
       },
+      async getConfig() {
+        this.errored = false;
+        try {
+          const { data: { types, tax } } = await productsAPI.getConfig();
+          this.types = types;
+          this.taxes = tax;
+        } catch (err) {
+          this.errored = true;
+          this.errorMessage = err.response.data.message;
+        }
+      }
     }
   }
 </script>
