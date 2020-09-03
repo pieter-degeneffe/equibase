@@ -19,7 +19,7 @@
 
 <script>
   //import { productsAPI } from '../../services';
-  import productsAPI from '@/services/ProductsAPI.js';
+  import productsAPI from '@/services/ProductsAPI';
 
   export default {
     props: ['title', 'headers'],
@@ -49,10 +49,8 @@
       async getProducts() {
         this.loading = true;
         try {
-          console.log('hey');
-          const response = await productsAPI.getProduct();
-          this.products = response.data.products;
-          //console.table(response.data.products);
+          const { data: { products } } = await productsAPI.getProduct();
+          this.products = products;
         } catch (e) {
           console.log(e);
           this.errored = true;
@@ -66,7 +64,7 @@
           this.loading = true;
           this.errored = false;
           await productsAPI.deleteProduct(item.id);
-          this.getProducts();
+          await this.getProducts();
         } catch (e) {
           console.log(e);
           this.errored = true;
@@ -78,7 +76,7 @@
       close() {
         this.dialog = false
         setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedItem = { ...this.defaultItem }
           this.editedIndex = -1
         }, 300)
       },
@@ -86,10 +84,9 @@
         try {
           this.loading = true;
           this.errored = false;
-          const response = await productsAPI.postProduct(this.editedItem);
-          console.log(response);
-          if (response) {
-            this.products.push(response.data);
+          const { data } = await productsAPI.postProduct(this.editedItem);
+          if (data) {
+            this.products.push(data);
           }
         } catch(e) {
           this.errored = true;
