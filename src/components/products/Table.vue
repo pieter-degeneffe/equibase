@@ -7,6 +7,9 @@
           mdi-delete
         </v-icon>
       </template>
+      <template v-slot:no-data>
+        Geen producten gevonden
+      </template>
     </v-data-table>
     <v-row v-if="errored">
       <v-col cols="12">
@@ -30,17 +33,6 @@
         loading: false,
         errored: false,
         errorMessage: '',
-        // te refactoren
-        /*types: ['Materiaal','Geneesmiddel','Voedingssupplement','Ontsmettingsmiddel'],
-        tax: ['6%','21'],
-        products: [],
-        editedIndex: -1,
-        editedItem: {
-          name: ''
-        },
-        defaultItem: {
-          name: ''
-        },*/
       };
     },
     mounted() {
