@@ -1,6 +1,7 @@
 <template>
   <v-card class="mx-5 mt-5 mb-12" outlined>
-    <v-data-table :headers="headers" :items="products">
+    <v-data-table :headers="headers" :items="products"
+                  :loading="loading" loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:item.action="{ item }">
         <v-icon small @click="deleteItem(item)">
           mdi-delete
@@ -49,7 +50,7 @@
       async getProducts() {
         this.loading = true;
         try {
-          const { data: { products } } = await productsAPI.getProduct();
+          const { data: { products } } = await productsAPI.getAllProducts();
           this.products = products;
         } catch (e) {
           console.log(e);
