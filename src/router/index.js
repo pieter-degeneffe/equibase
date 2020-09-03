@@ -117,13 +117,13 @@ const routes = [
   {
     path: "/settings/products",
     name: "Producten overview",
-    component: () => import("@/views/settings/Products"),
+    component: () => import("@/views/settings/products/index"),
     beforeEnter: requireAuth
   },
   {
-    path: "/settings/products/create",
+    path: "/settings/product/:id",
     props: true,
-    component: () => import("@/views/settings/Create"),
+    component: () => import("@/views/settings/products/product"),
     beforeEnter: requireAuth
   },
   {

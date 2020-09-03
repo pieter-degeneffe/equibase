@@ -3,6 +3,9 @@
     <v-data-table :headers="headers" :items="products"
                   :loading="loading" loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:item.action="{ item }">
+        <v-icon small class="mr-2" @click="openProductPage(item.id)">
+          mdi-pencil
+        </v-icon>
         <v-icon small @click="deleteItem(item)">
           mdi-delete
         </v-icon>
@@ -66,6 +69,9 @@
           this.loading = false;
         }
       },
+      openProductPage(id) {
+        this.$router.push("/settings/product/" + id);
+      }
     }
   }
 
