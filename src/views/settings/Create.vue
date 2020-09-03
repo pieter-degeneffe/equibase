@@ -1,5 +1,8 @@
 <template>
   <v-card class="ma-5" outlined>
+    <v-toolbar flat color="primary" dark>
+      <v-toolbar-title>{{ product.name }}</v-toolbar-title>
+    </v-toolbar>
     <products-form :product="product" :loading="loading"></products-form>
   </v-card>
 </template>

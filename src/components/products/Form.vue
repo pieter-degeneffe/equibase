@@ -89,7 +89,7 @@
     </v-form>
     <v-container v-if="valid">
       <v-row justify="end" dense>
-        <v-btn :disabled="!valid" depressed class="mr-4" @click="createProduct()">
+        <v-btn :disabled="!valid" color="success" class="mr-4" @click="createProduct()" depressed>
           Product opslaan
         </v-btn>
       </v-row>
