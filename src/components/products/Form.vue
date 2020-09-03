@@ -120,7 +120,7 @@
       async createProduct() {
         this.errored = false;
         try {
-          await productsAPI.postProduct({ ...this.product });
+          await productsAPI.postProduct(this.product);
           this.snackbar = true;
           await this.$router.push(`/settings/products`);
           this.errored = false;
