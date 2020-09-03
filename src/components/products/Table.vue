@@ -66,29 +66,6 @@
           this.loading = false;
         }
       },
-      close() {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = { ...this.defaultItem }
-          this.editedIndex = -1
-        }, 300)
-      },
-      async save() {
-        try {
-          this.loading = true;
-          this.errored = false;
-          const { data } = await productsAPI.postProduct(this.editedItem);
-          if (data) {
-            this.products.push(data);
-          }
-        } catch(e) {
-          this.errored = true;
-          this.errorMessage = e.response.data.message;
-        } finally {
-          this.close()
-          this.loading = false;
-        }
-      }
     }
   }
 
