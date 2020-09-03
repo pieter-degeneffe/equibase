@@ -25,7 +25,6 @@
         try {
           const product = await productsAPI.getProduct(id);
           this.product = product.data;
-          console.table(this.product);
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
