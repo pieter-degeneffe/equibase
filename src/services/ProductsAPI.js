@@ -1,8 +1,9 @@
 import API from "@/services/API";
 export default {
     postProduct: (product) => API().post("/api/product", { product }),
-    getProduct: () => API().get("/api/product"),
-    deleteProduct(id) {
-        return API().delete("/api/product/" + id);
-    },
+    getAllProducts: () => API().get("/api/product"),
+    getProduct: (id) => API().get(`/api/product/${ id }`),
+    getConfig: () => API().get('/api/product/config'),
+    putProduct: (product) => API().put(`/api/product/${ product._id }`, { product }),
+    deleteProduct: (id) => API().delete("/api/product/" + id)
 };
