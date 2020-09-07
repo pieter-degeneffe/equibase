@@ -80,6 +80,12 @@ export default {
     this.getAllStock();
   },
   computed: {
+    filteredStock() {
+      return this.products.map(product => {
+        let filtered = {...product};
+        return filtered;
+      });
+    },
     URLParameters() {
       return {
         'page': this.options.page,
