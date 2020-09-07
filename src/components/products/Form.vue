@@ -89,8 +89,11 @@
     </v-form>
     <v-container v-if="valid">
       <v-row justify="end" dense>
-        <v-btn :disabled="!valid" color="success" class="mr-4" @click="createProduct()" depressed>
+        <v-btn v-if="!product._id" :disabled="!valid" color="success" class="mr-4" @click="createProduct()" depressed>
           Product opslaan
+        </v-btn>
+        <v-btn v-if="product._id" :disabled="!valid" color="success" class="mr-4" @click="editProduct()" depressed>
+          Product aanpassen
         </v-btn>
       </v-row>
     </v-container>
@@ -117,13 +120,27 @@
       this.getConfig();
     },
     methods: {
+      async productHandler(data) {
+        this.$emit('update-product', data);
+        this.snackbar = true;
+        await this.$router.push(`/settings/products`);
+        this.errored = false;
+      },
       async createProduct() {
         this.errored = false;
         try {
-          await productsAPI.postProduct(this.product);
-          this.snackbar = true;
-          await this.$router.push(`/settings/products`);
-          this.errored = false;
+          const { data } = await productsAPI.postProduct(this.product);
+          await this.productHandler(data);
+        } catch (err) {
+          this.errored = true;
+          this.errorMessage = err.response.data.message;
+        }
+      },
+      async editProduct() {
+        this.errored = false;
+        try {
+          const { data } = await productsAPI.putProduct(this.product);
+          await this.productHandler(data);
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
