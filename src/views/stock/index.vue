@@ -1,6 +1,6 @@
 <template>
   <div>
-    <stockTable title="Stock overzicht" :headers="headers"></stockTable>
+    <stockTable title="Stock overzicht" :headers="headers" :filters="filters"/>
   </div>
 </template>
 
@@ -30,7 +30,8 @@
           CNK: null,
           eenheid: null,
           remaining: null,
-        }
+        },
+        sortBy: 'name'
       }
     },
     components: {
