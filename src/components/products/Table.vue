@@ -83,8 +83,6 @@
         this.$router.push(`/settings/product/${id}`);
       }
     },
-    components: {
-    },
   }
 
 </script>
