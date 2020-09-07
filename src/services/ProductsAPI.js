@@ -5,6 +5,6 @@ export default {
     getProduct: (id) => API().get(`/api/product/${ id }`),
     getConfig: () => API().get('/api/product/config'),
     putProduct: (product) => API().put(`/api/product/${ product._id }`, { product }),
-    deleteProduct: (id) => API().delete('/api/product/' + id),
+    deleteProduct: (id) => API().delete(`/api/product/${id}`),
     searchProduct: (searchValue) => API().get( `/api/product/${ searchValue }`)
 };
