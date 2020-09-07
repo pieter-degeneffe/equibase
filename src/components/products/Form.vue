@@ -102,7 +102,6 @@
 
 <script>
   import productsAPI from '@/services/ProductsAPI';
-  //import product from "@/views/settings/products/product";
 
   export default {
     props: ['product', 'loading'],
