@@ -1,6 +1,16 @@
 <template>
   <v-card class="mx-5 mt-5 mb-12" outlined>
-    <v-data-table :headers="headers" :items="products"
+    <v-toolbar flat>
+      <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Search"
+          single-line
+          hide-details
+      >
+      </v-text-field>
+    </v-toolbar>
+    <v-data-table :headers="headers" :items="products" :search="search"
                   :loading="loading" loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:item.action="{ item }">
         <v-icon small class="mr-2" @click="openProductPage(item.id)">
@@ -25,13 +35,13 @@
 </template>
 
 <script>
-  //import { productsAPI } from '../../services';
   import productsAPI from '@/services/ProductsAPI';
 
   export default {
     props: ['title', 'headers'],
     data() {
       return {
+        search: '',
         products: [],
         loading: false,
         errored: false,
@@ -72,7 +82,7 @@
       openProductPage(id) {
         this.$router.push(`/settings/product/${id}`);
       }
-    }
+    },
   }
 
 </script>
