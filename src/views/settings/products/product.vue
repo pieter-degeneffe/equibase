@@ -15,7 +15,7 @@
     props: ['id'],
     data() {
       return {
-        product: [],
+        product: {},
         loading: null
       }
     },
