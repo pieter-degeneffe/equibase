@@ -120,14 +120,17 @@
       this.getConfig();
     },
     methods: {
+      async productHandler(data) {
+        this.$emit('update-product', data);
+        this.snackbar = true;
+        await this.$router.push(`/settings/products`);
+        this.errored = false;
+      },
       async createProduct() {
         this.errored = false;
         try {
           const { data } = await productsAPI.postProduct(this.product);
-          this.$emit('update-product', data);
-          this.snackbar = true;
-          await this.$router.push(`/settings/products`);
-          this.errored = false;
+          await this.productHandler(data);
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
@@ -137,9 +140,7 @@
         this.errored = false;
         try {
           const { data } = await productsAPI.putProduct(this.product);
-          this.$emit('update-product', data);
-          await this.$router.push(`/settings/products`);
-          this.errored = false;
+          await this.productHandler(data);
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
