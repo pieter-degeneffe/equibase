@@ -76,6 +76,10 @@ export default {
           url: "/icsi",
         },
         {
+          text: "Stock",
+          url: "/stock",
+        },
+        {
           text: "Paarden",
           //icon: "mdi-alpha-p-circle",
           //icon: "mdi-horseshoe",
