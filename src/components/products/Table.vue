@@ -70,7 +70,7 @@
         }
       },
       openProductPage(id) {
-        this.$router.push("/settings/product/" + id);
+        this.$router.push(`/settings/product/${id}`);
       }
     }
   }
