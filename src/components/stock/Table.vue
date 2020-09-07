@@ -2,25 +2,17 @@
   <v-card class="mx-5 mt-5 mb-12" outlined>
     <v-toolbar flat>
       <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Zoeken"
-          single-line
-          hide-details
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Zoeken"
+        single-line
+        hide-details
       >
       </v-text-field>
     </v-toolbar>
     <v-data-table :headers="headers" :items="products" :search="search"
                   :loading="loading" loading-text="Bezig met laden..."
                   class="ma-5">
-      <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="openProductPage(item.id)">
-          mdi-pencil
-        </v-icon>
-        <v-icon small @click="deleteItem(item)">
-          mdi-delete
-        </v-icon>
-      </template>
       <template v-slot:no-data>
         Geen producten gevonden
       </template>
@@ -36,7 +28,7 @@
 </template>
 
 <script>
-  import productsAPI from '@/services/ProductsAPI';
+  import stockAPI from '@/services/StockAPI';
 
   export default {
     props: ['title', 'headers'],
@@ -50,39 +42,21 @@
       };
     },
     mounted() {
-      this.getProducts();
+      this.getAllStock();
     },
     methods: {
-      async getProducts() {
+      async getAllStock() {
         this.loading = true;
         try {
-          const { data: { products } } = await productsAPI.getAllProducts();
-          this.products = products;
+          const { data: { data } } = await stockAPI.getAllStock();
+          this.products = data;
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
         } finally {
           this.loading = false;
         }
-      },
-      async deleteItem(item) {
-        try {
-          this.loading = true;
-          this.errored = false;
-          await productsAPI.deleteProduct(item.id);
-          await this.getProducts();
-        } catch (e) {
-          console.log(e);
-          this.errored = true;
-          this.errorMessage = e.response.data.message;
-        } finally {
-          this.loading = false;
-        }
-      },
-      openProductPage(id) {
-        this.$router.push(`/settings/product/${id}`);
       }
     },
   }
-
 </script>

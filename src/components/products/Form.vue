@@ -25,13 +25,13 @@
         <v-row dense>
           <v-col cols="12" md="4">
             <v-text-field
-              :rules="required" type="number"
+              :rules="required" type="text"
               v-model="product.CNK" label="CNK"
               :loading="loading" outlined/>
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
-              :rules="required" type="number"
+              :rules="required" type="text"
               v-model="product.outgoingUnit" label="outgoingUnit"
               :loading="loading" outlined/>
           </v-col>

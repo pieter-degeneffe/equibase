@@ -1,15 +1,11 @@
 <template>
   <div>
-    <productsTable title="Productenlijst" :headers="headers"></productsTable>
-    <v-btn button color="primary" class="ma-2 white--text" depressed dark @click="openProductPage()" fixed right>
-      product toevoegen
-      <v-icon right dark>mdi-plus</v-icon>
-    </v-btn>
+    <stockTable title="Stock overzicht" :headers="headers"></stockTable>
   </div>
 </template>
 
 <script>
-  import productsTable from '@/components/products/Table';
+  import stockTable from '@/components/stock/Table';
 
   export default {
     data() {
@@ -18,7 +14,7 @@
           {text: 'Productnaam', align: 'left', sortable: true, value: 'name'},
           {text: 'Type', align: 'left', sortable: true, value: 'type'},
           {text: 'CNK', align: 'left', sortable: true, value: 'CNK'},
-          {text: 'Eenheid', align: 'left', sortable: false, value: 'outgoingUnit'},
+          {text: 'Eenheid', align: 'left', sortable: true, value: 'outgoingUnit'},
           {text: 'BTW', align: 'left', sortable: false, value: 'tax'},
           {text: 'Verkoopsprijs', align: 'left', sortable: false, value: 'sellingPrice'},
           {text: 'Verkoopsprijs/eenheid', align: 'left', sortable: false, value: 'sellingPricePerUnit'},
@@ -26,17 +22,19 @@
           //{ text: 'waitingTime', align: 'left', sortable: false, value: 'waitingTime' },
           //{ text: 'unitSellingPrice', align: 'left', sortable: false, value: 'unitSellingPrice' },
           //{ text: 'unitAdministrationPrice', align: 'left', sortable: false, value: 'unitAdministrationPrice' },
-          {text: 'Bewerken', align: 'right', sortable: false, value: 'action'},
+          {text: 'Remaining', align: 'right', sortable: true, value: 'remaining'},
         ],
+        filters: {
+          name: null,
+          type: null,
+          CNK: null,
+          eenheid: null,
+          remaining: null,
+        }
       }
     },
     components: {
-      productsTable
+      stockTable
     },
-    methods: {
-      openProductPage(id) {
-        this.$router.push({ path: `/settings/product/${id}` });
-      }
-    }
   }
 </script>
