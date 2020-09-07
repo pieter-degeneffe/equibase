@@ -117,7 +117,7 @@ const routes = [
   {
     path: "/settings/products",
     name: "Producten overview",
-    component: () => import("@/views/settings/products/index"),
+    component: () => import("@/views/settings/products"),
     beforeEnter: requireAuth
   },
   {
