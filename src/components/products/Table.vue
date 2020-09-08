@@ -4,14 +4,15 @@
       <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
-          label="Search"
+          label="Zoeken"
           single-line
           hide-details
       >
       </v-text-field>
     </v-toolbar>
     <v-data-table :headers="headers" :items="products" :search="search"
-                  :loading="loading" loading-text="Bezig met laden..." class="ma-5">
+                  :loading="loading" loading-text="Bezig met laden..."
+                  class="ma-5">
       <template v-slot:item.action="{ item }">
         <v-icon small class="mr-2" @click="openProductPage(item.id)">
           mdi-pencil
@@ -57,10 +58,9 @@
         try {
           const { data: { products } } = await productsAPI.getAllProducts();
           this.products = products;
-        } catch (e) {
-          console.log(e);
+        } catch (err) {
           this.errored = true;
-          this.errorMessage = e.response.data.message;
+          this.errorMessage = err.response.data.message;
         } finally {
           this.loading = false;
         }

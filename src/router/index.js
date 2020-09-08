@@ -127,6 +127,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/stock",
+    name: "Stock overview",
+    component: () => import("@/views/stock/index"),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/callback',
     component: () => import('@/components/Callback')
   },

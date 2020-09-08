@@ -109,7 +109,7 @@
           </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
