@@ -16,7 +16,9 @@
     data() {
       return {
         product: {},
-        loading: null
+        loading: null,
+        errored: false,
+        errorMessage: '',
       }
     },
     beforeMount() {

@@ -19,6 +19,18 @@
       <template v-slot:no-data>
         Geen producten gevonden
       </template>
+      <template v-slot:item="props">
+        <tr @click="openStockProductPage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.type }}</td>
+          <td>{{ props.item.CNK }}</td>
+          <td>{{ props.item.outgoingUnit }}</td>
+          <td>{{ props.item.tax }}</td>
+          <td>{{ props.item.sellingPrice }}</td>
+          <td>{{ props.item.sellingPricePerUnit }}</td>
+          <td align="right">{{ props.item.remaining }}</td>
+        </tr>
+      </template>
     </v-data-table>
     <v-dialog v-model="filterDialog" max-width="490">
       <v-card>
@@ -122,6 +134,12 @@ export default {
     }
   },
   methods: {
+    openStockProductPage(id) {
+      this.$router.push(`/stock/${ id }`);
+    },
+    mouseOver(hoverState) {
+      hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
+    },
     async getAllStock() {
       this.loading = true;
       try {
