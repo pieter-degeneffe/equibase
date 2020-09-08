@@ -5,5 +5,7 @@ export { default as horseAPI } from './HorseAPI';
 export { default as icsiAPI } from './icsi';
 export { default as locationAPI } from './LocationAPI';
 export { default as nitrogenContainerAPI } from './NitrogenContainerAPI';
+export { default as productsAPI } from './ProductsAPI';
+export { default as stockAPI } from './StockAPI';
 export * from './SearchAPI';
 export * from './SemenAPI';

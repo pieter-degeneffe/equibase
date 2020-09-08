@@ -15,23 +15,25 @@
           {text: 'Type', align: 'left', sortable: true, value: 'type'},
           {text: 'CNK', align: 'left', sortable: true, value: 'CNK'},
           {text: 'Eenheid', align: 'left', sortable: true, value: 'outgoingUnit'},
-          {text: 'BTW', align: 'left', sortable: false, value: 'tax'},
-          {text: 'Verkoopsprijs', align: 'left', sortable: false, value: 'sellingPrice'},
-          {text: 'Verkoopsprijs/eenheid', align: 'left', sortable: false, value: 'sellingPricePerUnit'},
-          //{ text: 'supplementAdministration', align: 'left', sortable: false, value: 'supplementAdministration' },
-          //{ text: 'waitingTime', align: 'left', sortable: false, value: 'waitingTime' },
-          //{ text: 'unitSellingPrice', align: 'left', sortable: false, value: 'unitSellingPrice' },
-          //{ text: 'unitAdministrationPrice', align: 'left', sortable: false, value: 'unitAdministrationPrice' },
+          {text: 'BTW', align: 'left', sortable: true, value: 'tax'},
+          {text: 'Verkoopsprijs', align: 'left', sortable: true, value: 'sellingPrice'},
+          {text: 'Verkoopsprijs/eenheid', align: 'left', sortable: true, value: 'sellingPricePerUnit'},
+          //{ text: 'supplementAdministration', align: 'left', sortable: true, value: 'supplementAdministration' },
+          //{ text: 'waitingTime', align: 'left', sortable: false, true: 'waitingTime' },
+          //{ text: 'unitSellingPrice', align: 'left', sortable: true, value: 'unitSellingPrice' },
+          //{ text: 'unitAdministrationPrice', align: 'left', sortable: true, value: 'unitAdministrationPrice' },
           {text: 'Remaining', align: 'right', sortable: true, value: 'remaining'},
         ],
         filters: {
           name: null,
           type: null,
           CNK: null,
+          tax: null,
           eenheid: null,
           remaining: null,
         },
-        sortBy: 'name'
+        sortBy: 'name',
+        sortDesc: false
       }
     },
     components: {

@@ -8,13 +8,12 @@
           single-line
           hide-details
       />
-      <v-spacer/>
-      <v-btn color="primary" dark @click="openFilterDialog" class="mr-2 d-print-none">
+      <v-btn color="primary" dark @click="openFilterDialog" class="mr-2 ml-5 d-print-none">
         <v-icon left>mdi-filter</v-icon>
         Filters
       </v-btn>
     </v-toolbar>
-    <v-data-table :headers="headers" :items="filteredStock" :search="search"
+    <v-data-table :headers="headers" :items="products" :search="search"
                   :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc"
                   loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:no-data>
@@ -25,20 +24,42 @@
       <v-card>
         <v-card-text class="pt-5">
           <v-row dense>
-            <v-col cols="6">
+            <v-col cols="12">
               <v-autocomplete
                   v-model="filters.type"
                   outlined
                   label="Filter op type"
-                  :items="products"
-                  :item-text="productType"
-                  item-value="type"
+                  :items="types"
                   multiple
+                  hide-details
+              />
+            </v-col>
+            <v-col cols="6">
+              <v-autocomplete
+                  v-model="filters.tax"
+                  outlined
+                  label="Filter op BTW"
+                  :items="taxes"
+                  item-value="tax"
+                  multiple
+                  hide-details
+              />
+            </v-col>
+            <v-col cols="6">
+              <v-autocomplete
+                  v-model="options.remaining"
+                  outlined
+                  label="Filter op remaining"
+                  :items="remaining"
                   hide-details
               />
             </v-col>
           </v-row>
         </v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
     <v-row v-if="errored">
@@ -52,23 +73,33 @@
 </template>
 
 <script>
-import stockAPI from '@/services/StockAPI';
+import { stockAPI, productsAPI } from '../../services';
 
 export default {
   props: ['title', 'headers', 'filters', 'sortBy'],
   data() {
     return {
       search: '',
-      products: [],
       loading: false,
       errored: false,
       errorMessage: '',
       filterDialog: false,
       sortDesc: true,
-      options: {}
+      options: {
+        remaining: 'All',},
+      products: [],
+      types: [],
+      taxes: [],
+      remaining: ['All', 'In stock', 'Out of stock']
     };
   },
   watch: {
+    options: {
+      handler() {
+        this.getAllStock();
+      },
+      deep: true
+    },
     filters: {
       handler() {
         this.getAllStock();
@@ -77,26 +108,16 @@ export default {
     }
   },
   mounted() {
+    this.getConfig();
     this.getAllStock();
   },
   computed: {
-    filteredStock() {
-      return this.products.map(product => {
-        let filtered = {...product};
-        return filtered;
-      });
-    },
     URLParameters() {
       return {
-        'page': this.options.page,
-        'limit': this.options.itemsPerPage,
-        'sortBy': this.options.sortBy,
-        'sortDesc': this.options.sortDesc,
         name: this.filters.name !== null ? this.filters.name : undefined,
         type: this.filters.type !== null ? this.filters.type : undefined,
-        CNK: this.filters.CNK !== null ? this.filters.CNK : undefined,
+        tax: this.filters.tax !== null ? this.filters.tax : undefined,
         outgoingUnit: this.filters.eenheid !== null ? this.filters.eenheid : undefined,
-        remaining: this.filters.remaining !== null ? this.filters.remaining : undefined,
       };
     }
   },
@@ -105,7 +126,11 @@ export default {
       this.loading = true;
       try {
         const {data: {data}} = await stockAPI.getAllStock(this.URLParameters);
-        this.products = data;
+        if(this.options.remaining === 'All'){
+          this.products = data;
+        } else {
+          this.products = data.filter(prod => this.options.remaining === "Out of stock" ? (prod.remaining === 0) : (prod.remaining > 0));
+        }
       } catch (err) {
         this.errored = true;
         console.log(err)
@@ -117,8 +142,16 @@ export default {
     openFilterDialog() {
       this.filterDialog = true;
     },
-    productType(product) {
-      return product.type;
+    async getConfig() {
+      this.errored = false;
+      try {
+        const { data: { types, tax } } = await productsAPI.getConfig();
+        this.types = types;
+        this.taxes = tax;
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
     }
   },
 }
