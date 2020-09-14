@@ -4,6 +4,24 @@
       <template v-slot:no-data>
         Geen batches gevonden
       </template>
+      <template v-slot:top>
+      <tr>
+        <td>
+          <v-edit-dialog @save="save" :return-value.sync="props.item.lotNumber">
+            <div>{{ props.item.lotNumber }}</div>
+            <template v-slot:input>
+              <v-text-field
+                  v-model="props.item.lotNumber"
+                  label="Edit"
+                  single-line
+                  counter
+                  autofocus
+              ></v-text-field>
+            </template>
+          </v-edit-dialog>
+        </td>
+      </tr>
+    </template>
       <template v-slot:item="props">
         <tr>
           <td>{{ props.item.lotNumber }}</td>
