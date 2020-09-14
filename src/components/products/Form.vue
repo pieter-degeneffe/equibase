@@ -101,7 +101,7 @@
 </template>
 
 <script>
-  import productsAPI from '@/services/ProductsAPI';
+  import { productsAPI, configAPI } from '../../services';
 
   export default {
     props: ['product', 'loading'],
@@ -149,7 +149,7 @@
       async getConfig() {
         this.errored = false;
         try {
-          const { data: { types, tax } } = await productsAPI.getConfig();
+          const { data: { types, tax } } = await configAPI.getProductConfig();
           this.types = types;
           this.taxes = tax;
         } catch (err) {

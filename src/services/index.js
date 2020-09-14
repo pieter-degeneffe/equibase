@@ -7,5 +7,6 @@ export { default as locationAPI } from './LocationAPI';
 export { default as nitrogenContainerAPI } from './NitrogenContainerAPI';
 export { default as productsAPI } from './ProductsAPI';
 export { default as stockAPI } from './StockAPI';
+export { default as configAPI } from './ConfigAPI';
 export * from './SearchAPI';
 export * from './SemenAPI';
