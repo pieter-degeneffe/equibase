@@ -3,7 +3,8 @@
     <v-toolbar flat color="primary" dark>
       <v-toolbar-title>{{ product.name }}</v-toolbar-title>
     </v-toolbar>
-    <products-form :product="product" :loading="loading" @update-product="updateProduct"></products-form>
+    <products-form :product="product" :loading="loading" callbackURL="/settings/products"
+                   :disabled="disabled" @update-product="updateProduct"/>
   </v-card>
 </template>
 
@@ -15,6 +16,7 @@
     props: ['id'],
     data() {
       return {
+        disabled: false,
         product: {},
         loading: null,
         errored: false,

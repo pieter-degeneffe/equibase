@@ -130,7 +130,7 @@ export default {
       products: [],
       types: [],
       taxes: [],
-      remaining: ['All', 'In stock', 'Out of stock']
+      remaining: ['All', 'In stock', 'Out of stock'],
     };
   },
   watch: {
