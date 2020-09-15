@@ -22,7 +22,7 @@
       </v-tab-item>
       <v-tab-item class="ma-5">
         <BatchTable :headers="headers" :id="id" :batches="batches"
-                    :product="product"/>
+                    :product="product" :filters="filters" :options="options"/>
       </v-tab-item>
       <v-tab-item class="ma-5">
         <h3>mods</h3>
@@ -48,6 +48,9 @@
         errored: false,
         errorMessage: '',
         loading: false,
+        options: {
+          remaining: 'All',
+        },
         editedIndex: -1,
         headers: [
           { text: 'lot nummer', value: 'lotNumber' },
@@ -59,6 +62,10 @@
           { text: 'remaining', value: 'remainingAmount' },
           { text: 'laatste update', value: 'updatedAt' },
         ],
+        filters: {
+          supplier: null,
+          remaining: null
+        }
       };
     },
     components: {
@@ -80,7 +87,11 @@
         this.loading = true;
         try {
           const { data: { batches }, data } = await stockAPI.getStockProduct(id);
-          this.batches = batches;
+          if(this.options.remaining === 'All'){
+            this. batches = batches;
+          } else {
+            this.batches = batches.filter(prod => this.options.remaining === "Out of stock" ? (prod.remaining === 0) : (prod.remaining > 0));
+          }
           this.product = data;
         } catch (err) {
           this.errored = true;

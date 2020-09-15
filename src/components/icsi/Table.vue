@@ -16,7 +16,7 @@
                   Filters
                 </v-btn>
                 <v-btn color="primary" dark @click.stop="columnDialog = true" class="d-print-none">
-                  <v-icon left>mdi-settings</v-icon>
+                  <v-icon left>mdi-cog</v-icon>
                   Kolommen
                 </v-btn>
               </div>
