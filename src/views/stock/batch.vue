@@ -22,8 +22,7 @@
       </v-tab-item>
       <v-tab-item class="ma-5">
         <BatchTable :headers="headers" :id="id" :batches="batches"
-                    :errored="errored" :errorMessage="errorMessage"
-                    :loading="loading" :product="product"/>
+                    :product="product"/>
       </v-tab-item>
       <v-tab-item class="ma-5">
         <h3>mods</h3>
