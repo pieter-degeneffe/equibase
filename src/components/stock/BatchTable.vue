@@ -12,6 +12,10 @@
         <v-icon left>mdi-plus</v-icon>
         Nieuw lot toevoegen
       </v-btn>
+      <v-btn color='primary' dark @click='openFilterDialog' class='ml-5 d-print-none' depressed>
+        <v-icon left>mdi-filter</v-icon>
+        Filters
+      </v-btn>
     </v-toolbar>
     <v-data-table :headers='headers' :items='batches' :search="search">
       <template v-slot:no-data>
@@ -30,6 +34,27 @@
         </tr>
       </template>
     </v-data-table>
+    <v-dialog v-model='filterDialog' max-width='490'>
+      <v-card>
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12">
+              <v-autocomplete
+                  v-model="options.remaining"
+                  outlined
+                  label="Filter op remaining"
+                  :items="remaining"
+                  hide-details
+              />
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn text color="success" @click="filterDialog = false">Sluiten</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model='createDialog' max-width='690'>
       <v-card>
         <v-card-title>Form title</v-card-title>
@@ -152,6 +177,19 @@ export default {
     computedDeliveryDateFormatted() {
       return this.formatDate(this.editedRow.deliveryDate);
     },
+    URLParameters() {
+      return {
+        remaining: this.filters.location.tube !== null ? this.filters.location.tube.value : undefined,
+      };
+    },
+  },
+  watch: {
+    filters: {
+      handler() {
+        this.getStockProduct(this.id);
+      },
+      deep: true
+    }
   },
   methods: {
     mouseOver(hoverState) {
