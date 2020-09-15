@@ -101,10 +101,10 @@
 </template>
 
 <script>
-  import productsAPI from '@/services/ProductsAPI';
+  import { productsAPI, configAPI } from '@/services';
 
   export default {
-    props: ['product', 'loading'],
+    props: ['product', 'loading', 'callbackURL', 'disabled'],
     data() {
       return {
         errored: false,
@@ -123,7 +123,7 @@
       async productHandler(data) {
         this.$emit('update-product', data);
         this.snackbar = true;
-        await this.$router.push(`/settings/products`);
+        await this.$router.push(this.callbackURL);
         this.errored = false;
       },
       async createProduct() {
@@ -149,7 +149,7 @@
       async getConfig() {
         this.errored = false;
         try {
-          const { data: { types, tax } } = await productsAPI.getConfig();
+          const { data: { types, tax } } = await configAPI.getProductConfig();
           this.types = types;
           this.taxes = tax;
         } catch (err) {

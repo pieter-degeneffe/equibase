@@ -14,7 +14,7 @@
                   :loading="loading" loading-text="Bezig met laden..."
                   class="ma-5">
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="openProductPage(item.id)">
+        <v-icon small class="mr-2" @click="openProductPage(item._id)">
           mdi-pencil
         </v-icon>
         <v-icon small @click="deleteItem(item)">
@@ -69,7 +69,7 @@
         try {
           this.loading = true;
           this.errored = false;
-          await productsAPI.deleteProduct(item.id);
+          await productsAPI.deleteProduct(item._id);
           await this.getProducts();
         } catch (e) {
           console.log(e);

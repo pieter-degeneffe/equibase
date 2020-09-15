@@ -133,6 +133,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/stock/:id",
+    props: true,
+    component: () => import("@/views/stock/batch"),
+    beforeEnter: requireAuth
+  },
+  {
     path: '/callback',
     component: () => import('@/components/Callback')
   },

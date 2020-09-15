@@ -3,7 +3,7 @@
     <v-data-table :headers="headers" :items="locations" :loading="loading" loading-text="Bezig met laden..." :sort-by="['stable', 'name']" multi-sort>
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-spacer></v-spacer>
+            <v-spacer/>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark class="mb-2" v-on="on">Locatie toevoegen</v-btn>

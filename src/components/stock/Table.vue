@@ -8,16 +8,36 @@
           single-line
           hide-details
       />
-      <v-btn color="primary" dark @click="openFilterDialog" class="mr-2 ml-5 d-print-none">
+      <v-btn color="primary" dark @click="openFilterDialog" class="ml-5 d-print-none">
         <v-icon left>mdi-filter</v-icon>
         Filters
       </v-btn>
+      <v-btn color="primary" dark @click.stop="columnDialog = true" class="ml-4 d-print-none">
+        <v-icon left>mdi-cog</v-icon>
+        Kolommen
+      </v-btn>
     </v-toolbar>
-    <v-data-table :headers="headers" :items="products" :search="search"
+    <v-data-table :headers="filteredHeaders" :items="filteredProducts" :search="search"
                   :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc"
                   loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:no-data>
         Geen producten gevonden
+      </template>
+      <template v-slot:item="props">
+        <tr @click="openStockProductPage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
+          <td v-if="showColumn('name')">{{ props.item.name }}</td>
+          <td v-if="showColumn('type')">{{ props.item.type }}</td>
+          <td v-if="showColumn('CNK')">{{ props.item.CNK }}</td>
+          <td v-if="showColumn('outgoingUnit')">{{ props.item.outgoingUnit }}</td>
+          <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
+          <td v-if="showColumn('sellingPrice')">{{ props.item.sellingPrice }}</td>
+          <td v-if="showColumn('sellingPricePerUnit')">{{ props.item.sellingPricePerUnit }}</td>
+          <td v-if="showColumn('supplementAdministration')">{{ props.item.supplementAdministration }}</td>
+          <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
+          <td v-if="showColumn('unitSellingPrice')">{{ props.item.unitSellingPrice }}</td>
+          <td v-if="showColumn('unitAdministrationPrice')">{{ props.item.unitAdministrationPrice }}</td>
+          <td v-if="showColumn('remaining')" align="right">{{ props.item.remaining }}</td>
+        </tr>
       </template>
     </v-data-table>
     <v-dialog v-model="filterDialog" max-width="490">
@@ -62,6 +82,25 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="columnDialog" max-width="690">
+      <v-card>
+        <v-card-text>
+          <v-list>
+            <v-row dense>
+              <v-col cols="12" sm="6" md="4" v-for="header in headers" :key="header.text">
+                <v-list-item>
+                  <v-checkbox :label="header.text" v-model="header.selected" :value="header.selected"></v-checkbox>
+                </v-list-item>
+              </v-col>
+            </v-row>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="columnDialog = false">Sluiten</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-row v-if="errored">
       <v-col cols="12">
         <v-alert type="error" v-if="errored" class="mx-5">
@@ -73,7 +112,7 @@
 </template>
 
 <script>
-import { stockAPI, productsAPI } from '../../services';
+import { stockAPI, configAPI } from '../../services';
 
 export default {
   props: ['title', 'headers', 'filters', 'sortBy'],
@@ -84,13 +123,14 @@ export default {
       errored: false,
       errorMessage: '',
       filterDialog: false,
+      columnDialog: false,
       sortDesc: true,
       options: {
         remaining: 'All',},
       products: [],
       types: [],
       taxes: [],
-      remaining: ['All', 'In stock', 'Out of stock']
+      remaining: ['All', 'In stock', 'Out of stock'],
     };
   },
   watch: {
@@ -112,6 +152,18 @@ export default {
     this.getAllStock();
   },
   computed: {
+    filteredHeaders() {
+      return this.headers.filter(header => header.selected);
+    },
+    filteredProducts() {
+      return this.products.map(products => {
+        let filtered = { ...products };
+        this.headers.forEach(header => {
+          if (!header.selected) delete filtered[header.value];
+        });
+        return filtered;
+      });
+    },
     URLParameters() {
       return {
         name: this.filters.name !== null ? this.filters.name : undefined,
@@ -122,14 +174,23 @@ export default {
     }
   },
   methods: {
+    openStockProductPage(id) {
+      this.$router.push(`/stock/${ id }`);
+    },
+    mouseOver(hoverState) {
+      hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
+    },
+    showColumn(col) {
+      return this.headers.find(header => header.value === col).selected;
+    },
     async getAllStock() {
       this.loading = true;
       try {
-        const {data: {data}} = await stockAPI.getAllStock(this.URLParameters);
+        const {data: {stock}} = await stockAPI.getAllStock(this.URLParameters);
         if(this.options.remaining === 'All'){
-          this.products = data;
+          this.products = stock;
         } else {
-          this.products = data.filter(prod => this.options.remaining === "Out of stock" ? (prod.remaining === 0) : (prod.remaining > 0));
+          this.products = stock.filter(prod => this.options.remaining === "Out of stock" ? (prod.remaining === 0) : (prod.remaining > 0));
         }
       } catch (err) {
         this.errored = true;
@@ -145,7 +206,7 @@ export default {
     async getConfig() {
       this.errored = false;
       try {
-        const { data: { types, tax } } = await productsAPI.getConfig();
+        const { data: { types, tax } } = await configAPI.getProductConfig();
         this.types = types;
         this.taxes = tax;
       } catch (err) {
