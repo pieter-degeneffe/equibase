@@ -1,24 +1,28 @@
 <template>
   <v-card flat>
     <v-form ref="form" v-model="valid">
-      <v-container>
-        <v-row dense>
+      <v-card outlined class="ma-5">
+        <v-toolbar flat dense light>
+          <v-toolbar-title>ICSI toevoegen</v-toolbar-title>
+        </v-toolbar>
+        <v-divider/>
+        <v-row class="ma-5">
           <v-col cols="12" md="4">
             <v-text-field
                 :rules="[(v) => !!v || 'Dit veld is verplicht']"
-                v-model="icsi.code" label="Code ICSI"
-                :disabled="icsi.active" :loading="loading" outlined/>
+                v-model="icsi.code" label="Code ICSI *"
+                :disabled="icsi.active" :loading="loading"/>
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
                 :rules="[(v) => v>0  || 'Dit veld is verplicht en moet groter zijn dan 0']"
-                v-model="icsi.amount" label="Aantal embryos" outlined type="number" :loading="loading"/>
+                v-model="icsi.amount" label="Aantal embryos" type="number" :loading="loading"/>
           </v-col>
           <v-col cols="12" md="4">
             <select-customer :owner="icsi.owner" @update-customer="updateCustomer" :loading="loading" label="Eigenaar"/>
           </v-col>
         </v-row>
-        <v-row dense>
+        <v-row class="ma-5">
           <v-col cols="12" md="4">
             <v-select
                 v-model="icsi.donor_mare"
@@ -29,7 +33,6 @@
                 :loading="loading"
                 :rules="[(v) => !!v || 'Dit veld is verplicht']"
                 required
-                outlined
                 return-object
                 clearable
             />
@@ -44,17 +47,16 @@
                 :loading="loading"
                 :rules="[(v) => !!v || 'Dit veld is verplicht']"
                 required
-                outlined
                 return-object
                 clearable
             />
           </v-col>
           <v-col cols="12" md="4">
             <v-select v-model="icsi.collectionColor" :items="collectionColors" label="Kleur rietjes"
-                      outlined/>
+                      />
           </v-col>
         </v-row>
-        <v-row dense>
+        <v-row class="ma-5">
           <v-col cols="12" md="4">
             <v-menu
                 v-model="collectionDateMenu" :close-on-content-click="false" :nudge-right="40"
@@ -66,7 +68,6 @@
                     label="Datum import"
                     v-on="on"
                     readonly
-                    outlined
                     :loading="loading"
                 />
               </template>
@@ -83,11 +84,10 @@
           <v-col cols="12" md="4">
             <v-select v-if="icsi.location" v-model="icsi.location.container"
                       :items="nitrogenContainers" item-text="name" item-value="_id" label="Locatie - stikstof vat"
-                      outlined return-object required :rules="[(v) => !!v || 'Dit veld is verplicht']"/>
+                      return-object required :rules="[(v) => !!v || 'Dit veld is verplicht']"/>
           </v-col>
           <v-col cols="12" md="4">
             <v-select
-                outlined
                 required
                 v-if="icsi.location.container"
                 v-model="icsi.location.tube"
@@ -97,6 +97,7 @@
             />
           </v-col>
         </v-row>
+      </v-card>
         <v-alert type="error" v-if="errored">
           {{ errorMessage }}
         </v-alert>
@@ -106,25 +107,33 @@
             sluiten
           </v-btn>
         </v-snackbar>
-      </v-container>
     </v-form>
-    <v-container v-if="valid">
-      <v-row>
-        <v-col cols="3" class="d-flex justify-space-between">
-          <v-btn text @click="selectAll">Alles selecteren</v-btn>
-          <v-btn text @click="deselectAll">Deselecteren</v-btn>
-        </v-col>
-      </v-row>
-      <v-row>
+    <v-card outlined class="ma-5" v-if="valid">
+      <v-toolbar flat dense light>
+        <v-toolbar-title>
+          Embryo selecteren
+        </v-toolbar-title>
+        <v-spacer/>
+        <v-btn text @click="selectAll">Alles selecteren</v-btn>
+        <v-btn text @click="deselectAll">Deselecteren</v-btn>
+      </v-toolbar>
+      <v-divider/>
+      <v-row class="ma-5">
         <v-col cols="4" v-for="embryo in embryos" :key="embryo.code">
           <v-switch v-model="embryoCodes" :label="embryo.code" :value="embryo.code"/>
         </v-col>
       </v-row>
+    </v-card>
+    <div class="mr-2">
       <v-row justify="end" dense>
+        <v-btn depressed color="gray" class="mr-4" @click="back()">
+          <v-icon left>mdi-arrow-left</v-icon>
+          terug
+        </v-btn>
         <v-btn v-if="!icsi._id" :disabled="!valid || !embryoCodes.length" color="success" class="mr-4" @click="createICSI()" depressed>
+          <v-icon left>mdi-content-save-outline</v-icon>
           ICSI opslaan
         </v-btn>
-
         <v-btn v-if="icsi._id" :disabled="!valid || !embryoCodes.length" color="success" depressed class="mr-4" @click="updateICSI()">
           {{ icsi.type }} bijwerken
         </v-btn>
@@ -145,7 +154,7 @@
           </v-card>
         </v-dialog>
       </v-row>
-    </v-container>
+    </div>
   </v-card>
 </template>
 
@@ -191,6 +200,9 @@
       },
     },
     methods: {
+      back() {
+        this.$router.push('/icsi');
+      },
       tubesAvailable(container) {
         if (container) {
           let tubesAvailable = [];
