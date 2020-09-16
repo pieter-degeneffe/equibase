@@ -1,10 +1,23 @@
 <template>
   <v-card flat>
-    <v-data-table :headers="headers" :items="batches">
+    <v-toolbar flat>
+      <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Zoeken"
+          single-line
+          hide-details
+      />
+      <v-btn color='success' @click='openCreateDialog(editedRow)' class='ml-5 d-print-none' depressed>
+        <v-icon left>mdi-plus</v-icon>
+        Nieuw lot toevoegen
+      </v-btn>
+    </v-toolbar>
+    <v-data-table :headers='headers' :items='batches' :search="search">
       <template v-slot:no-data>
         Geen batches gevonden
       </template>
-      <template v-slot:item="props">
+      <template v-slot:item='props'>
         <tr>
           <td>{{ props.item.lotNumber }}</td>
           <td>{{ new Date(props.item.expirationDate) | dateFormat('DD/MM/YY') }}</td>
@@ -17,77 +30,69 @@
         </tr>
       </template>
     </v-data-table>
-    <v-container>
-      <v-row justify="end" dense>
-        <v-btn color="success" @click="openDialog(editedRow)" depressed>
-          Nieuw lot toevoegen
-          <v-icon right>mdi-plus</v-icon>
-        </v-btn>
-      </v-row>
-    </v-container>
-    <v-dialog v-model="dialog" max-width="690">
+    <v-dialog v-model='createDialog' max-width='690'>
       <v-card>
         <v-card-title>Form title</v-card-title>
         <v-card-text>
           <v-container>
-            <v-form ref="form" v-model="valid">
+            <v-form ref='form' v-model='valid'>
               <v-row dense>
-                <v-col cols="6">
-                  <v-text-field v-model="editedRow.lotNumber" required :rules="required" type="text" label="Lot nummer*" outlined/>
+                <v-col cols='6'>
+                  <v-text-field v-model='editedRow.lotNumber' required :rules='required' type='text' label='Lot nummer*' outlined/>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols='6'>
                   <v-menu
-                      ref="expirationDateMenu" v-model="expirationDateMenu"
-                      :close-on-content-click="false" transition="scale-transition"
-                      offset-y max-width="290px" min-width="290px"
+                      ref='expirationDateMenu' v-model='expirationDateMenu'
+                      :close-on-content-click='false' transition='scale-transition'
+                      offset-y max-width='290px' min-width='290px'
                   >
-                    <template v-slot:activator="{ on }">
+                    <template v-slot:activator='{ on }'>
                       <v-text-field
-                          v-model="computedExpirationDateFormatted"
-                          label="Verval datum*"
-                          hint="MM/DD/YYYY format"
+                          v-model='computedExpirationDateFormatted'
+                          label='Verval datum*'
+                          hint='MM/DD/YYYY format'
                           persistent-hint
-                          v-on="on"
+                          v-on='on'
                           outlined
                           readonly
-                          required :rules="required"
+                          required :rules='required'
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model="editedRow.expirationDate" no-title first-day-of-week="1" @input="expirationDateMenu = false"></v-date-picker>
+                    <v-date-picker v-model='editedRow.expirationDate' no-title first-day-of-week='1' @input='expirationDateMenu = false'></v-date-picker>
                   </v-menu>
                 </v-col>
               </v-row>
               <v-row dense>
-                <v-col cols="6">
-                  <v-text-field v-model="editedRow.supplier" type="text" label="Leverancier" outlined/>
+                <v-col cols='6'>
+                  <v-text-field v-model='editedRow.supplier' type='text' label='Leverancier' outlined/>
                 </v-col>
-                <v-col cols="6">
+                <v-col cols='6'>
                   <v-menu
-                      v-model="deliveryDateMenu" :close-on-content-click="false"
-                      transition="scale-transition" offset-y max-width="290px" min-width="290px">
-                    <template v-slot:activator="{ on }">
+                      v-model='deliveryDateMenu' :close-on-content-click='false'
+                      transition='scale-transition' offset-y max-width='290px' min-width='290px'>
+                    <template v-slot:activator='{ on }'>
                       <v-text-field
-                          v-model="computedDeliveryDateFormatted"
-                          label="Levering datum*"
-                          hint="MM/DD/YYYY format"
+                          v-model='computedDeliveryDateFormatted'
+                          label='Levering datum*'
+                          hint='MM/DD/YYYY format'
                           persistent-hint
-                          v-on="on"
+                          v-on='on'
                           outlined
                           readonly
-                          required :rules="required"
+                          required :rules='required'
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model="editedRow.deliveryDate" locale="nl"
-                                   no-title first-day-of-week="1" @input="deliveryDateMenu = false"/>
+                    <v-date-picker v-model='editedRow.deliveryDate' locale='nl'
+                                   no-title first-day-of-week='1' @input='deliveryDateMenu = false'/>
                   </v-menu>
                 </v-col>
               </v-row>
               <v-row dense>
-                <v-col cols="6">
-                  <v-text-field v-model="editedRow.initialAmount" required :rules="required" type="number" label="Amount*" outlined/>
+                <v-col cols='6'>
+                  <v-text-field v-model='editedRow.initialAmount' required :rules='required' type='number' label='Amount*' outlined/>
                 </v-col>
-                <v-col cols="6">
-                  <v-text-field v-model="editedRow.buyInPrice" type="number" label="Buy in price" outlined/>
+                <v-col cols='6'>
+                  <v-text-field v-model='editedRow.buyInPrice' type='number' label='Buy in price' outlined/>
                 </v-col>
               </v-row>
             </v-form>
@@ -95,17 +100,17 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
-          <v-btn color="error" text @click="close">Annuleer</v-btn>
-          <v-btn color="success" :disabled="!valid" text @click="save">Opslaan</v-btn>
+          <v-btn color='error' text @click='close'>Annuleer</v-btn>
+          <v-btn color='success' :disabled='!valid' text @click='save'>Opslaan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-alert type="error" v-if="errored">
+    <v-alert type='error' v-if='errored'>
       {{ errorMessage }}
     </v-alert>
-    <v-snackbar v-model="snackbar" timeout="6000" :color="snackColor" bottom>
+    <v-snackbar v-model='snackbar' :timeout='timeout' :color='snackColor' bottom>
       {{ snackText }}
-      <v-btn dark text @click="snackbar = false">
+      <v-btn dark text @click='snackbar = false'>
         sluiten
       </v-btn>
     </v-snackbar>
@@ -116,14 +121,17 @@
 import {stockAPI} from '@/services'
 
 export default {
-  props: ['id', 'headers', 'batches', 'product'],
+  props: ['id', 'headers', 'batches', 'product', 'filters', 'options'],
   data() {
     return {
+      search: '',
       expirationDateMenu: false,
       deliveryDateMenu: false,
-      dialog: false,
+      createDialog: false,
+      filterDialog: false,
       valid: false,
       snackbar: false,
+      timeout: 6000,
       snackText: ``,
       snackColor: '',
       singleRow: false,
@@ -134,12 +142,8 @@ export default {
       editedRow: {
         lotNumber: ''
       },
+      remaining: ['All', 'In stock', 'Out of stock'],
     };
-  },
-  watch: {
-    dialog() {
-      this.$refs.form.reset()
-    }
   },
   computed: {
     computedExpirationDateFormatted() {
@@ -153,13 +157,16 @@ export default {
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
     },
-    openDialog(item) {
-      this.dialog = true;
+    openFilterDialog() {
+      this.filterDialog = true;
+    },
+    openCreateDialog(item) {
+      this.createDialog = true;
       this.editedRow = item;
     },
     close () {
       this.$refs.form.resetValidation()
-      this.dialog = false;
+      this.createDialog = false;
     },
     async save() {
       this.errored = false;

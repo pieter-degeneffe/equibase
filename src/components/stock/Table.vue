@@ -166,6 +166,10 @@ export default {
     },
     URLParameters() {
       return {
+        'page': this.options.page,
+        'limit': this.options.itemsPerPage,
+        'sortBy': this.options.sortBy,
+        'sortDesc': this.options.sortDesc,
         name: this.filters.name !== null ? this.filters.name : undefined,
         type: this.filters.type !== null ? this.filters.type : undefined,
         tax: this.filters.tax !== null ? this.filters.tax : undefined,
