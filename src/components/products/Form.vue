@@ -1,102 +1,119 @@
 <template>
   <v-card flat>
     <v-form ref="form" v-model="valid">
-      <v-container>
-        <v-row dense>
+      <v-card outlined class="ma-5">
+        <v-toolbar flat dense light>
+          <v-toolbar-title>Product informatie</v-toolbar-title>
+        </v-toolbar>
+        <v-divider/>
+        <v-row class="ma-5">
           <v-col cols="12" md="4">
             <v-text-field
-              :rules="required"
-              v-model="product.name" label="Productnaam"
-              :loading="loading" outlined/>
+                :rules="required"
+                v-model="product.name" label="Productnaam *"
+                :loading="loading"
+            />
           </v-col>
           <v-col cols="12" md="4">
             <v-select
-              :rules="required" :items="types"
-              v-model="product.type" label="Product type"
-              :loading="loading" outlined/>
+                :rules="required" :items="types"
+                v-model="product.type" label="Product type *"
+                :loading="loading"/>
           </v-col>
           <v-col cols="12" md="4">
             <v-select
-              :rules="required" :items="taxes"
-              v-model="product.tax" label="Product tax"
-              :loading="loading" outlined/>
+                :rules="required" :items="taxes"
+                v-model="product.tax" label="Product tax *"
+                :loading="loading"/>
           </v-col>
         </v-row>
-        <v-row dense>
+        <v-row class="ma-5">
           <v-col cols="12" md="4">
             <v-text-field
-              :rules="required" type="text"
-              v-model="product.CNK" label="CNK"
-              :loading="loading" outlined/>
+                :rules="required" type="text"
+                v-model="product.CNK" label="CNK *"
+                :loading="loading"/>
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
-              :rules="required" type="text"
-              v-model="product.outgoingUnit" label="outgoingUnit"
-              :loading="loading" outlined/>
+                :rules="required" type="text"
+                v-model="product.outgoingUnit" label="Eenheid *"
+                :loading="loading"/>
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
-              :rules="required" type="number"
-              v-model="product.sellingPrice" label="sellingPrice"
-              :loading="loading" outlined/>
-          </v-col>
-        </v-row>
-        <v-row dense>
-          <v-col cols="12" md="4">
-            <v-text-field
-              :rules="required" type="number"
-              v-model="product.sellingPricePerUnit" label="sellingPricePerUnit"
-              :loading="loading" outlined/>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field
-              :rules="required" type="number"
-              v-model="product.supplementAdministration" label="supplementAdministration"
-              :loading="loading" outlined/>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field
-              :rules="required" type="number"
-              v-model="product.waitingTime" label="waitingTime"
-              :loading="loading" outlined/>
+                :rules="required" type="number"
+                v-model="product.waitingTime" label="waitingTime *"
+                :loading="loading"/>
           </v-col>
         </v-row>
-        <v-row dense>
+      </v-card>
+      <v-card outlined class="ma-5">
+        <v-toolbar flat dense light>
+          <v-toolbar-title>Prijs</v-toolbar-title>
+        </v-toolbar>
+        <v-divider/>
+        <v-row class="ma-5">
           <v-col cols="12" md="4">
             <v-text-field
-              :rules="required" type="number"
-              v-model="product.unitSellingPrice" label="unitSellingPrice"
-              :loading="loading" outlined/>
+                :rules="required" type="number"
+                v-model="product.sellingPrice" label="sellingPrice *"
+                :loading="loading" prefix="€" placeholder="0.00"/>
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
-              :rules="required" type="number"
-              v-model="product.unitAdministrationPrice" label="unitAdministrationPrice"
-              :loading="loading" outlined/>
+                :rules="required" type="number"
+                v-model="product.sellingPricePerUnit" label="sellingPricePerUnit *"
+                :loading="loading" prefix="€" placeholder="0.00"/>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+                :rules="required" type="number"
+                v-model="product.supplementAdministration" label="supplementAdministration *"
+                :loading="loading" prefix="€" placeholder="0.00"/>
           </v-col>
         </v-row>
-        <v-alert type="error" v-if="errored">
-          {{ errorMessage }}
-        </v-alert>
-        <v-snackbar v-model="snackbar">
-          Product is succesvol opgeslagen
-          <v-btn color="pink" text @click="snackbar = false">
-            sluiten
-          </v-btn>
-        </v-snackbar>
-      </v-container>
+        <v-row class="ma-5">
+          <v-col cols="12" md="4">
+            <v-text-field
+                :rules="required" type="number"
+                v-model="product.unitSellingPrice" label="unitSellingPrice *"
+                :loading="loading" prefix="€" placeholder="0.00"/>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+                :rules="required" type="number"
+                v-model="product.unitAdministrationPrice" label="unitAdministrationPrice *"
+                :loading="loading" prefix="€" placeholder="0.00"/>
+          </v-col>
+        </v-row>
+      </v-card>
     </v-form>
-    <v-container v-if="valid">
+    <v-alert type="error" v-if="errored">
+      {{ errorMessage }}
+    </v-alert>
+    <v-snackbar v-model="snackbar">
+      Product is succesvol opgeslagen
+      <v-btn color="pink" text @click="snackbar = false">
+        sluiten
+      </v-btn>
+    </v-snackbar>
+    <div class="mr-2">
       <v-row justify="end" dense>
+        <v-btn depressed color="gray" class="mr-4" @click="back()">
+          <v-icon left>mdi-arrow-left</v-icon>
+          terug
+        </v-btn>
         <v-btn v-if="!product._id" :disabled="!valid" color="success" class="mr-4" @click="createProduct()" depressed>
+          <v-icon left>mdi-content-save-outline</v-icon>
           Product opslaan
         </v-btn>
         <v-btn v-if="product._id" :disabled="!valid" color="success" class="mr-4" @click="editProduct()" depressed>
+          <v-icon left>mdi-content-save-outline</v-icon>
           Product aanpassen
         </v-btn>
       </v-row>
-    </v-container>
+    </div>
   </v-card>
 </template>
 
@@ -136,6 +153,9 @@
           this.errorMessage = err.response.data.message;
         }
       },
+      back() {
+        this.$router.push(this.callbackURL);
+      },
       async editProduct() {
         this.errored = false;
         try {
@@ -160,3 +180,6 @@
     }
   }
 </script>
+<style>
+
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-autocomplete v-model="model" :items="items" :loading="loading" :placeholder="placeholder" :search-input.sync="search" hide-no-data hide-selected item-text="Description" item-value="_id" :label="label" return-object outlined>
+    <v-autocomplete v-model="model" :items="items" :loading="loading" :placeholder="placeholder" :search-input.sync="search" hide-no-data hide-selected item-text="Description" item-value="_id" :label="label" return-object>
       <template v-slot:item="{ item }">
         <v-list-item-content>
           <v-list-item-title>{{ item.first_name }} {{ item.last_name }}</v-list-item-title>

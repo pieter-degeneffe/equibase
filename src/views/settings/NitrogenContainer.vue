@@ -1,64 +1,76 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :items="containers" :loading="loading" loading-text="Bezig met laden..." :sort-by="['name']">
-        <template v-slot:top>
-          <v-toolbar flat color="white">
-            <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">Vat toevoegen</v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-form ref="form" v-model="valid">
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field v-model="editedItem.name" :rules="required" label="Naam vat" outlined></v-text-field>
-                          <v-text-field v-model="editedItem.available_places" :rules="required" type="number" label="Aantal kokers" outlined></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-form>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Annuleer</v-btn>
-                  <v-btn color="blue darken-1" :disabled="!valid" text @click="save">Opslaan</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-toolbar>
-        </template>
-        <template v-slot:item.action="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon small @click="deleteItem(item)">
-            mdi-delete
-          </v-icon>
-        </template>
-        <template v-slot:no-data>
-            Geen containers in de database
-        </template>
-      </v-data-table>
-      <v-row>
-        <v-col cols="12">
-          <v-alert type="error" v-if="errored" class="mx-5">
-            {{ errorMessage }}
-          </v-alert>
-        </v-col>
-      </v-row>
+    <v-data-table :headers="headers" :search="search" :items="containers" :loading="loading"
+                  loading-text="Bezig met laden..."
+                  :sort-by="['name']">
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Zoeken"
+              single-line
+              hide-details
+          >
+          </v-text-field>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)">
+          mdi-pencil
+        </v-icon>
+        <v-icon small @click="deleteItem(item)">
+          mdi-delete
+        </v-icon>
+      </template>
+      <template v-slot:no-data>
+        Geen containers in de database
+      </template>
+    </v-data-table>
+    <v-dialog v-model="dialog" max-width="500px">
+      <template v-slot:activator="{ on }">
+        <v-btn color="primary" fixed bottom right depressed dark class="ma-2" v-on="on">
+          Vat toevoegen
+          <v-icon right>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{ formTitle }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-form ref="form" v-model="valid">
+              <v-row>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field v-model="editedItem.name" :rules="required" label="Naam vat"
+                                outlined></v-text-field>
+                  <v-text-field v-model="editedItem.available_places" :rules="required" type="number"
+                                label="Aantal kokers" outlined></v-text-field>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="close">Annuleer</v-btn>
+          <v-btn color="blue darken-1" :disabled="!valid" text @click="save">Opslaan</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-alert type="error" v-if="errored" class="mx-5">
+      {{ errorMessage }}
+    </v-alert>
   </v-card>
 </template>
 <script>
 import nitrogenContainerAPI from "@/services/NitrogenContainerAPI.js";
+
 export default {
   data() {
     return {
+      search: '',
       dialog: false,
       loading: null,
       valid: false,
@@ -68,11 +80,11 @@ export default {
         v => !!v || 'Dit veld is verplicht'
       ],
       headers: [
-        { text: 'Naam vat', align: 'left', sortable: false, value: 'name' },
-        { text: 'Aantal kokers', align: 'left', sortable: false, value: 'available_places' },
-        { text: 'Bewerken', align: 'right', value: 'action', sortable: false },
+        {text: 'Naam vat', align: 'left', sortable: false, value: 'name'},
+        {text: 'Aantal kokers', align: 'left', sortable: false, value: 'available_places'},
+        {text: 'Bewerken', align: 'right', value: 'action', sortable: false},
       ],
-      stables: ['Stal Zoutleeuw','Stal Dormaal','Wei'],
+      stables: ['Stal Zoutleeuw', 'Stal Dormaal', 'Wei'],
       containers: [],
       editedIndex: -1,
       editedItem: {
@@ -84,7 +96,7 @@ export default {
     };
   },
   computed: {
-    formTitle () {
+    formTitle() {
       return this.editedIndex === -1 ? 'Nieuwe container' : 'Container bewerken'
     },
   },
@@ -92,7 +104,7 @@ export default {
     this.getContainers();
   },
   watch: {
-    dialog (val) {
+    dialog(val) {
       val || this.close()
     },
   },
@@ -109,12 +121,12 @@ export default {
         this.loading = false;
       }
     },
-    editItem (item) {
+    editItem(item) {
       this.editedIndex = this.containers.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
-    async deleteItem (item) {
+    async deleteItem(item) {
       try {
         this.loading = true;
         this.errored = false;
@@ -123,14 +135,14 @@ export default {
           const index = this.containers.indexOf(item)
           this.containers.splice(index, 1)
         }
-      } catch(e) {
+      } catch (e) {
         this.errored = true;
         this.errorMessage = e.response.data.message;
       } finally {
         this.loading = false;
       }
     },
-    close () {
+    close() {
       this.dialog = false
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)

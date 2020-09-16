@@ -1,40 +1,54 @@
 <template>
-  <div>
-    <v-card class="mx-5 mt-5 mb-12" outlined>
-      <v-data-table :headers="headers" :items="horses" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
-        <template v-slot:no-data>
-            Geen draagmoeders gevonden
-        </template>
-        <template v-slot:item="props">
-          <tr>
-            <td>{{ props.item.name }}</td>
-            <td>{{ props.item.surrogate_uid }}</td>
-            <td>{{ props.item.microchip }}</td>
-            <td><span v-if="props.item.location">{{ props.item.location.name }}</span></td>
-            <td><span v-if="props.item.date_of_birth">{{ new Date(props.item.date_of_birth) | dateFormat('DD/MM/YY')}}</span></td>
-          </tr>
-        </template>
-      </v-data-table>
-      <v-btn bottom color="primary" class="ma-2 white--text" depressed dark @click="downloadResearchSheet()" fixed right>
-        onderzoeksfiches downloaden
-        <v-icon right dark>mdi-arrow-collapse-down</v-icon>
-      </v-btn>
-    </v-card>
-  </div>
+  <v-card class="ma-5" outlined>
+    <v-data-table :headers="headers" :search="search" :items="horses" :loading="loading"
+                  loading-text="Bezig met laden...">
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Zoeken"
+              single-line
+              hide-details
+          />
+        </v-toolbar>
+      </template>
+      <template v-slot:no-data>
+        Geen draagmoeders gevonden
+      </template>
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.surrogate_uid }}</td>
+          <td>{{ props.item.microchip }}</td>
+          <td><span v-if="props.item.location">{{ props.item.location.name }}</span></td>
+          <td><span
+              v-if="props.item.date_of_birth">{{ new Date(props.item.date_of_birth) | dateFormat('DD/MM/YY') }}</span>
+          </td>
+        </tr>
+      </template>
+    </v-data-table>
+    <v-btn bottom color="primary" class="ma-2 white--text" depressed dark @click="downloadResearchSheet()" fixed right>
+      onderzoeksfiches downloaden
+      <v-icon right dark>mdi-arrow-collapse-down</v-icon>
+    </v-btn>
+  </v-card>
 </template>
 <script>
 import horseAPI from "@/services/HorseAPI.js";
 import jsPDF from 'jspdf';
+
 export default {
-  data () {
+  data() {
     return {
+      search: '',
       horses: [],
       headers: [
-        { text: 'Naam', value: 'name', align: 'left', sortable: true, selected: true },
-        { text: 'Brandnummer', value: 'surrogate_uid', align: 'left', sortable: false, selected: false },
-        { text: 'Microchip', value: 'microchip', align: 'left', selected: false},
-        { text: 'Locatie', value: 'location', align: 'left', sortable: true, selected: true},
-        { text: 'Geboortedatum', value: 'date_of_birth', selected: false}
+        {text: 'Naam', value: 'name', align: 'left', sortable: true, selected: true},
+        {text: 'Brandnummer', value: 'surrogate_uid', align: 'left', sortable: false, selected: false},
+        {text: 'Microchip', value: 'microchip', align: 'left', selected: false},
+        {text: 'Locatie', value: 'location', align: 'left', sortable: true, selected: true},
+        {text: 'Geboortedatum', value: 'date_of_birth', selected: false}
       ],
       loading: true,
       errored: false,
@@ -50,7 +64,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.getHorses()
   },
   methods: {
@@ -67,10 +81,10 @@ export default {
         this.loading = false;
       }
     },
-    downloadResearchSheet () {
+    downloadResearchSheet() {
       const researchSheet = new jsPDF();
-      for (let i=0; i < this.horses.length; i++) {
-        researchSheet.line(0, 30, 210, 30 );
+      for (let i = 0; i < this.horses.length; i++) {
+        researchSheet.line(0, 30, 210, 30);
         researchSheet.line(25, 0, 25, 297);
         researchSheet.setFontSize(14);
         researchSheet.text(new Date().getFullYear().toString(), 6, 26);
@@ -82,7 +96,7 @@ export default {
         researchSheet.text(this.horses[i].name.toUpperCase(), 30, 26);
         researchSheet.setFontStyle("normal");
         researchSheet.addPage();
-        researchSheet.line(0, 30, 210, 30 );
+        researchSheet.line(0, 30, 210, 30);
         researchSheet.line(25, 0, 25, 297);
         researchSheet.setFontSize(14);
         researchSheet.text(new Date().getFullYear().toString(), 6, 26);

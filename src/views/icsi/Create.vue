@@ -1,10 +1,5 @@
 <template>
-  <v-card class="ma-5" outlined>
-    <v-toolbar flat color="primary" dark>
-      <v-toolbar-title>{{ icsi.code }}</v-toolbar-title>
-    </v-toolbar>
-    <icsi-form :icsi="icsi" :loading="loading"/>
-  </v-card>
+  <icsi-form :icsi="icsi" :loading="loading"/>
 </template>
 
 <script>
