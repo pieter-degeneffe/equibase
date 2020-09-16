@@ -1,69 +1,79 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :items="locations" :loading="loading" loading-text="Bezig met laden..." :sort-by="['stable', 'name']" multi-sort>
-        <template v-slot:top>
-          <v-toolbar flat color="white">
-            <v-spacer/>
-            <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">Locatie toevoegen</v-btn>
-              </template>
-              <v-card>
-                <v-card-title>
-                  <span class="headline">{{ formTitle }}</span>
-                </v-card-title>
-                <v-card-text>
-                  <v-container>
-                    <v-form ref="form" v-model="valid">
-                      <v-row>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-select v-model="editedItem.stable" :items="stables" label="Stal" outlined></v-select>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field v-model="editedItem.name" :rules="required" label="Naam locatie*" outlined></v-text-field>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="12">
-                          <v-text-field v-model="editedItem.places" :rules="required" type="number" label="Aantal plaatsen*" outlined></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-form>
-                  </v-container>
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Annuleer</v-btn>
-                  <v-btn color="blue darken-1" :disabled="!valid" text @click="save">Opslaan</v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-toolbar>
-        </template>
-        <template v-slot:item.action="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
-            mdi-pencil
-          </v-icon>
-          <v-icon small @click="deleteItem(item)">
-            mdi-delete
-          </v-icon>
-        </template>
-        <template v-slot:no-data>
-            Geen locaties in de database
-        </template>
-      </v-data-table>
-      <v-row>
-        <v-col cols="12">
-          <v-alert type="error" v-if="errored" class="mx-5">
-            {{ errorMessage }}
-          </v-alert>
-        </v-col>
-      </v-row>
+    <v-data-table :headers="headers" :search="search" :items="locations" :loading="loading"
+                  loading-text="Bezig met laden..." :sort-by="['stable', 'name']" multi-sort>
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Zoeken"
+              single-line
+              hide-details
+          />
+        </v-toolbar>
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)">
+          mdi-pencil
+        </v-icon>
+        <v-icon small @click="deleteItem(item)">
+          mdi-delete
+        </v-icon>
+      </template>
+      <template v-slot:no-data>
+        Geen locaties in de database
+      </template>
+    </v-data-table>
+    <v-dialog v-model="dialog" max-width="500px">
+      <template v-slot:activator="{ on }">
+        <v-btn color="primary" fixed bottom right depressed dark class="ma-2" v-on="on">
+          Locatie toevoegen
+          <v-icon right>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{ formTitle }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-form ref="form" v-model="valid">
+              <v-row>
+                <v-col cols="12" sm="12" md="12">
+                  <v-select v-model="editedItem.stable" :items="stables" label="Stal" outlined/>
+                </v-col>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field v-model="editedItem.name" :rules="required" label="Naam locatie*"
+                                outlined/>
+                </v-col>
+                <v-col cols="12" sm="12" md="12">
+                  <v-text-field v-model="editedItem.places" :rules="required" type="number" label="Aantal plaatsen*"
+                                outlined/>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="close">Annuleer</v-btn>
+          <v-btn color="blue darken-1" :disabled="!valid" text @click="save">Opslaan</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-alert type="error" v-if="errored" class="mx-5">
+      {{ errorMessage }}
+    </v-alert>
   </v-card>
 </template>
 <script>
 import locationAPI from "@/services/LocationAPI.js";
+
 export default {
   data() {
     return {
+      search: '',
       dialog: false,
       loading: null,
       valid: false,
@@ -73,13 +83,13 @@ export default {
         v => !!v || 'Dit veld is verplicht'
       ],
       headers: [
-        { text: 'Stal', align: 'left', sortable: false, value: 'stable' },
-        { text: 'Naam locatie', align: 'left', sortable: false, value: 'name' },
-        { text: '# Plaatsen', align: 'left', sortable: false, value: 'places' },
-        { text: '# Paarden', align: 'left', sortable: false, value: 'horses.length' },
-        { text: 'Bewerken', align: 'right', value: 'action', sortable: false },
+        {text: 'Stal', align: 'left', sortable: false, value: 'stable'},
+        {text: 'Naam locatie', align: 'left', sortable: false, value: 'name'},
+        {text: '# Plaatsen', align: 'left', sortable: false, value: 'places'},
+        {text: '# Paarden', align: 'left', sortable: false, value: 'horses.length'},
+        {text: 'Bewerken', align: 'right', value: 'action', sortable: false},
       ],
-      stables: ['Stal Zoutleeuw','Stal Dormaal','Wei'],
+      stables: ['Stal Zoutleeuw', 'Stal Dormaal', 'Wei'],
       locations: [],
       editedIndex: -1,
       editedItem: {
@@ -91,7 +101,7 @@ export default {
     };
   },
   computed: {
-    formTitle () {
+    formTitle() {
       return this.editedIndex === -1 ? 'Nieuwe locatie' : 'locatie bewerken'
     },
   },
@@ -99,7 +109,7 @@ export default {
     this.loadLocations();
   },
   watch: {
-    dialog (val) {
+    dialog(val) {
       val || this.close()
     },
   },
@@ -116,12 +126,12 @@ export default {
         this.loading = false;
       }
     },
-    editItem (item) {
+    editItem(item) {
       this.editedIndex = this.locations.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
-    async deleteItem (item) {
+    async deleteItem(item) {
       try {
         this.loading = true;
         this.errored = false;
@@ -130,14 +140,14 @@ export default {
           const index = this.locations.indexOf(item)
           this.locations.splice(index, 1)
         }
-      } catch(e) {
+      } catch (e) {
         this.errored = true;
         this.errorMessage = e.response.data.message;
       } finally {
         this.loading = false;
       }
     },
-    close () {
+    close() {
       this.dialog = false
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)

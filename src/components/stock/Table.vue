@@ -179,6 +179,7 @@ export default {
   },
   methods: {
     openStockProductPage(id) {
+      document.body.style.cursor = 'default';
       this.$router.push(`/stock/${ id }`);
     },
     mouseOver(hoverState) {

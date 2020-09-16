@@ -215,6 +215,7 @@
         hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
       },
       openFilterDialog() {
+        document.body.style.cursor = 'default';
         this.filterDialog = true;
         this.getMares();
         this.getStallions();

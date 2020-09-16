@@ -8,10 +8,6 @@
           single-line
           hide-details
       />
-      <v-btn color='success' @click='openCreateDialog(editedRow)' class='ml-5 d-print-none' depressed>
-        <v-icon left>mdi-plus</v-icon>
-        Nieuw lot toevoegen
-      </v-btn>
     </v-toolbar>
     <v-data-table :headers='headers' :items='batches' :search="search">
       <template v-slot:no-data>
@@ -30,6 +26,12 @@
         </tr>
       </template>
     </v-data-table>
+    <div class="d-flex justify-end mt-5">
+      <v-btn color='success' @click='openCreateDialog(editedRow)' class='ml-5 d-print-none' right depressed>
+        <v-icon left>mdi-plus</v-icon>
+        Nieuw lot toevoegen
+      </v-btn>
+    </div>
     <v-dialog v-model='createDialog' max-width='690'>
       <v-card>
         <v-card-title>Form title</v-card-title>

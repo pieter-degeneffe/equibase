@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-5 mt-5 mb-12" outlined>
+  <v-card class="mx-5 mt-5 mb-5" outlined>
     <v-toolbar flat>
       <v-text-field
           v-model="search"
@@ -7,8 +7,7 @@
           label="Zoeken"
           single-line
           hide-details
-      >
-      </v-text-field>
+      />
     </v-toolbar>
     <v-data-table :headers="headers" :items="products" :search="search"
                   :loading="loading" loading-text="Bezig met laden..."
