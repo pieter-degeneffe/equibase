@@ -63,8 +63,8 @@
           { text: 'laatste update', value: 'updatedAt' },
         ],
         filters: {
-          supplier: null,
-          remaining: null
+          supplier: '',
+          remaining: '',
         }
       };
     },
