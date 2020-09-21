@@ -178,7 +178,7 @@ export default {
       singleRow: false,
       errored: false,
       errorMessage: '',
-      requiredNumber: [(v) => v>0  || 'Dit veld is verplicht en moet groter zijn dan 0'],
+      requiredNumber: [(v) => v > 0 || 'Dit veld is verplicht en moet groter zijn dan 0'],
       required: [v => !!v || 'Dit veld is verplicht'],
       editedRow: {
         lotNumber: ''
