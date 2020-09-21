@@ -8,6 +8,10 @@
           single-line
           hide-details
       />
+      <v-btn color="primary" dark @click="filterDialog = true" class="ml-4 d-print-none">
+        <v-icon left>mdi-filter</v-icon>
+        Filters
+      </v-btn>
     </v-toolbar>
     <v-data-table :headers='headers' :items='batches' :search="search">
       <template v-slot:no-data>
@@ -32,15 +36,39 @@
         Nieuw lot toevoegen
       </v-btn>
     </div>
+    <v-dialog v-model="filterDialog" max-width="490">
+      <v-card>
+        <v-card-title>Loten filteren</v-card-title>
+        <v-card-text>
+          <v-row dense>
+            <v-col cols="12">
+              <v-autocomplete
+                  v-model="options.remaining"
+                  outlined
+                  label="Filter op remaining"
+                  :items="remaining"
+                  @input="applyFilter($event)"
+                  hide-details
+              />
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn color="error" text @click="filterDialog = false">Sluiten</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model='createDialog' max-width='690'>
       <v-card>
-        <v-card-title>Form title</v-card-title>
+        <v-card-title>Nieuw lot toevoegen</v-card-title>
         <v-card-text>
           <v-container>
             <v-form ref='form' v-model='valid'>
               <v-row dense>
                 <v-col cols='6'>
-                  <v-text-field v-model='editedRow.lotNumber' required :rules='required' type='text' label='Lot nummer*' outlined/>
+                  <v-text-field v-model='editedRow.lotNumber' required :rules='required' type='text' label='Lot nummer*'
+                                outlined/>
                 </v-col>
                 <v-col cols='6'>
                   <v-menu
@@ -60,7 +88,8 @@
                           required :rules='required'
                       ></v-text-field>
                     </template>
-                    <v-date-picker v-model='editedRow.expirationDate' no-title first-day-of-week='1' @input='expirationDateMenu = false'></v-date-picker>
+                    <v-date-picker v-model='editedRow.expirationDate' no-title first-day-of-week='1'
+                                   @input='expirationDateMenu = false'></v-date-picker>
                   </v-menu>
                 </v-col>
               </v-row>
@@ -91,10 +120,20 @@
               </v-row>
               <v-row dense>
                 <v-col cols='6'>
-                  <v-text-field v-model='editedRow.initialAmount' required :rules='required' type='number' label='Amount*' outlined/>
+                  <v-text-field v-model='editedRow.initialAmount'
+                                required
+                                :rules="requiredNumber"
+                                type='number'
+                                label='Amount*'
+                                outlined/>
                 </v-col>
                 <v-col cols='6'>
-                  <v-text-field v-model='editedRow.buyInPrice' type='number' label='Buy in price' outlined/>
+                  <v-text-field v-model='editedRow.buyInPrice'
+                                type='number'
+                                label='Buy in price'
+                                required
+                                :rules="requiredNumber"
+                                outlined/>
                 </v-col>
               </v-row>
             </v-form>
@@ -123,7 +162,7 @@
 import {stockAPI} from '@/services'
 
 export default {
-  props: ['id', 'headers', 'batches', 'product', 'filters', 'options'],
+  props: ['id', 'headers', 'batches', 'product', 'filters', 'options', 'loading'],
   data() {
     return {
       search: '',
@@ -139,7 +178,7 @@ export default {
       singleRow: false,
       errored: false,
       errorMessage: '',
-      loading: false,
+      requiredNumber: [(v) => v>0  || 'Dit veld is verplicht en moet groter zijn dan 0'],
       required: [v => !!v || 'Dit veld is verplicht'],
       editedRow: {
         lotNumber: ''
@@ -166,9 +205,12 @@ export default {
       this.createDialog = true;
       this.editedRow = item;
     },
-    close () {
+    close() {
       this.$refs.form.resetValidation()
       this.createDialog = false;
+    },
+    applyFilter(data) {
+      this.$emit('filter-batch', data);
     },
     async save() {
       this.errored = false;
@@ -177,7 +219,7 @@ export default {
       this.snackText = `Lot succesvol toegevoegd aan ${this.product.name}`
       try {
         this.loading = true;
-        const { data } = await stockAPI.postStock({...this.editedRow,product:this.product._id})
+        const {data} = await stockAPI.postStock({...this.editedRow, product: this.product._id})
         if (data) {
           this.batches.push(data);
         }
@@ -196,7 +238,7 @@ export default {
       if (!date) return null;
       date = new Date(date).toISOString().substr(0, 10);
       const [year, month, day] = date.split('-');
-      return `${ day }/${ month }/${ year }`;
+      return `${day}/${month}/${year}`;
     },
   },
 }

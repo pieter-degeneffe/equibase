@@ -22,8 +22,9 @@
                      :disabled="true" @update-product="updateProduct"/>
       </v-tab-item>
       <v-tab-item class="ma-5">
-        <BatchTable :headers="headers" :id="id" :batches="batches"
-                    :product="product" :filters="filters" :options="options"/>
+        <BatchTable :headers="headers" :id="id" :batches="batches" :loading="loading"
+                    :product="product" :filters="filters" :options="options"
+                    @filter-batch="filterBatch"/>
       </v-tab-item>
       <v-tab-item class="ma-5">
         <h3>mods</h3>
@@ -64,8 +65,7 @@ export default {
         {text: 'laatste update', value: 'updatedAt'},
       ],
       filters: {
-        supplier: '',
-        remaining: '',
+        remaining: null,
       }
     };
   },
@@ -83,6 +83,15 @@ export default {
       this.getStockProduct(this.id);
     }
   },
+  watch: {
+    options: {
+      handler() {
+        this.getStockProduct(this.id);
+        console.log(this.options.remaining);
+      },
+      deep: true
+    }
+  },
   methods: {
     async getStockProduct(id) {
       this.loading = true;
@@ -91,7 +100,11 @@ export default {
         if (this.options.remaining === 'All') {
           this.batches = batches;
         } else {
-          this.batches = batches.filter(prod => this.options.remaining === "Out of stock" ? (prod.remaining === 0) : (prod.remaining > 0));
+          this.batches = batches.filter(prod => {
+            const check = this.options.remaining === "Out of stock" ? (prod.remainingAmount === 0) : (prod.remainingAmount > 0);
+            console.log(check, prod.remainingAmount);
+            return check;
+          });
         }
         this.product = data;
       } catch (err) {
@@ -101,9 +114,13 @@ export default {
         this.loading = false;
       }
     },
+    filterBatch(filter) {
+      this.options.remaining = filter;
+    },
     updateProduct(product) {
       this.product = product;
     },
+
   },
 };
 </script>
