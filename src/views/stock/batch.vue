@@ -89,7 +89,6 @@ export default {
     options: {
       handler() {
         this.getStockProduct(this.id);
-        console.log(this.options.remaining);
       },
       deep: true
     }
@@ -102,11 +101,7 @@ export default {
         if (this.options.remaining === 'All') {
           this.batches = batches;
         } else {
-          this.batches = batches.filter(prod => {
-            const check = this.options.remaining === "Out of stock" ? (prod.remainingAmount === 0) : (prod.remainingAmount > 0);
-            console.log(check, prod.remainingAmount);
-            return check;
-          });
+          this.batches = batches.filter(prod => this.options.remaining === "Out of stock" ? (prod.remainingAmount === 0) : (prod.remainingAmount > 0));
         }
         this.product = data;
       } catch (err) {
