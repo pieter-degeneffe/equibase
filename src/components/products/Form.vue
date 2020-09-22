@@ -42,48 +42,16 @@
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
-                :rules="required" type="number"
-                v-model="product.waitingTime" label="waitingTime *"
+                :rules="required" type="number" hint="dagen"
+                v-model="product.waitingTime" label="Wachttijd *"
                 :loading="loading"/>
           </v-col>
         </v-row>
-      </v-card>
-      <v-card outlined class="ma-5">
-        <v-toolbar flat dense light>
-          <v-toolbar-title>Prijs</v-toolbar-title>
-        </v-toolbar>
-        <v-divider/>
         <v-row class="ma-5">
           <v-col cols="12" md="4">
             <v-text-field
-                :rules="required" type="number"
-                v-model="product.sellingPrice" label="sellingPrice *"
-                :loading="loading" prefix="€" placeholder="0.00"/>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field
-                :rules="required" type="number"
-                v-model="product.sellingPricePerUnit" label="sellingPricePerUnit *"
-                :loading="loading" prefix="€" placeholder="0.00"/>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field
-                :rules="required" type="number"
-                v-model="product.supplementAdministration" label="supplementAdministration *"
-                :loading="loading" prefix="€" placeholder="0.00"/>
-          </v-col>
-        </v-row>
-        <v-row class="ma-5">
-          <v-col cols="12" md="4">
-            <v-text-field
-                :rules="required" type="number"
-                v-model="product.unitSellingPrice" label="unitSellingPrice *"
-                :loading="loading" prefix="€" placeholder="0.00"/>
-          </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field
-                :rules="required" type="number"
-                v-model="product.unitAdministrationPrice" label="unitAdministrationPrice *"
+                :rules="required" type="number" hint="prijs per manuele toediening"
+                v-model="product.supplementAdministration" label="Supplement administratie *"
                 :loading="loading" prefix="€" placeholder="0.00"/>
           </v-col>
         </v-row>

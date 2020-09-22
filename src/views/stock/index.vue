@@ -11,16 +11,15 @@
     data() {
       return {
         headers: [
-          {text: 'Productnaam', value: 'name', align: 'left', sortable: true, selected: true},
-          {text: 'Type', value: 'type', align: 'left', sortable: true, selected: true},
-          {text: 'CNK', value: 'CNK', align: 'left', sortable: true, selected: true},
-          {text: 'Eenheid', value: 'outgoingUnit', align: 'left', sortable: true, selected: true},
-          {text: 'BTW', value: 'tax', align: 'left', sortable: true, selected: true},
-          {text: 'Verkoopsprijs', value: 'sellingPrice', align: 'left', sortable: true, selected: true},
-          {text: 'Verkoopsprijs/eenheid', value: 'sellingPricePerUnit', align: 'left', sortable: true, selected: true},
-          {text: 'supplementAdministration', value: 'supplementAdministration', align: 'left', sortable: true, selected: false },
-          {text: 'waitingTime', value: 'waitingTime', align: 'left', sortable: false, selected: false },
-          {text: 'Remaining', value: 'remaining', align: 'right', sortable: true, selected: true},
+          {text: 'Productnaam', value: 'name', align: 'start', sortable: true, selected: true},
+          {text: 'Type', value: 'type', align: 'start', sortable: true, selected: true},
+          {text: 'CNK', value: 'CNK', align: 'start', sortable: true, selected: true},
+          {text: 'Eenheid', value: 'outgoingUnit', align: 'start', sortable: true, selected: true},
+          {text: 'BTW', value: 'tax', align: 'start', sortable: true, selected: true},
+          {text: 'Wachttijd (dagen)', value: 'waitingTime', align: 'left', sortable: false, selected: false },
+          {text: 'Supplement', value: 'supplementAdministration', align: 'end', sortable: true, selected: false },
+          {text: 'Totale verkoopsprijs', value: 'sellingPrice', align: 'end', sortable: true, selected: true},
+          {text: 'Resterend', value: 'remaining', align: 'end', sortable: true, selected: true},
         ],
         filters: {
           type: null,

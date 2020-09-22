@@ -30,11 +30,10 @@
           <td v-if="showColumn('CNK')">{{ props.item.CNK }}</td>
           <td v-if="showColumn('outgoingUnit')">{{ props.item.outgoingUnit }}</td>
           <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
-          <td v-if="showColumn('sellingPrice')">{{ props.item.sellingPrice }}</td>
-          <td v-if="showColumn('sellingPricePerUnit')">{{ props.item.sellingPricePerUnit }}</td>
-          <td v-if="showColumn('supplementAdministration')">{{ props.item.supplementAdministration }}</td>
           <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
-          <td v-if="showColumn('remaining')" align="right">{{ props.item.remaining }}</td>
+          <td v-if="showColumn('supplementAdministration')" align="end">{{ props.item.supplementAdministration }}</td>
+          <td v-if="showColumn('sellingPrice')" align="end">{{ props.item.sellingPrice }}</td>
+          <td v-if="showColumn('remaining')" align="end">{{ props.item.remaining }}</td>
         </tr>
       </template>
     </v-data-table>

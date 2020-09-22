@@ -21,7 +21,7 @@
           {text: 'Eenheid', align: 'left', sortable: false, value: 'outgoingUnit'},
           {text: 'Wachttijd (dagen)', align: 'left', sortable: false, value: 'waitingTime'},
           {text: 'BTW', align: 'left', sortable: false, value: 'tax'},
-          {text: 'supplement (€)', align: 'left', sortable: false, value: 'supplementAdministration'},
+          {text: 'Supplement (€)', align: 'left', sortable: false, value: 'supplementAdministration'},
           {text: '', align: 'right', sortable: false, value: 'action'},
         ],
       }
