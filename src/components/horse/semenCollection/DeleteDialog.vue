@@ -15,7 +15,7 @@
             </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn color="blue darken-1" text @click="closeDialog">Annuleren</v-btn>
           <v-btn color="error" text :disabled="!valid" @click="deleteSemenCollection">Verwijderen</v-btn>
         </v-card-actions>

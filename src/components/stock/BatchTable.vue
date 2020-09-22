@@ -12,21 +12,29 @@
         <v-icon left>mdi-filter</v-icon>
         Filters
       </v-btn>
+      <v-btn color="primary" dark @click.stop="columnDialog = true" class="ml-4 d-print-none">
+        <v-icon left>mdi-cog</v-icon>
+        Kolommen
+      </v-btn>
     </v-toolbar>
-    <v-data-table :headers='headers' :items='batches' :search="search">
+    <v-data-table :headers='filteredHeaders' :items='filteredBatches' :loading="loading" loading-text="Bezig met laden..."
+                  :server-items-length="totalBatches" :sort-by="sortBy" :sortDesc="sortDesc" :options.sync="options"
+                  >
       <template v-slot:no-data>
         Geen batches gevonden
       </template>
       <template v-slot:item='props'>
         <tr>
-          <td>{{ props.item.lotNumber }}</td>
-          <td>{{ new Date(props.item.expirationDate) | dateFormat('DD/MM/YY') }}</td>
-          <td>{{ new Date(props.item.deliveryDate) | dateFormat('DD/MM/YY') }}</td>
-          <td>{{ props.item.supplier }}</td>
-          <td>{{ props.item.buyInPrice }}</td>
-          <td>{{ props.item.initialAmount }}</td>
-          <td>{{ props.item.remainingAmount }}</td>
-          <td>{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YY') }}</td>
+          <td v-if="showColumn('lotNumber')">{{ props.item.lotNumber }}</td>
+          <td v-if="showColumn('expirationDate')">{{new Date(props.item.expirationDate) | dateFormat('DD/MM/YY')}}</td>
+          <td v-if="showColumn('deliveryDate')">{{ new Date(props.item.deliveryDate) | dateFormat('DD/MM/YY') }}</td>
+          <td v-if="showColumn('supplier')">{{ props.item.supplier }}</td>
+          <td v-if="showColumn('buyInPrice')" align="end">€ {{ props.item.buyInPrice.toFixed(2) }}</td>
+          <td v-if="showColumn('sellingPrice')" align="end">€ {{ props.item.sellingPrice.toFixed(2) }}</td>
+          <td v-if="showColumn('sellingPricePerUnit')" align="end">€ {{ props.item.sellingPricePerUnit.toFixed(2) }}</td>
+          <td v-if="showColumn('initialAmount')" align="end">{{ props.item.initialAmount }}</td>
+          <td v-if="showColumn('remainingAmount')" align="end">{{ props.item.remainingAmount }}</td>
+          <td v-if="showColumn('updatedAt')" align="end">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YY') }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -47,7 +55,6 @@
                   outlined
                   label="Filter op remaining"
                   :items="remaining"
-                  @input="applyFilter($event)"
                   hide-details
               />
             </v-col>
@@ -65,10 +72,11 @@
         <v-card-text>
           <v-container>
             <v-form ref='form' v-model='valid'>
-              <v-row dense>
+              <v-row>
                 <v-col cols='6'>
-                  <v-text-field v-model='editedRow.lotNumber' required :rules='required' type='text' label='Lot nummer*'
-                                outlined/>
+                  <v-text-field v-model='editedRow.lotNumber' required :rules='required' type='text'
+                                label='Lot nummer *'
+                  />
                 </v-col>
                 <v-col cols='6'>
                   <v-menu
@@ -79,11 +87,10 @@
                     <template v-slot:activator='{ on }'>
                       <v-text-field
                           v-model='computedExpirationDateFormatted'
-                          label='Verval datum*'
+                          label='Verval datum *'
                           hint='MM/DD/YYYY format'
                           persistent-hint
                           v-on='on'
-                          outlined
                           readonly
                           required :rules='required'
                       ></v-text-field>
@@ -93,9 +100,9 @@
                   </v-menu>
                 </v-col>
               </v-row>
-              <v-row dense>
+              <v-row>
                 <v-col cols='6'>
-                  <v-text-field v-model='editedRow.supplier' type='text' label='Leverancier' outlined/>
+                  <v-text-field v-model='editedRow.supplier' type='text' label='Leverancier *'/>
                 </v-col>
                 <v-col cols='6'>
                   <v-menu
@@ -104,11 +111,10 @@
                     <template v-slot:activator='{ on }'>
                       <v-text-field
                           v-model='computedDeliveryDateFormatted'
-                          label='Levering datum*'
+                          label='Leveringsdatum *'
                           hint='MM/DD/YYYY format'
                           persistent-hint
                           v-on='on'
-                          outlined
                           readonly
                           required :rules='required'
                       ></v-text-field>
@@ -118,22 +124,31 @@
                   </v-menu>
                 </v-col>
               </v-row>
-              <v-row dense>
-                <v-col cols='6'>
+              <v-row>
+                <v-col cols='4'>
+                  <v-text-field v-model='editedRow.buyInPrice'
+                                type='number'
+                                label='Aankoopprijs'
+                                required
+                                :rules="requiredNumber"
+                                prefix="€" placeholder="0.00"/>
+                </v-col>
+                <v-col cols='4'>
+                  <v-text-field v-model='editedRow.sellingPricePerUnit'
+                                type='number'
+                                label='verkoopprijs/eenheid *'
+                                required
+                                :rules="requiredNumber"
+                                prefix="€" placeholder="0.00"/>
+                </v-col>
+                <v-col cols='4'>
                   <v-text-field v-model='editedRow.initialAmount'
                                 required
                                 :rules="requiredNumber"
                                 type='number'
-                                label='Amount*'
-                                outlined/>
-                </v-col>
-                <v-col cols='6'>
-                  <v-text-field v-model='editedRow.buyInPrice'
-                                type='number'
-                                label='Buy in price'
-                                required
-                                :rules="requiredNumber"
-                                outlined/>
+                                label='Initieel aantal *'
+                                placeholder="0"
+                  />
                 </v-col>
               </v-row>
             </v-form>
@@ -143,6 +158,25 @@
           <v-spacer/>
           <v-btn color='error' text @click='close'>Annuleer</v-btn>
           <v-btn color='success' :disabled='!valid' text @click='save'>Opslaan</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="columnDialog" max-width="690">
+      <v-card>
+        <v-card-text>
+          <v-list>
+            <v-row dense>
+              <v-col cols="12" sm="6" md="4" v-for="header in headers" :key="header.text">
+                <v-list-item>
+                  <v-checkbox :label="header.text" v-model="header.selected" :value="header.selected"></v-checkbox>
+                </v-list-item>
+              </v-col>
+            </v-row>
+          </v-list>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn color="green darken-1" text @click="columnDialog = false">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -162,15 +196,17 @@
 import {stockAPI} from '@/services'
 
 export default {
-  props: ['id', 'headers', 'batches', 'product', 'filters', 'options', 'loading'],
+  props: ['id', 'headers', 'filters', 'sortBy', 'sortDesc', 'product'],
   data() {
     return {
-      search: '',
+      search: null,
       expirationDateMenu: false,
       deliveryDateMenu: false,
       createDialog: false,
       filterDialog: false,
+      columnDialog: false,
       valid: false,
+      loading: false,
       snackbar: false,
       timeout: 6000,
       snackText: ``,
@@ -178,39 +214,90 @@ export default {
       singleRow: false,
       errored: false,
       errorMessage: '',
-      requiredNumber: [(v) => v>0  || 'Dit veld is verplicht en moet groter zijn dan 0'],
+      requiredNumber: [(v) => v > 0 || 'Dit veld is verplicht en moet groter zijn dan 0'],
       required: [v => !!v || 'Dit veld is verplicht'],
       editedRow: {
         lotNumber: ''
       },
+      totalBatches: 0,
+      batches: [],
+      options: {
+        remaining: 'All',
+      },
       remaining: ['All', 'In stock', 'Out of stock'],
     };
   },
+  watch: {
+    options: {
+      handler() {
+        this.getStockProduct(this.id);
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.getStockProduct(this.id);
+  },
   computed: {
+    filteredHeaders() {
+      return this.headers.filter(header => header.selected);
+    },
+    filteredBatches() {
+      return this.batches.map(products => {
+        let filtered = {...products};
+        this.headers.forEach(header => {
+          if (!header.selected) delete filtered[header.value];
+        });
+        return filtered;
+      });
+    },
     computedExpirationDateFormatted() {
       return this.formatDate(this.editedRow.expirationDate);
     },
     computedDeliveryDateFormatted() {
       return this.formatDate(this.editedRow.deliveryDate);
     },
+    URLParameters() {
+      return {
+        'page': this.options.page,
+        'limit': this.options.itemsPerPage,
+        'sortBy': this.options.sortBy,
+        'sortDesc': this.options.sortDesc,
+        'query': this.options.search,
+      };
+    }
   },
   methods: {
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
     },
-    openFilterDialog() {
-      this.filterDialog = true;
-    },
     openCreateDialog(item) {
       this.createDialog = true;
       this.editedRow = item;
+    },
+    showColumn(col) {
+      return this.headers.find(header => header.value === col).selected;
     },
     close() {
       this.$refs.form.resetValidation()
       this.createDialog = false;
     },
-    applyFilter(data) {
-      this.$emit('filter-batch', data);
+    async getStockProduct(id) {
+      this.loading = true;
+      try {
+        const {data: {batches, total}} = await stockAPI.getStockProduct(id, this.URLParameters);
+        if (this.options.remaining === 'All') {
+          this.batches = batches;
+        } else {
+          this.batches = batches.filter(prod => this.options.remaining === "Out of stock" ? (prod.remainingAmount === 0) : (prod.remainingAmount > 0));
+        }
+        this.totalBatches = total;
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.loading = false;
+      }
     },
     async save() {
       this.errored = false;

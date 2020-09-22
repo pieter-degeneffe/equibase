@@ -15,18 +15,14 @@
     data() {
       return {
         headers: [
-          {text: 'Productnaam', align: 'left', sortable: true, value: 'name'},
-          {text: 'Type', align: 'left', sortable: true, value: 'type'},
-          {text: 'CNK', align: 'left', sortable: true, value: 'CNK'},
-          {text: 'Eenheid', align: 'left', sortable: false, value: 'outgoingUnit'},
-          {text: 'BTW', align: 'left', sortable: false, value: 'tax'},
-          {text: 'Verkoopsprijs', align: 'left', sortable: false, value: 'sellingPrice'},
-          {text: 'Verkoopsprijs/eenheid', align: 'left', sortable: false, value: 'sellingPricePerUnit'},
-          //{ text: 'supplementAdministration', align: 'left', sortable: false, value: 'supplementAdministration' },
-          //{ text: 'waitingTime', align: 'left', sortable: false, value: 'waitingTime' },
-          //{ text: 'unitSellingPrice', align: 'left', sortable: false, value: 'unitSellingPrice' },
-          //{ text: 'unitAdministrationPrice', align: 'left', sortable: false, value: 'unitAdministrationPrice' },
-          {text: 'Bewerken', align: 'right', sortable: false, value: 'action'},
+          {text: 'Productnaam', value: 'name', sortable: true},
+          {text: 'Type', value: 'type', sortable: true},
+          {text: 'CNK', value: 'CNK', sortable: true},
+          {text: 'Eenheid', value: 'outgoingUnit', sortable: false},
+          {text: 'Wachttijd (dagen)', value: 'waitingTime', sortable: false},
+          {text: 'BTW', value: 'tax', align: 'left', sortable: false},
+          {text: 'Supplement (€)', value: 'supplementAdministration', align: 'end', sortable: false},
+          {text: '', value: 'action', align: 'end', sortable: false},
         ],
       }
     },
