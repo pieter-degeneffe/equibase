@@ -20,8 +20,6 @@
           {text: 'Verkoopsprijs/eenheid', value: 'sellingPricePerUnit', align: 'left', sortable: true, selected: true},
           {text: 'supplementAdministration', value: 'supplementAdministration', align: 'left', sortable: true, selected: false },
           {text: 'waitingTime', value: 'waitingTime', align: 'left', sortable: false, selected: false },
-          {text: 'unitSellingPrice', value: 'unitSellingPrice', align: 'left', sortable: true, selected: false },
-          {text: 'unitAdministrationPrice', value: 'unitAdministrationPrice', align: 'left', sortable: true, selected: false },
           {text: 'Remaining', value: 'remaining', align: 'right', sortable: true, selected: true},
         ],
         filters: {

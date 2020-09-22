@@ -34,8 +34,6 @@
           <td v-if="showColumn('sellingPricePerUnit')">{{ props.item.sellingPricePerUnit }}</td>
           <td v-if="showColumn('supplementAdministration')">{{ props.item.supplementAdministration }}</td>
           <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
-          <td v-if="showColumn('unitSellingPrice')">{{ props.item.unitSellingPrice }}</td>
-          <td v-if="showColumn('unitAdministrationPrice')">{{ props.item.unitAdministrationPrice }}</td>
           <td v-if="showColumn('remaining')" align="right">{{ props.item.remaining }}</td>
         </tr>
       </template>

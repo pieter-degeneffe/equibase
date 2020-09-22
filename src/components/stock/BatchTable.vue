@@ -13,7 +13,8 @@
         Filters
       </v-btn>
     </v-toolbar>
-    <v-data-table :headers='headers' :items='batches' :search="search">
+    <v-data-table :headers='headers' :items='batches' :search="search"
+                  :sort-by.sync="sortBy" :sort-desc.sync="sortDesc">
       <template v-slot:no-data>
         Geen batches gevonden
       </template>
@@ -166,6 +167,8 @@ export default {
   data() {
     return {
       search: '',
+      sortBy: 'expirationDate',
+      sortDesc: false,
       expirationDateMenu: false,
       deliveryDateMenu: false,
       createDialog: false,
