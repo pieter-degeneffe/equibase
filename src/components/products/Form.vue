@@ -50,8 +50,8 @@
         <v-row class="ma-5">
           <v-col cols="12" md="4">
             <v-text-field
-                type="number" hint="prijs per manuele toediening"
-                v-model="product.supplementAdministration" label="Supplement administratie *"
+                :rules="required" type="number" hint="prijs per manuele toediening"
+                v-model="product.supplementAdministration" label="Supplement toediening *"
                 :loading="loading" prefix="€" placeholder="0.00"/>
           </v-col>
         </v-row>

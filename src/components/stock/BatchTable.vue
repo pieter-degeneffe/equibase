@@ -111,7 +111,7 @@
                     <template v-slot:activator='{ on }'>
                       <v-text-field
                           v-model='computedDeliveryDateFormatted'
-                          label='Levering datum *'
+                          label='Leveringsdatum *'
                           hint='MM/DD/YYYY format'
                           persistent-hint
                           v-on='on'
