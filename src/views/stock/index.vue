@@ -1,6 +1,6 @@
 <template>
   <div>
-    <stockTable title="Stock overzicht" :headers="headers" :filters="filters"/>
+    <stockTable title="Stock overzicht" :headers="headers" :filters="filters" :sort-by="sortBy"/>
   </div>
 </template>
 
@@ -11,14 +11,14 @@
     data() {
       return {
         headers: [
-          {text: 'Productnaam', value: 'name', align: 'start', sortable: true, selected: true},
-          {text: 'Type', value: 'type', align: 'start', sortable: true, selected: true},
-          {text: 'CNK', value: 'CNK', align: 'start', sortable: true, selected: true},
-          {text: 'Eenheid', value: 'outgoingUnit', align: 'start', sortable: true, selected: true},
-          {text: 'BTW', value: 'tax', align: 'start', sortable: true, selected: true},
-          {text: 'Wachttijd (dagen)', value: 'waitingTime', align: 'left', sortable: false, selected: false },
+          {text: 'Productnaam', value: 'name', sortable: true, selected: true},
+          {text: 'Type', value: 'type', sortable: true, selected: true},
+          {text: 'CNK', value: 'CNK', sortable: true, selected: true},
+          {text: 'Eenheid', value: 'outgoingUnit', sortable: true, selected: true},
+          {text: 'BTW', value: 'tax', sortable: true, selected: true},
+          {text: 'Wachttijd (dagen)', value: 'waitingTime', sortable: false, selected: false },
           {text: 'Supplement', value: 'supplementAdministration', align: 'end', sortable: true, selected: false },
-          {text: 'Totale verkoopsprijs', value: 'sellingPrice', align: 'end', sortable: true, selected: true},
+          {text: 'Totale verkoopsprijs', value: 'value', align: 'end', sortable: true, selected: true},
           {text: 'Resterend', value: 'remaining', align: 'end', sortable: true, selected: true},
         ],
         filters: {
@@ -29,7 +29,6 @@
           remaining: null,
         },
         sortBy: 'name',
-        sortDesc: false
       }
     },
     components: {

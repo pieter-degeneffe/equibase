@@ -23,8 +23,8 @@
           <td>{{ props.item.outgoingUnit }}</td>
           <td>{{ props.item.waitingTime }}</td>
           <td>{{ props.item.tax }}</td>
-          <td>{{ props.item.supplementAdministration }}</td>
-          <td align="right" class="d-print-none">
+          <td align="end">€ {{ props.item.supplementAdministration.toFixed(2) }}</td>
+          <td align="end" class="d-print-none">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-icon dark color="primary" class="mr-2" @click="openProductPage(props.item._id)" v-on="on">

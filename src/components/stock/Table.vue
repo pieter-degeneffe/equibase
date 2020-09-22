@@ -17,8 +17,8 @@
         Kolommen
       </v-btn>
     </v-toolbar>
-    <v-data-table :headers="filteredHeaders" :items="filteredProducts" :search="search"
-                  :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc"
+    <v-data-table :headers="filteredHeaders" :items="filteredProducts" :server-items-length="totalProducts"
+                  :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc" :options.sync="options"
                   loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:no-data>
         Geen producten gevonden
@@ -31,8 +31,8 @@
           <td v-if="showColumn('outgoingUnit')">{{ props.item.outgoingUnit }}</td>
           <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
           <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
-          <td v-if="showColumn('supplementAdministration')" align="end">{{ props.item.supplementAdministration }}</td>
-          <td v-if="showColumn('sellingPrice')" align="end">{{ props.item.sellingPrice }}</td>
+          <td v-if="showColumn('supplementAdministration')" align="end">€ {{ props.item.supplementAdministration.toFixed(2) }}</td>
+          <td v-if="showColumn('value')" align="end">€ {{ props.item.value }}</td>
           <td v-if="showColumn('remaining')" align="end">{{ props.item.remaining }}</td>
         </tr>
       </template>
@@ -115,15 +115,17 @@ export default {
   props: ['title', 'headers', 'filters', 'sortBy'],
   data() {
     return {
-      search: '',
+      search: null,
       loading: false,
       errored: false,
       errorMessage: '',
       filterDialog: false,
       columnDialog: false,
-      sortDesc: true,
+      sortDesc: false,
       options: {
-        remaining: 'All',},
+        remaining: 'All',
+      },
+      totalProducts: 0,
       products: [],
       types: [],
       taxes: [],
@@ -142,7 +144,8 @@ export default {
         this.getAllStock();
       },
       deep: true
-    }
+    },
+
   },
   mounted() {
     this.getConfig();
@@ -188,12 +191,13 @@ export default {
     async getAllStock() {
       this.loading = true;
       try {
-        const {data: {stock}} = await stockAPI.getAllStock(this.URLParameters);
+        const { data: {products, total}} = await stockAPI.getAllStock(this.URLParameters);
         if(this.options.remaining === 'All'){
-          this.products = stock;
+          this.products = products;
         } else {
-          this.products = stock.filter(prod => this.options.remaining === "Out of stock" ? (prod.remaining === 0) : (prod.remaining > 0));
+          this.products = products.filter(prod => this.options.remaining === "Out of stock" ? (prod.remaining === 0) : (prod.remaining > 0));
         }
+        this.totalProducts = total;
       } catch (err) {
         this.errored = true;
         console.log(err)

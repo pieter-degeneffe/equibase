@@ -17,23 +17,24 @@
         Kolommen
       </v-btn>
     </v-toolbar>
-    <v-data-table :headers='filteredHeaders' :items='filteredBatches' :search="search"
-                  :sort-by.sync="sortBy" :sort-desc.sync="sortDesc">
+    <v-data-table :headers='filteredHeaders' :items='filteredBatches' :loading="loading" loading-text="Bezig met laden..."
+                  :server-items-length="totalBatches" :sort-by="sortBy" :sortDesc="sortDesc" :options.sync="options"
+                  >
       <template v-slot:no-data>
         Geen batches gevonden
       </template>
       <template v-slot:item='props'>
         <tr>
           <td v-if="showColumn('lotNumber')">{{ props.item.lotNumber }}</td>
-          <td v-if="showColumn('expirationDate')">{{ new Date(props.item.expirationDate) | dateFormat('DD/MM/YY') }}</td>
+          <td v-if="showColumn('expirationDate')">{{new Date(props.item.expirationDate) | dateFormat('DD/MM/YY')}}</td>
           <td v-if="showColumn('deliveryDate')">{{ new Date(props.item.deliveryDate) | dateFormat('DD/MM/YY') }}</td>
           <td v-if="showColumn('supplier')">{{ props.item.supplier }}</td>
-          <td v-if="showColumn('buyInPrice')">{{ props.item.buyInPrice }}</td>
-          <td v-if="showColumn('sellingPrice')">{{ props.item.sellingPrice }}</td>
-          <td v-if="showColumn('sellingPriceUnit')">{{ props.item.sellingPriceUnit }}</td>
-          <td v-if="showColumn('initialAmount')">{{ props.item.initialAmount }}</td>
-          <td v-if="showColumn('remainingAmount')">{{ props.item.remainingAmount }}</td>
-          <td v-if="showColumn('updatedAt')">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YY') }}</td>
+          <td v-if="showColumn('buyInPrice')" align="end">€ {{ props.item.buyInPrice.toFixed(2) }}</td>
+          <td v-if="showColumn('sellingPrice')" align="end">€ {{ props.item.sellingPrice.toFixed(2) }}</td>
+          <td v-if="showColumn('sellingPricePerUnit')" align="end">€ {{ props.item.sellingPricePerUnit.toFixed(2) }}</td>
+          <td v-if="showColumn('initialAmount')" align="end">{{ props.item.initialAmount }}</td>
+          <td v-if="showColumn('remainingAmount')" align="end">{{ props.item.remainingAmount }}</td>
+          <td v-if="showColumn('updatedAt')" align="end">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YY') }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -54,7 +55,6 @@
                   outlined
                   label="Filter op remaining"
                   :items="remaining"
-                  @input="applyFilter($event)"
                   hide-details
               />
             </v-col>
@@ -74,8 +74,9 @@
             <v-form ref='form' v-model='valid'>
               <v-row>
                 <v-col cols='6'>
-                  <v-text-field v-model='editedRow.lotNumber' required :rules='required' type='text' label='Lot nummer *'
-                                />
+                  <v-text-field v-model='editedRow.lotNumber' required :rules='required' type='text'
+                                label='Lot nummer *'
+                  />
                 </v-col>
                 <v-col cols='6'>
                   <v-menu
@@ -133,7 +134,7 @@
                                 prefix="€" placeholder="0.00"/>
                 </v-col>
                 <v-col cols='4'>
-                  <v-text-field v-model='editedRow.sellPriceunit'
+                  <v-text-field v-model='editedRow.sellingPricePerUnit'
                                 type='number'
                                 label='verkoopprijs/eenheid *'
                                 required
@@ -147,7 +148,7 @@
                                 type='number'
                                 label='Initieel aantal *'
                                 placeholder="0"
-                                />
+                  />
                 </v-col>
               </v-row>
             </v-form>
@@ -195,18 +196,17 @@
 import {stockAPI} from '@/services'
 
 export default {
-  props: ['id', 'headers', 'batches', 'product', 'filters', 'options', 'loading'],
+  props: ['id', 'headers', 'filters', 'sortBy', 'sortDesc', 'product'],
   data() {
     return {
-      search: '',
-      sortBy: 'expirationDate',
-      sortDesc: false,
+      search: null,
       expirationDateMenu: false,
       deliveryDateMenu: false,
       createDialog: false,
       filterDialog: false,
       columnDialog: false,
       valid: false,
+      loading: false,
       snackbar: false,
       timeout: 6000,
       snackText: ``,
@@ -219,8 +219,24 @@ export default {
       editedRow: {
         lotNumber: ''
       },
+      totalBatches: 0,
+      batches: [],
+      options: {
+        remaining: 'All',
+      },
       remaining: ['All', 'In stock', 'Out of stock'],
     };
+  },
+  watch: {
+    options: {
+      handler() {
+        this.getStockProduct(this.id);
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.getStockProduct(this.id);
   },
   computed: {
     filteredHeaders() {
@@ -228,7 +244,7 @@ export default {
     },
     filteredBatches() {
       return this.batches.map(products => {
-        let filtered = { ...products };
+        let filtered = {...products};
         this.headers.forEach(header => {
           if (!header.selected) delete filtered[header.value];
         });
@@ -241,13 +257,19 @@ export default {
     computedDeliveryDateFormatted() {
       return this.formatDate(this.editedRow.deliveryDate);
     },
+    URLParameters() {
+      return {
+        'page': this.options.page,
+        'limit': this.options.itemsPerPage,
+        'sortBy': this.options.sortBy,
+        'sortDesc': this.options.sortDesc,
+        'query': this.options.search,
+      };
+    }
   },
   methods: {
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
-    },
-    openFilterDialog() {
-      this.filterDialog = true;
     },
     openCreateDialog(item) {
       this.createDialog = true;
@@ -260,8 +282,22 @@ export default {
       this.$refs.form.resetValidation()
       this.createDialog = false;
     },
-    applyFilter(data) {
-      this.$emit('filter-batch', data);
+    async getStockProduct(id) {
+      this.loading = true;
+      try {
+        const {data: {batches, total}} = await stockAPI.getStockProduct(id, this.URLParameters);
+        if (this.options.remaining === 'All') {
+          this.batches = batches;
+        } else {
+          this.batches = batches.filter(prod => this.options.remaining === "Out of stock" ? (prod.remainingAmount === 0) : (prod.remainingAmount > 0));
+        }
+        this.totalBatches = total;
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.loading = false;
+      }
     },
     async save() {
       this.errored = false;

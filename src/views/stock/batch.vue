@@ -22,9 +22,7 @@
                      :disabled="true" @update-product="updateProduct"/>
       </v-tab-item>
       <v-tab-item class="ma-5">
-        <BatchTable :headers="headers" :id="id" :batches="batches" :loading="loading"
-                    :product="product" :filters="filters" :options="options"
-                    @filter-batch="filterBatch"/>
+        <BatchTable :headers="headers" :id="id" :product="product" :sort-by="sortBy"/>
       </v-tab-item>
       <v-tab-item class="ma-5">
         <h3>mods</h3>
@@ -36,7 +34,7 @@
 <script>
 import BatchTable from '@/components/stock/BatchTable';
 import ProductForm from '@/components/products/Form';
-import {stockAPI} from "@/services";
+import { productsAPI} from "@/services";
 
 export default {
   props: ['id'],
@@ -46,29 +44,28 @@ export default {
       disabled: true,
       valid: false,
       product: {},
-      batches: [],
+      totalBatches: 0,
       errored: false,
       errorMessage: '',
       loading: false,
-      options: {
-        remaining: 'All',
-      },
       editedIndex: -1,
       headers: [
         {text: 'lot nummer', value: 'lotNumber', selected: true},
         {text: 'vervaldatum', value: 'expirationDate', selected: true},
         {text: 'leveringsdatum', value: 'deliveryDate', selected: true},
         {text: 'leverancier', value: 'supplier', selected: true},
-        {text: 'aankoopprijs', value: 'buyInPrice', selected: true},
-        {text: 'verkoopprijs', value: 'sellingPrice', selected: true},
-        {text: 'verkoopprijs/eenheid', value: 'sellingPriceUnit', selected: true},
-        {text: 'initieel aantal', value: 'initialAmount', selected: false},
-        {text: 'resterend', value: 'remainingAmount', selected: true},
-        {text: 'laatste update', value: 'updatedAt', selected: false},
+        {text: 'aankoopprijs', value: 'buyInPrice', align: 'end', selected: true},
+        {text: 'verkoopprijs', value: 'sellingPrice', align: 'end', selected: true},
+        {text: 'verkoopprijs/eenheid', value: 'sellingPricePerUnit', align: 'end', selected: true},
+        {text: 'initieel aantal', value: 'initialAmount', align: 'end', selected: false},
+        {text: 'resterend', value: 'remainingAmount', align: 'end', selected: true},
+        {text: 'laatste update', value: 'updatedAt', align: 'end',selected: false},
       ],
       filters: {
         remaining: null,
-      }
+      },
+      sortBy: 'expirationDate',
+      sortDesc: false,
     };
   },
   components: {
@@ -80,29 +77,14 @@ export default {
       return this.editedIndex === -1 ? 'Nieuwe batch' : 'batch bewerken'
     },
   },
-  beforeMount() {
-    if (this.id !== 'undefined') {
-      this.getStockProduct(this.id);
-    }
-  },
-  watch: {
-    options: {
-      handler() {
-        this.getStockProduct(this.id);
-      },
-      deep: true
-    }
+  mounted() {
+    this.getProduct(this.id);
   },
   methods: {
-    async getStockProduct(id) {
+    async getProduct(id) {
       this.loading = true;
       try {
-        const {data: {batches}, data} = await stockAPI.getStockProduct(id);
-        if (this.options.remaining === 'All') {
-          this.batches = batches;
-        } else {
-          this.batches = batches.filter(prod => this.options.remaining === "Out of stock" ? (prod.remainingAmount === 0) : (prod.remainingAmount > 0));
-        }
+        const { data } = await productsAPI.getProduct(id);
         this.product = data;
       } catch (err) {
         this.errored = true;
