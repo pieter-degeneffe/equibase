@@ -93,7 +93,7 @@
           </v-list>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn color="green darken-1" text @click="columnDialog = false">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
