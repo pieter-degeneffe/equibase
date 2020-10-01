@@ -8,6 +8,27 @@
           single-line
           hide-details
       />
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              color="primary"
+              class="ml-4 d-print-none"
+              v-bind="attrs" v-on="on"
+              dark :disabled="checkSelectedBatches">
+            <v-icon left>mdi-chevron-down</v-icon>
+            Acties
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+              v-for="(item, index) in actieMenu"
+              :key="index"
+              @click="item.action"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <v-btn color="primary" dark @click="filterDialog = true" class="ml-4 d-print-none">
         <v-icon left>mdi-filter</v-icon>
         Filters
@@ -17,14 +38,34 @@
         Kolommen
       </v-btn>
     </v-toolbar>
-    <v-data-table :headers='filteredHeaders' :items='filteredBatches' :loading="loading" loading-text="Bezig met laden..."
-                  :server-items-length="totalBatches" :sort-by="sortBy" :sortDesc="sortDesc" :options.sync="options"
-                  >
+    <v-data-table :headers='filteredHeaders'
+                  :items='filteredBatches'
+                  :loading="loading"
+                  loading-text="Bezig met laden..."
+                  :server-items-length="totalBatches"
+                  :sort-by="sortBy"
+                  :sortDesc="sortDesc"
+                  :options.sync="options"
+                  v-model="selectedBatches"
+                  show-select
+                  :single-select="false"
+    >
       <template v-slot:no-data>
         Geen batches gevonden
       </template>
       <template v-slot:item='props'>
-        <tr>
+        <tr :style="{
+          backgroundColor: (selectedBatches.includes(props.item) ? '#efefef' : (!props.item.active) ? '#f9f9f9' : ''),
+          color: ((!props.item.active) ? '#999' : '')
+        }">
+          <td>
+            <v-checkbox
+                dense
+                :input-value="props.isSelected"
+                @click="logThis(selectedBatches)"
+                @change="props.select($event)"
+            />
+          </td>
           <td v-if="showColumn('lotNumber')">{{ props.item.lotNumber }}</td>
           <td v-if="showColumn('expirationDate')">{{new Date(props.item.expirationDate) | dateFormat('DD/MM/YY')}}</td>
           <td v-if="showColumn('deliveryDate')">{{ new Date(props.item.deliveryDate) | dateFormat('DD/MM/YY') }}</td>
@@ -221,6 +262,15 @@ export default {
       },
       totalBatches: 0,
       batches: [],
+      selectedBatches: [],
+      actieMenu: [
+        { title: 'Deactiveer', action: this.deactivate },
+        { title: 'Activeer', action: this.activate },
+        { title: 'Verkoop', action: '' },
+        { title: 'Toediening', action: '' },
+        { title: 'Vervallen', action: '' },
+        { title: 'Controle', action: '' },
+      ],
       options: {
         remaining: 'All',
       },
@@ -257,6 +307,9 @@ export default {
     computedDeliveryDateFormatted() {
       return this.formatDate(this.editedRow.deliveryDate);
     },
+    checkSelectedBatches() {
+      return this.selectedBatches.length === 0;
+    },
     URLParameters() {
       return {
         'page': this.options.page,
@@ -268,8 +321,16 @@ export default {
     }
   },
   methods: {
+    showSnackbar(color, text) {
+      this.snackbar = true;
+      this.snackColor = color;
+      this.snackText = text;
+    },
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
+    },
+    logThis(item) {
+      console.log(item);
     },
     openCreateDialog(item) {
       this.createDialog = true;
@@ -301,23 +362,51 @@ export default {
     },
     async save() {
       this.errored = false;
-      this.snackbar = true;
-      this.snackColor = 'success'
-      this.snackText = `Lot succesvol toegevoegd aan ${this.product.name}`
       try {
         this.loading = true;
         const {data} = await stockAPI.postStock({...this.editedRow, product: this.product._id})
         if (data) {
           this.batches.push(data);
         }
+        this.showSnackbar('success', `Lot succesvol toegevoegd aan ${this.product.name}`);
       } catch (err) {
-        this.snackbar = true;
-        this.snackColor = 'error'
-        this.snackText = `Fout opgetreden tijden het toegevoegen aan ${this.product.name}`
+        this.showSnackbar('error',`Fout opgetreden tijdens het toegevoegen aan ${this.product.name}`);
         this.errored = true;
         this.errorMessage = err.response.data.message;
       } finally {
         this.close()
+        this.loading = false;
+      }
+    },
+    async deactivate() {
+      this.errored = false;
+      try {
+        this.loading = true;
+        await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.deactivateBatch(_id)));
+        this.getStockProduct(this.id);
+        this.selectedBatches = [];
+        this.showSnackbar('success', 'lot succesvol gedeactiveerd');
+      } catch (err) {
+        this.showSnackbar('error', `Fout opgetreden tijdens het deactiveren van ${this.selectedBatches._id}`);
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+    async activate() {
+      this.errored = false;
+      try {
+        this.loading = true;
+        await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.activateBatch(_id)));
+        this.getStockProduct(this.id);
+        this.selectedBatches = [];
+        this.showSnackbar('success', 'lot succesvol geactiveerd');
+      } catch (err) {
+        this.showSnackbar('error', `Fout opgetreden tijdens het activeren van ${this.selectedBatches._id}`);
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
         this.loading = false;
       }
     },
@@ -330,3 +419,13 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.theme--dark.v-btn.v-btn--disabled:not(.v-btn--flat):not(.v-btn--text):not(.v-btn--outlined) {
+  background-color: #eee !important;
+  color: #999 !important;
+}
+.theme--dark.v-btn.v-btn--disabled .v-icon, .theme--dark.v-btn.v-btn--disabled .v-btn__loading {
+  color: #999 !important;
+}
+</style>
