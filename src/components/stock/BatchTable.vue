@@ -24,6 +24,7 @@
               v-for="(item, index) in actieMenu"
               :key="index"
               @click="item.action"
+              :disabled="item.singleSelect ? selectedBatches.length > 1 : false"
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
@@ -62,7 +63,6 @@
             <v-checkbox
                 dense
                 :input-value="props.isSelected"
-                @click="logThis(selectedBatches)"
                 @change="props.select($event)"
             />
           </td>
@@ -202,6 +202,57 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model='editDialog' max-width='690'>
+      <v-card>
+        <v-card-title>Product aanpassen - type: {{ updateRow.type }}</v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-form ref="form" v-model="valid">
+              <v-row class="ma-5">
+                <v-col cols="6">
+                  <v-select
+                      :rules="required"
+                      :items="modsTypes"
+                      disabled
+                      v-model="updateRow.type"
+                      label="type *"
+                      :loading="loading"
+                  />
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                      min="0"
+                      max="10"
+                      :rules="requiredNumber"
+                      type="number"
+                      v-model="updateRow.amount"
+                      label="aantal *"
+                      :loading="loading"
+                  />
+                </v-col>
+              </v-row>
+              <v-row v-if="updateRow.type === 'Verkoop'" class="ma-5">
+                <v-col cols="12">
+                  <v-select
+                      :rules="required"
+                      :items="modsTypes"
+                      disabled
+                      v-model="updateRow.type"
+                      label="Klant *"
+                      :loading="loading"
+                  />
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn color="error" text @click="close">Annuleer</v-btn>
+          <v-btn color="success" :disabled="!valid" text @click="edit">Opslaan</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="columnDialog" max-width="690">
       <v-card>
         <v-card-text>
@@ -234,7 +285,7 @@
 </template>
 
 <script>
-import {stockAPI} from '@/services'
+import {stockAPI, configAPI, customerAPI} from '@/services'
 
 export default {
   props: ['id', 'headers', 'filters', 'sortBy', 'sortDesc', 'product'],
@@ -243,6 +294,7 @@ export default {
       search: null,
       expirationDateMenu: false,
       deliveryDateMenu: false,
+      editDialog: false,
       createDialog: false,
       filterDialog: false,
       columnDialog: false,
@@ -260,16 +312,20 @@ export default {
       editedRow: {
         lotNumber: ''
       },
+      updateRow: {},
       totalBatches: 0,
       batches: [],
       selectedBatches: [],
+      modsTypes: [],
+      customers: [],
       actieMenu: [
-        { title: 'Deactiveer', action: this.deactivate },
-        { title: 'Activeer', action: this.activate },
-        { title: 'Verkoop', action: '' },
-        { title: 'Toediening', action: '' },
-        { title: 'Vervallen', action: '' },
-        { title: 'Controle', action: '' },
+        { title: 'Deactiveer', action: this.deactivate, singleSelect: false },
+        { title: 'Activeer', action: this.activate, singleSelect: false },
+        { title: 'Beschadigd', action: this.openEditDialog, singleSelect: true },
+        { title: 'Verkoop', action: this.openEditDialog, singleSelect: true },
+        { title: 'Toediening', action: this.openEditDialog, singleSelect: true },
+        { title: 'Vervallen', action: this.openEditDialog, singleSelect: true },
+        { title: 'Controle', action: this.openEditDialog, singleSelect: true },
       ],
       options: {
         remaining: 'All',
@@ -287,6 +343,8 @@ export default {
   },
   mounted() {
     this.getStockProduct(this.id);
+    this.getModsConfig();
+    this.getCustomers();
   },
   computed: {
     filteredHeaders() {
@@ -329,12 +387,16 @@ export default {
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
     },
-    logThis(item) {
-      console.log(item);
-    },
     openCreateDialog(item) {
       this.createDialog = true;
       this.editedRow = item;
+    },
+    openEditDialog(e) {
+      this.editDialog = true;
+      this.updateRow = {
+        id: this.selectedBatches[0].id,
+        type: e.target.innerText,
+      };
     },
     showColumn(col) {
       return this.headers.find(header => header.value === col).selected;
@@ -342,6 +404,28 @@ export default {
     close() {
       this.$refs.form.resetValidation()
       this.createDialog = false;
+      this.editDialog = false;
+    },
+    async getModsConfig() {
+      this.errored = false;
+      try {
+        const { data: { types }} = await configAPI.getModConfig();
+        this.modsTypes = types;
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
+    },
+    async getCustomers() {
+      this.errored = false;
+      try {
+        const { data } = await customerAPI.getCustomers();
+        this.customers = data;
+        console.log('customers: ', this.customers);
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
     },
     async getStockProduct(id) {
       this.loading = true;
@@ -357,6 +441,23 @@ export default {
         this.errored = true;
         this.errorMessage = err.response.data.message;
       } finally {
+        this.loading = false;
+      }
+    },
+    async edit() {
+      this.errored = false;
+      try {
+        this.loading = true;
+        const response = await stockAPI.putStock(this.id, {...this.updateRow});
+        console.log(response);
+        this.getStockProduct(this.id);
+        this.showSnackbar('success', `${this.product.name} aangepast`);
+      } catch (err) {
+        this.showSnackbar('error',`Fout opgetreden tijdens het aanpassen van ${this.product.name}`);
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.close();
         this.loading = false;
       }
     },

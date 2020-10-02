@@ -25,7 +25,7 @@
         <BatchTable :headers="headers" :id="id" :product="product" :sort-by="sortBy"/>
       </v-tab-item>
       <v-tab-item class="ma-5">
-        <h3>mods</h3>
+        <BatchModsTable :product="product" :id="id"/>
       </v-tab-item>
     </v-tabs>
   </v-card>
@@ -34,6 +34,7 @@
 <script>
 import BatchTable from '@/components/stock/BatchTable';
 import ProductForm from '@/components/products/Form';
+import BatchModsTable from '@/components/stock/BatchModsTable';
 import { productsAPI} from "@/services";
 
 export default {
@@ -71,6 +72,7 @@ export default {
   components: {
     BatchTable,
     ProductForm,
+    BatchModsTable
   },
   computed: {
     formTitle() {

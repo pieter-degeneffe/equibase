@@ -13,7 +13,7 @@
                 </v-list-item-content>
               </v-list-item>
             </template>
-            <v-list-item v-for="(child, i) in item.submenu" :key="i" :to="child.url">
+            <v-list-item v-for="(child, i) in item.submenu" :key="i" :to="child.url" class="pl-8">
               <!-- <v-list-item-action v-if="child.icon">
                 <v-icon>{{ child.icon }}</v-icon>
               </v-list-item-action> -->

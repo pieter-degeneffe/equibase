@@ -35,8 +35,8 @@
                 :loading="loading"/>
           </v-col>
           <v-col cols="12" md="4">
-            <v-text-field
-                :rules="required" type="text"
+            <v-select
+                :rules="required" :items="units"
                 v-model="product.outgoingUnit" label="Eenheid *"
                 :loading="loading"/>
           </v-col>
@@ -98,7 +98,8 @@
         snackbar: false,
         required: [v => !!v || 'Dit veld is verplicht'],
         types: [],
-        taxes: []
+        taxes: [],
+        units: []
       }
     },
     mounted() {
@@ -137,9 +138,10 @@
       async getConfig() {
         this.errored = false;
         try {
-          const { data: { types, tax } } = await configAPI.getProductConfig();
+          const { data: { types, tax, units } } = await configAPI.getProductConfig();
           this.types = types;
           this.taxes = tax;
+          this.units = units;
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
