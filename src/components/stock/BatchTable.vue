@@ -55,10 +55,14 @@
         Geen batches gevonden
       </template>
       <template v-slot:item='props'>
-        <tr :style="{
-          backgroundColor: (selectedBatches.includes(props.item) ? '#efefef' : (!props.item.active) ? '#f9f9f9' : ''),
-          color: ((!props.item.active) ? '#999' : '')
-        }">
+        <tr @click="selectRow(props.item)"
+            @mouseover="mouseOver(true)"
+            @mouseleave="mouseOver(false)"
+            :style="{
+              backgroundColor: (selectedBatches.includes(props.item) ? '#efefef' : (!props.item.active) ? '#f9f9f9' : ''),
+              color: ((!props.item.active) ? '#999' : '')
+            }"
+        >
           <td>
             <v-checkbox
                 dense
@@ -67,15 +71,15 @@
             />
           </td>
           <td v-if="showColumn('lotNumber')">{{ props.item.lotNumber }}</td>
-          <td v-if="showColumn('expirationDate')">{{new Date(props.item.expirationDate) | dateFormat('DD/MM/YY')}}</td>
-          <td v-if="showColumn('deliveryDate')">{{ new Date(props.item.deliveryDate) | dateFormat('DD/MM/YY') }}</td>
+          <td v-if="showColumn('expirationDate')">{{new Date(props.item.expirationDate) | dateFormat('DD/MM/YYYY')}}</td>
+          <td v-if="showColumn('deliveryDate')">{{ new Date(props.item.deliveryDate) | dateFormat('DD/MM/YYYY') }}</td>
           <td v-if="showColumn('supplier')">{{ props.item.supplier }}</td>
           <td v-if="showColumn('buyInPrice')" align="end">€ {{ props.item.buyInPrice.toFixed(2) }}</td>
           <td v-if="showColumn('sellingPrice')" align="end">€ {{ props.item.sellingPrice.toFixed(2) }}</td>
           <td v-if="showColumn('sellingPricePerUnit')" align="end">€ {{ props.item.sellingPricePerUnit.toFixed(2) }}</td>
           <td v-if="showColumn('initialAmount')" align="end">{{ props.item.initialAmount }}</td>
           <td v-if="showColumn('remainingAmount')" align="end">{{ props.item.remainingAmount }}</td>
-          <td v-if="showColumn('updatedAt')" align="end">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YY') }}</td>
+          <td v-if="showColumn('updatedAt')" align="end">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YYYY') }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -208,7 +212,7 @@
         <v-card-text>
           <v-container>
             <v-form ref="form" v-model="valid">
-              <v-row class="ma-5">
+              <v-row class="ml-5 mr-5">
                 <v-col cols="6">
                   <v-select
                       :rules="required"
@@ -231,15 +235,31 @@
                   />
                 </v-col>
               </v-row>
-              <v-row v-if="updateRow.type === 'Verkoop'" class="ma-5">
+              <v-row v-if="updateRow.type === 'Verkoop'" class="ml-5 mr-5">
                 <v-col cols="12">
                   <v-select
                       :rules="required"
-                      :items="modsTypes"
-                      disabled
-                      v-model="updateRow.type"
+                      :items="customers"
+                      item-value="_id"
+                      :item-text="generateCustomerName"
+                      v-model="updateRow.client"
                       label="Klant *"
                       :loading="loading"
+                      clearable
+                  />
+                </v-col>
+              </v-row>
+              <v-row v-if="updateRow.type === 'Toediening'" class="ml-5 mr-5">
+                <v-col cols="12">
+                  <v-select
+                      :rules="required"
+                      :items="horses"
+                      item-value="_id"
+                      item-text="name"
+                      v-model="updateRow.horse"
+                      label="Paard *"
+                      :loading="loading"
+                      clearable
                   />
                 </v-col>
               </v-row>
@@ -285,7 +305,7 @@
 </template>
 
 <script>
-import {stockAPI, configAPI, customerAPI} from '@/services'
+import {stockAPI, configAPI, customerAPI, horseAPI} from '@/services'
 
 export default {
   props: ['id', 'headers', 'filters', 'sortBy', 'sortDesc', 'product'],
@@ -318,6 +338,7 @@ export default {
       selectedBatches: [],
       modsTypes: [],
       customers: [],
+      horses: [],
       actieMenu: [
         { title: 'Deactiveer', action: this.deactivate, singleSelect: false },
         { title: 'Activeer', action: this.activate, singleSelect: false },
@@ -345,6 +366,7 @@ export default {
     this.getStockProduct(this.id);
     this.getModsConfig();
     this.getCustomers();
+    this.getHorses();
   },
   computed: {
     filteredHeaders() {
@@ -379,6 +401,12 @@ export default {
     }
   },
   methods: {
+    generateCustomerName(item) {
+      return (`${item.last_name} ${item.first_name}`);
+    },
+    selectRow(row) {
+      !this.selectedBatches.includes(row) ? this.selectedBatches.push(row) : this.selectedBatches = this.selectedBatches.filter(item => item !== row);
+    },
     showSnackbar(color, text) {
       this.snackbar = true;
       this.snackColor = color;
@@ -405,6 +433,7 @@ export default {
       this.$refs.form.resetValidation()
       this.createDialog = false;
       this.editDialog = false;
+      this.getStockProduct(this.id);
     },
     async getModsConfig() {
       this.errored = false;
@@ -421,7 +450,16 @@ export default {
       try {
         const { data } = await customerAPI.getCustomers();
         this.customers = data;
-        console.log('customers: ', this.customers);
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
+    },
+    async getHorses() {
+      this.errored = false;
+      try {
+        const { data: { horses } } = await horseAPI.getHorses();
+        this.horses = horses;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
@@ -448,9 +486,7 @@ export default {
       this.errored = false;
       try {
         this.loading = true;
-        const response = await stockAPI.putStock(this.id, {...this.updateRow});
-        console.log(response);
-        this.getStockProduct(this.id);
+        await stockAPI.putStock(this.id, {...this.updateRow}, this.updateRow.id);
         this.showSnackbar('success', `${this.product.name} aangepast`);
       } catch (err) {
         this.showSnackbar('error',`Fout opgetreden tijdens het aanpassen van ${this.product.name}`);
@@ -458,6 +494,7 @@ export default {
         this.errorMessage = err.response.data.message;
       } finally {
         this.close();
+        this.selectedBatches = [];
         this.loading = false;
       }
     },
@@ -484,7 +521,7 @@ export default {
       try {
         this.loading = true;
         await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.deactivateBatch(_id)));
-        this.getStockProduct(this.id);
+        await this.getStockProduct(this.id);
         this.selectedBatches = [];
         this.showSnackbar('success', 'lot succesvol gedeactiveerd');
       } catch (err) {
@@ -500,7 +537,7 @@ export default {
       try {
         this.loading = true;
         await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.activateBatch(_id)));
-        this.getStockProduct(this.id);
+        await this.getStockProduct(this.id);
         this.selectedBatches = [];
         this.showSnackbar('success', 'lot succesvol geactiveerd');
       } catch (err) {
