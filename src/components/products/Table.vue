@@ -9,9 +9,16 @@
           hide-details
       />
     </v-toolbar>
-    <v-data-table :headers="headers" :items="products" :search="search"
-                  :loading="loading" loading-text="Bezig met laden..."
-                  class="ma-5">
+    <v-data-table
+        class="ma-5"
+        :headers="headers"
+        :items="products"
+        :search="search"
+        :loading="loading"
+        loading-text="Bezig met laden..."
+        :server-items-length="totalProducts"
+        :options.sync="options"
+    >
       <template v-slot:no-data>
         Geen producten gevonden
       </template>
@@ -76,23 +83,46 @@
     data() {
       return {
         search: '',
+        totalProducts: 0,
         products: [],
         loading: false,
         errored: false,
         errorMessage: '',
         deleteDialog: false,
         deleteQueue: {},
+        options: {},
+        sortBy: '',
+        sortDesc: false,
       };
     },
     mounted() {
       this.getProducts();
     },
+    watch: {
+      options: {
+        handler() {
+          this.getProducts();
+        },
+        deep: true
+      },
+    },
+    computed: {
+      URLParameters() {
+        return {
+          'page': this.options.page,
+          'limit': this.options.itemsPerPage,
+          'sortBy': this.options.sortBy,
+          'sortDesc': this.options.sortDesc,
+        };
+      }
+    },
     methods: {
       async getProducts() {
         this.loading = true;
         try {
-          const { data: { products } } = await productsAPI.getAllProducts();
+          const { data: { products, total } } = await productsAPI.getAllProducts(this.URLParameters);
           this.products = products;
+          this.totalProducts = total;
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
@@ -107,9 +137,9 @@
           await productsAPI.deleteProduct(item._id);
           this.deleteDialog = false;
           await this.getProducts();
-        } catch (e) {
+        } catch (err) {
           this.errored = true;
-          this.errorMessage = e.response.data.message;
+          this.errorMessage = err.response.data.message;
         } finally {
           this.loading = false;
         }

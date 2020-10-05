@@ -3,10 +3,11 @@
     <v-toolbar flat>
       <v-text-field
           v-model="search"
-          append-icon="mdi-magnify"
+          prepend-inner-icon="mdi-magnify"
           label="Zoeken"
           single-line
           hide-details
+          @input="searchStock"
       />
       <v-btn color="primary" dark @click="openFilterDialog" class="ml-5 d-print-none">
         <v-icon left>mdi-filter</v-icon>
@@ -178,6 +179,9 @@ export default {
     }
   },
   methods: {
+    searchStock(item) {
+      this.search = item;
+    },
     openStockProductPage(id) {
       document.body.style.cursor = 'default';
       this.$router.push(`/stock/${ id }`);
