@@ -77,7 +77,7 @@ export default {
         {text: 'laatste update', value: 'updatedAt', align: 'end',selected: false},
       ],
       filters: {
-        remaining: null,
+        remaining: 'All',
       },
       sortBy: 'expirationDate',
       sortDesc: false,

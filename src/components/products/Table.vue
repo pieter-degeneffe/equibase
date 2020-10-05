@@ -8,11 +8,18 @@
           single-line
           hide-details
       />
+      <FilterButton
+          :toFilter="toFilter"
+          :filters="filters"
+          :headers="headers"
+          :products="products"
+          @emit-headers="updateFilteredHeaders"
+      />
     </v-toolbar>
     <v-data-table
         class="ma-5"
-        :headers="headers"
-        :items="products"
+        :headers="filteredHeaders"
+        :items="filteredProducts"
         :search="search"
         :loading="loading"
         loading-text="Bezig met laden..."
@@ -24,13 +31,13 @@
       </template>
       <template v-slot:item="props">
         <tr>
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.type }}</td>
-          <td>{{ props.item.CNK }}</td>
-          <td>{{ props.item.outgoingUnit }}</td>
-          <td>{{ props.item.waitingTime }}</td>
-          <td>{{ props.item.tax }}</td>
-          <td align="end">€ {{ props.item.supplementAdministration.toFixed(2) }}</td>
+          <td v-if="showColumn('name')">{{ props.item.name }}</td>
+          <td v-if="showColumn('type')">{{ props.item.type }}</td>
+          <td v-if="showColumn('CNK')">{{ props.item.CNK }}</td>
+          <td v-if="showColumn('outgoingUnit')">{{ props.item.outgoingUnit }}</td>
+          <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
+          <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
+          <td v-if="showColumn('supplementAdministration')" align="end">€ {{ props.item.supplementAdministration.toFixed(2) }}</td>
           <td align="end" class="d-print-none">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -77,8 +84,12 @@
 
 <script>
   import productsAPI from '@/services/ProductsAPI';
+  import FilterButton from "@/components/FilterButton";
 
   export default {
+    components: {
+      FilterButton,
+    },
     props: ['title', 'headers'],
     data() {
       return {
@@ -93,6 +104,10 @@
         options: {},
         sortBy: '',
         sortDesc: false,
+        filters: {},
+        toFilter: ['type'],
+        filteredHeaders: [],
+        // filteredProducts: [],
       };
     },
     mounted() {
@@ -105,18 +120,43 @@
         },
         deep: true
       },
+      filters: {
+        handler() {
+          this.getProducts();
+        },
+        deep: true
+      },
     },
     computed: {
+      filteredProducts() {
+        return this.products.map(products => {
+          let filtered = {...products};
+          this.headers.forEach(header => {
+            if (!header.selected) delete filtered[header.value];
+          });
+          return filtered;
+        });
+      },
       URLParameters() {
         return {
           'page': this.options.page,
           'limit': this.options.itemsPerPage,
           'sortBy': this.options.sortBy,
           'sortDesc': this.options.sortDesc,
+          type: this.filters.type !== null ? this.filters.type : undefined,
         };
       }
     },
     methods: {
+      updateFilteredHeaders(headers) {
+        this.filteredHeaders = headers;
+      },
+      // updateFilteredItems(products) {
+      //   this.filteredProducts = products
+      // },
+      showColumn(col) {
+        return this.headers.find(header => header.value === col).selected;
+      },
       async getProducts() {
         this.loading = true;
         try {

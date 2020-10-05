@@ -1,9 +1,17 @@
 <template>
   <v-card flat>
-    <v-toolbar flat></v-toolbar>
-    <v-data-table
+    <v-toolbar flat>
+      <v-spacer/>
+      <FilterButton
+        :toFilter="toFilter"
+        :filters="filters"
         :headers="headers"
-        :items="mods"
+        :products="filteredMods"
+      />
+    </v-toolbar>
+    <v-data-table
+        :headers="filteredHeaders"
+        :items="filteredMods"
         :server-items-length="totalMods"
         :options.sync="options"
         :sort-by="sortBy"
@@ -17,12 +25,12 @@
       </template>
       <template v-slot:item='props'>
         <tr>
-          <td>{{ props.item.type }}</td>
-          <td>{{ props.item.product.name }}</td>
-          <td>{{ props.item.batch ? props.item.batch.lotNumber : '-' }}</td>
-          <td>{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
-          <td>{{ props.item.horse ? props.item.horse.name : '-' }}</td>
-          <td>{{ props.item.amount }}</td>
+          <td v-if="showColumn('type')">{{ props.item.type }}</td>
+          <td v-if="showColumn('product')">{{ props.item.product.name }}</td>
+          <td v-if="showColumn('batch')">{{ props.item.batch ? props.item.batch.lotNumber : '-' }}</td>
+          <td v-if="showColumn('client')">{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
+          <td v-if="showColumn('horse')">{{ props.item.horse ? props.item.horse.name : '-' }}</td>
+          <td v-if="showColumn('amount')">{{ props.item.amount }}</td>
           <td align="end">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YYYY - hh:mm') }}</td>
         </tr>
       </template>
@@ -35,11 +43,14 @@
 
 <script>
 import {stockAPI} from '@/services'
+import FilterButton from "@/components/FilterButton";
 
 export default {
   name: "BatchModsTable",
+  components: {
+    FilterButton,
+  },
   props: ['id', 'product', 'refresh'],
-
   data() {
     return {
       totalMods : 0,
@@ -51,14 +62,16 @@ export default {
       sortDesc: true,
       options: {},
       headers: [
-        {text: 'Type', value: 'type', selected: true},
+        {text: 'Type', value: 'type', selected: true, sortable: true},
         {text: 'Product', value: 'product', selected: true},
         {text: 'Lot nummer', value: 'batch', selected: true},
         {text: 'Klant', value: 'client', selected: true},
         {text: 'Paard', value: 'horse', selected: true},
         {text: 'Aantal', value: 'amount', selected: true},
-        {text: '', align: 'end', value: 'createdAt', selected: true},
+        {text: 'Datum', align: 'end', value: 'createdAt', selected: true},
       ],
+      toFilter: ['modTypes'],
+      filters: [],
     };
   },
   activated() {
@@ -66,6 +79,12 @@ export default {
   },
   watch: {
     options: {
+      handler() {
+        this.getStockProductMods(this.id);
+      },
+      deep: true
+    },
+    filters: {
       handler() {
         this.getStockProductMods(this.id);
       },
@@ -79,16 +98,32 @@ export default {
     }
   },
   computed: {
+    filteredHeaders() {
+      return this.headers.filter(header => header.selected);
+    },
+    filteredMods() {
+      return this.mods.map(products => {
+        let filtered = {...products};
+        this.headers.forEach(header => {
+          if (!header.selected) delete filtered[header.value];
+        });
+        return filtered;
+      });
+    },
     URLParameters() {
       return {
         'page': this.options.page,
         'limit': this.options.itemsPerPage,
         'sortBy': this.options.sortBy,
         'sortDesc': this.options.sortDesc,
+        type: this.filters.type !== null ? this.filters.type : undefined,
       };
     }
   },
   methods: {
+    showColumn(col) {
+      return this.headers.find(header => header.value === col).selected;
+    },
     refresher() {
       this.$emit('update-refresh', false);
     },

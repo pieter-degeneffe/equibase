@@ -15,14 +15,14 @@
     data() {
       return {
         headers: [
-          {text: 'Productnaam', value: 'name', sortable: true},
-          {text: 'Type', value: 'type', sortable: true},
-          {text: 'CNK', value: 'CNK', sortable: true},
-          {text: 'Eenheid', value: 'outgoingUnit', sortable: false},
-          {text: 'Wachttijd (dagen)', value: 'waitingTime', sortable: false},
-          {text: 'BTW', value: 'tax', align: 'left', sortable: false},
-          {text: 'Supplement (€)', value: 'supplementAdministration', align: 'end', sortable: false},
-          {text: '', value: 'action', align: 'end', sortable: false},
+          {text: 'Productnaam', value: 'name', sortable: true, selected: true},
+          {text: 'Type', value: 'type', sortable: true, selected: true},
+          {text: 'CNK', value: 'CNK', sortable: true, selected: true},
+          {text: 'Eenheid', value: 'outgoingUnit', sortable: false, selected: true},
+          {text: 'Wachttijd (dagen)', value: 'waitingTime', sortable: false, selected: true},
+          {text: 'BTW', value: 'tax', align: 'left', sortable: false, selected: true},
+          {text: 'Supplement (€)', value: 'supplementAdministration', align: 'end', sortable: false, selected: true},
+          {text: '', value: 'action', align: 'end', sortable: false, selected: true},
         ],
       }
     },
