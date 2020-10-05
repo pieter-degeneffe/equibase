@@ -10,6 +10,7 @@
         :sort-desc="sortDesc"
         :loading="loading"
         loading-text="Bezig met laden..."
+        v-if="refresh===true?refresher:refresher"
     >
       <template v-slot:no-data>
         Geen stock modificaties voor product {{ product.name }} gevonden.
@@ -37,7 +38,7 @@ import {stockAPI} from '@/services'
 
 export default {
   name: "BatchModsTable",
-  props: ['id', 'product'],
+  props: ['id', 'product', 'refresh'],
 
   data() {
     return {
@@ -60,11 +61,17 @@ export default {
       ],
     };
   },
-  mounted() {
-    this.getStockProductMods(this.id);
+  activated() {
+      this.getStockProductMods(this.id);
   },
   watch: {
     options: {
+      handler() {
+        this.getStockProductMods(this.id);
+      },
+      deep: true
+    },
+    refresh: {
       handler() {
         this.getStockProductMods(this.id);
       },
@@ -82,6 +89,9 @@ export default {
     }
   },
   methods: {
+    refresher() {
+      this.$emit('update-refresh', false);
+    },
     generateCustomerName(item) {
       return (`${item.last_name} ${item.first_name}`);
     },
@@ -91,9 +101,8 @@ export default {
         const { data: { mods, total } } = await stockAPI.getStockProductMods(id, false, this.URLParameters);
         this.mods = mods;
         this.totalMods = total;
-        console.log('total: ', total);
-        console.log('loaded-mods: ', mods);
         this.errored = false;
+        this.refresher();
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;

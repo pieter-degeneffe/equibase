@@ -13,19 +13,33 @@
         <v-icon left>mdi-alpha-l-circle</v-icon>
         Loten
       </v-tab>
-      <v-tab class="d-print-none">
+      <v-tab class="d-print-none" @change="setRefresh()">
         <v-icon left>mdi-alpha-m-circle</v-icon>
         Mods
       </v-tab>
       <v-tab-item class="mb-5">
-        <productForm :product="product" :loading="loading" callbackURL="/stock"
-                     :disabled="true" @update-product="updateProduct"/>
+        <productForm
+            :product="product"
+            :loading="loading"
+            callbackURL="/stock"
+            :disabled="true"
+            @update-product="updateProduct"
+        />
       </v-tab-item>
       <v-tab-item class="ma-5">
-        <BatchTable :headers="headers" :id="id" :product="product" :sort-by="sortBy"/>
+        <BatchTable
+            :headers="headers"
+            :id="id"
+            :product="product"
+            :sort-by="sortBy"
+        />
       </v-tab-item>
       <v-tab-item class="ma-5">
-        <BatchModsTable :product="product" :id="id"/>
+        <BatchModsTable
+            :product="product"
+            :id="id"
+            :refresh="refresh"
+            @update-refresh="refresh=false"/>
       </v-tab-item>
     </v-tabs>
   </v-card>
@@ -67,6 +81,7 @@ export default {
       },
       sortBy: 'expirationDate',
       sortDesc: false,
+      refresh: false,
     };
   },
   components: {
@@ -83,6 +98,10 @@ export default {
     this.getProduct(this.id);
   },
   methods: {
+    setRefresh() {
+      console.log('setRefresh: true');
+      this.refresh = true;
+    },
     async getProduct(id) {
       this.loading = true;
       try {

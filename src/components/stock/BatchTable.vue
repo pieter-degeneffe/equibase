@@ -345,7 +345,6 @@ export default {
         { title: 'Beschadigd', action: this.openEditDialog, singleSelect: true },
         { title: 'Verkoop', action: this.openEditDialog, singleSelect: true },
         { title: 'Toediening', action: this.openEditDialog, singleSelect: true },
-        { title: 'Vervallen', action: this.openEditDialog, singleSelect: true },
         { title: 'Controle', action: this.openEditDialog, singleSelect: true },
       ],
       options: {
