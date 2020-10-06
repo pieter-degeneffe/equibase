@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn color="primary" dark @click="filterDialog = true" class="ml-4 d-print-none">
+    <v-btn v-if="filters" color="primary" dark @click="filterDialog = true" class="ml-4 d-print-none">
       <v-icon left>mdi-filter</v-icon>
       Filters
     </v-btn>

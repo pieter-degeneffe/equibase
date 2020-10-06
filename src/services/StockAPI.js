@@ -1,6 +1,7 @@
 import API from "@/services/API";
 export default {
     getAllStock: (params) => API().get('/api/stock', { params }),
+    getTimedStock: (params) => API().get('/api/stock/mods', {params}),
     getStockProduct: (id, params) => API().get(`/api/stock/${ id }`, {params}),
     getStockProductMods: (id, outgoing, params) => API().get(`/api/stock/${ id }/mods${outgoing ? '?out=true' : ''}`, {params}),
     postStock: (batch) => API().post('/api/stock',batch),
