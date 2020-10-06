@@ -80,23 +80,21 @@ export default {
   watch: {
     options: {
       handler() {
-        console.log('options changed');
         this.getStockProductMods(this.id);
       },
       deep: true
     },
     filters: {
       handler() {
-        console.log('filters changed');
-        this.getStockProductMods(this.id);
-      },
-    },
-    refresh: {
-      handler() {
-        console.log('refresher changed');
         this.getStockProductMods(this.id);
       },
       deep: true
+    },
+    refresh: {
+      handler() {
+        this.getStockProductMods(this.id);
+        this.refresher();
+      }
     }
   },
   computed: {
@@ -130,7 +128,6 @@ export default {
         this.mods = mods;
         this.totalMods = total;
         this.errored = false;
-        this.refresher();
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;

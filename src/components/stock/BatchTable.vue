@@ -326,6 +326,7 @@ export default {
     },
     filters: {
       handler() {
+        console.log('filters called');
         this.getStockProduct(this.id);
       },
       deep: true

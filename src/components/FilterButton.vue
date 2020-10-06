@@ -142,7 +142,6 @@ export default {
     async getConfig() {
       this.errored = false;
       try {
-        console.log('child getConfig called');
         const { data: { types, tax } } = await configAPI.getProductConfig();
         this.types = types;
         this.taxes = tax;

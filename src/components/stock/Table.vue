@@ -88,9 +88,6 @@ export default {
     },
 
   },
-  mounted() {
-    this.getAllStock();
-  },
   computed: {
     URLParameters() {
       return {
@@ -109,6 +106,9 @@ export default {
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers;
     },
+    showColumn(col) {
+      return this.headers.find(header => header.value === col).selected;
+    },
     searchStock(item) {
       this.search = item;
     },
@@ -118,9 +118,6 @@ export default {
     },
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
-    },
-    showColumn(col) {
-      return this.headers.find(header => header.value === col).selected;
     },
     async getAllStock() {
       this.loading = true;
