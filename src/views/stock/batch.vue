@@ -13,7 +13,7 @@
         <v-icon left>mdi-alpha-l-circle</v-icon>
         Loten
       </v-tab>
-      <v-tab class="d-print-none" @change="setRefresh()">
+      <v-tab class="d-print-none" @change="setRefresh">
         <v-icon left>mdi-alpha-m-circle</v-icon>
         Mods
       </v-tab>
@@ -99,7 +99,6 @@ export default {
   },
   methods: {
     setRefresh() {
-      console.log('setRefresh: true');
       this.refresh = true;
     },
     async getProduct(id) {
