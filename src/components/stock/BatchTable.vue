@@ -39,7 +39,7 @@
       />
     </v-toolbar>
     <v-data-table :headers='filteredHeaders'
-                  :items='filteredBatches'
+                  :items='batches'
                   :loading="loading"
                   loading-text="Bezig met laden..."
                   :server-items-length="totalBatches"
@@ -314,7 +314,7 @@ export default {
       options: {},
       remaining: ['All', 'In stock', 'Out of stock'],
       filteredHeaders: [],
-      // filteredBatches: [],
+      filteredBatches: [],
     };
   },
   watch: {
@@ -331,22 +331,13 @@ export default {
       deep: true
     },
   },
-  created() {
+  mounted() {
     this.getStockProduct(this.id);
     this.getModsConfig();
     this.getCustomers();
     this.getHorses();
   },
   computed: {
-    filteredBatches() {
-      return this.batches.map(products => {
-        let filtered = {...products};
-        this.headers.forEach(header => {
-          if (!header.selected) delete filtered[header.value];
-        });
-        return filtered;
-      });
-    },
     computedExpirationDateFormatted() {
       return this.formatDate(this.editedRow.expirationDate);
     },
@@ -370,9 +361,9 @@ export default {
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers;
     },
-    // updateFilteredItems(products) {
-    //   this.filteredBatches = products
-    // },
+    showColumn(col) {
+      return this.headers.find(header => header.value === col).selected;
+    },
     generateCustomerName(item) {
       return (`${item.last_name} ${item.first_name}`);
     },
@@ -397,9 +388,6 @@ export default {
         id: this.selectedBatches[0].id,
         type: e.target.innerText,
       };
-    },
-    showColumn(col) {
-      return this.headers.find(header => header.value === col).selected;
     },
     close() {
       this.$refs.form.resetValidation()
@@ -494,7 +482,9 @@ export default {
       try {
         this.loading = true;
         await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.deactivateBatch(_id)));
+        console.log('deactivate async');
         await this.getStockProduct(this.id);
+        console.log('getStockProduct from deactivate async');
         this.selectedBatches = [];
         this.showSnackbar('success', 'lot succesvol gedeactiveerd');
       } catch (err) {

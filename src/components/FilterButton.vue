@@ -28,7 +28,7 @@
                   v-if="toFilter.includes('modTypes')"
                   v-model="filters.type"
                   outlined
-                  label="Filter op remaining"
+                  label="Filter op modificatie"
                   :items="modsTypes"
                   multiple
                   hide-details
@@ -97,9 +97,6 @@ import {configAPI} from "@/services";
 export default {
   name: "FilterButton",
   props: ['filters', 'headers', 'products', 'toFilter'],
-  created() {
-
-  },
   mounted() {
     this.getConfig();
     this.getModsConfig();
@@ -115,23 +112,21 @@ export default {
       remaining: ['All', 'In stock', 'Out of stock'],
     };
   },
+  watch: {
+    filteredProducts: {
+      handler() {
+        this.emitFiltered();
+      },
+      deep: true
+    }
+  },
   computed: {
     filteredHeaders() {
       return this.headers.filter(header => header.selected);
     },
-    filteredProducts() {
-      return this.products.map(products => {
-        let filtered = { ...products };
-        this.headers.forEach(header => {
-          if (!header.selected) delete filtered[header.value];
-        });
-        return filtered;
-      });
-    },
   },
   methods: {
     emitFiltered() {
-      this.$emit('emit-items',this.filteredProducts);
       this.$emit('emit-headers',this.filteredHeaders);
     },
     async getModsConfig() {
@@ -147,6 +142,7 @@ export default {
     async getConfig() {
       this.errored = false;
       try {
+        console.log('child getConfig called');
         const { data: { types, tax } } = await configAPI.getProductConfig();
         this.types = types;
         this.taxes = tax;

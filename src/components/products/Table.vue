@@ -19,7 +19,7 @@
     <v-data-table
         class="ma-5"
         :headers="filteredHeaders"
-        :items="filteredProducts"
+        :items="products"
         :search="search"
         :loading="loading"
         loading-text="Bezig met laden..."
@@ -107,11 +107,8 @@
         filters: {},
         toFilter: ['type'],
         filteredHeaders: [],
-        // filteredProducts: [],
+        filteredProducts: [],
       };
-    },
-    mounted() {
-      this.getProducts();
     },
     watch: {
       options: {
@@ -128,15 +125,6 @@
       },
     },
     computed: {
-      filteredProducts() {
-        return this.products.map(products => {
-          let filtered = {...products};
-          this.headers.forEach(header => {
-            if (!header.selected) delete filtered[header.value];
-          });
-          return filtered;
-        });
-      },
       URLParameters() {
         return {
           'page': this.options.page,
@@ -151,9 +139,6 @@
       updateFilteredHeaders(headers) {
         this.filteredHeaders = headers;
       },
-      // updateFilteredItems(products) {
-      //   this.filteredProducts = products
-      // },
       showColumn(col) {
         return this.headers.find(header => header.value === col).selected;
       },

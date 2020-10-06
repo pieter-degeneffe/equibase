@@ -14,9 +14,10 @@
           :filters="filters"
           :headers="headers"
           :products="products"
+          @emit-headers="updateFilteredHeaders"
       />
     </v-toolbar>
-    <v-data-table :headers="filteredHeaders" :items="filteredProducts" :server-items-length="totalProducts"
+    <v-data-table :headers="filteredHeaders" :items="products" :server-items-length="totalProducts"
                   :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc" :options.sync="options"
                   loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:no-data>
@@ -68,6 +69,8 @@ export default {
       options: {},
       totalProducts: 0,
       products: [],
+      filteredHeaders: [],
+      filteredProducts: [],
     };
   },
   watch: {
@@ -89,18 +92,6 @@ export default {
     this.getAllStock();
   },
   computed: {
-    filteredHeaders() {
-      return this.headers.filter(header => header.selected);
-    },
-    filteredProducts() {
-      return this.products.map(products => {
-        let filtered = { ...products };
-        this.headers.forEach(header => {
-          if (!header.selected) delete filtered[header.value];
-        });
-        return filtered;
-      });
-    },
     URLParameters() {
       return {
         'page': this.options.page,
@@ -115,6 +106,9 @@ export default {
     }
   },
   methods: {
+    updateFilteredHeaders(headers) {
+      this.filteredHeaders = headers;
+    },
     searchStock(item) {
       this.search = item;
     },

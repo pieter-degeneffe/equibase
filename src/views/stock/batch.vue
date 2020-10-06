@@ -13,7 +13,7 @@
         <v-icon left>mdi-alpha-l-circle</v-icon>
         Loten
       </v-tab>
-      <v-tab class="d-print-none" @change="setRefresh()">
+      <v-tab class="d-print-none" @change="setRefresh">
         <v-icon left>mdi-alpha-m-circle</v-icon>
         Mods
       </v-tab>
@@ -39,7 +39,8 @@
             :product="product"
             :id="id"
             :refresh="refresh"
-            @update-refresh="refresh=false"/>
+            @update-refresh="refresh=false"
+        />
       </v-tab-item>
     </v-tabs>
   </v-card>

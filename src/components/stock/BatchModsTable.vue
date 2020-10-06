@@ -6,12 +6,13 @@
         :toFilter="toFilter"
         :filters="filters"
         :headers="headers"
-        :products="filteredMods"
+        :products="mods"
+        @emit-headers="updateFilteredHeaders"
       />
     </v-toolbar>
     <v-data-table
         :headers="filteredHeaders"
-        :items="filteredMods"
+        :items="mods"
         :server-items-length="totalMods"
         :options.sync="options"
         :sort-by="sortBy"
@@ -42,7 +43,7 @@
 </template>
 
 <script>
-import {stockAPI} from '@/services'
+import { stockAPI } from '@/services'
 import FilterButton from "@/components/FilterButton";
 
 export default {
@@ -71,45 +72,34 @@ export default {
         {text: 'Datum', align: 'end', value: 'createdAt', selected: true},
       ],
       toFilter: ['modTypes'],
-      filters: [],
+      filters: {},
+      filteredHeaders: [],
+      filteredMods: []
     };
-  },
-  activated() {
-      this.getStockProductMods(this.id);
   },
   watch: {
     options: {
       handler() {
+        console.log('options changed');
         this.getStockProductMods(this.id);
       },
       deep: true
     },
     filters: {
       handler() {
+        console.log('filters changed');
         this.getStockProductMods(this.id);
       },
-      deep: true
     },
     refresh: {
       handler() {
+        console.log('refresher changed');
         this.getStockProductMods(this.id);
       },
       deep: true
     }
   },
   computed: {
-    filteredHeaders() {
-      return this.headers.filter(header => header.selected);
-    },
-    filteredMods() {
-      return this.mods.map(products => {
-        let filtered = {...products};
-        this.headers.forEach(header => {
-          if (!header.selected) delete filtered[header.value];
-        });
-        return filtered;
-      });
-    },
     URLParameters() {
       return {
         'page': this.options.page,
@@ -121,6 +111,9 @@ export default {
     }
   },
   methods: {
+    updateFilteredHeaders(headers) {
+      this.filteredHeaders = headers;
+    },
     showColumn(col) {
       return this.headers.find(header => header.value === col).selected;
     },
