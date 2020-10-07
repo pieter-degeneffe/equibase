@@ -5,6 +5,7 @@
       <FilterButton
         :toFilter="toFilter"
         :filters="filters"
+        :columns=true
         :headers="headers"
         :products="mods"
         @emit-headers="updateFilteredHeaders"
@@ -32,7 +33,7 @@
           <td v-if="showColumn('client')">{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
           <td v-if="showColumn('horse')">{{ props.item.horse ? props.item.horse.name : '-' }}</td>
           <td v-if="showColumn('amount')">{{ props.item.amount }}</td>
-          <td align="end">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YYYY - hh:mm') }}</td>
+          <td v-if="showColumn('createdAt')" align="end">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YYYY - hh:mm') }}</td>
         </tr>
       </template>
     </v-data-table>

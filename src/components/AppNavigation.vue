@@ -134,6 +134,11 @@ export default {
               text: "Stock sperma import",
               url: "/report/stock-semen-import",
               //icon: "mdi-christianity"
+            },
+            {
+              text: "Geleverde producten",
+              url: "/report/delivered-products",
+              //icon: "mdi-christianity"
             }
           ]
         },
