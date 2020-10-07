@@ -2,6 +2,7 @@
   <v-card class="mx-5 mt-5 mb-12" flat>
     <v-toolbar flat>
       <v-menu
+          v-if="datePicker"
           ref='fromDateMenu'
           v-model='fromDateMenu'
           :close-on-content-click='false'
@@ -29,6 +30,7 @@
         />
       </v-menu>
       <v-menu
+          v-if="datePicker"
           ref='toDateMenu'
           v-model='toDateMenu'
           :close-on-content-click='false'
@@ -57,7 +59,7 @@
       <v-spacer/>
       <FilterButton
           :toFilter="toFilter"
-          :filters=false
+          :filters="filters"
           :columns=true
           :headers="headers"
           :products="mods"
@@ -105,6 +107,7 @@ export default {
   components: {
     FilterButton,
   },
+  props: ['outgoing', 'datePicker', 'delivered', 'filters', 'toFilter'],
   data() {
     return {
       mods: [],
@@ -118,8 +121,6 @@ export default {
         {text: 'Aantal', value: 'amount', selected: true},
         {text: 'Datum', align: 'end', value: 'createdAt', selected: true},
       ],
-      toFilter: ['supplier'],
-      filters: {},
       sortBy: 'createdAt',
       sortDesc: true,
       fromDateMenu: false,
@@ -133,30 +134,30 @@ export default {
     };
   },
   mounted() {
-    this.getMods();
+    this.getMods(this.outgoing);
   },
   watch: {
     from: {
       handler() {
-        this.getMods();
+        this.getMods(this.outgoing);
       },
       deep: true
     },
     to: {
       handler() {
-        this.getMods();
+        this.getMods(this.outgoing);
       },
       deep: true
     },
     options: {
       handler() {
-        this.getMods();
+        this.getMods(this.outgoing);
       },
       deep: true
     },
     filters: {
       handler() {
-        this.getMods();
+        this.getMods(this.outgoing);
       },
       deep: true
     }
@@ -174,9 +175,9 @@ export default {
         'limit': this.options.itemsPerPage,
         'sortBy': this.options.sortBy,
         'sortDesc': this.options.sortDesc,
-        from: this.formatDate(this.from),
-        to: this.formatDate(this.to),
-        type: 'Aankoop',
+        from: this.datePicker ? this.formatDate(this.from) : undefined,
+        to: this.datePicker ? this.formatDate(this.to) : undefined,
+        type: this.delivered ? 'Aankoop' : this.filters.type !== null ? this.filters.type : undefined,
       };
     },
   },
@@ -187,10 +188,10 @@ export default {
     showColumn(col) {
       return this.headers.find(header => header.value === col).selected;
     },
-    async getMods() {
+    async getMods(outgoing) {
       this.loading = true;
       try {
-        const {data: {mods, total}} = await stockAPI.getTimedStock(this.URLParameters);
+        const {data: {mods, total}} = await stockAPI.getStockMods(outgoing, this.URLParameters);
         this.mods = mods;
         this.errored = false;
         this.totalMods = total;

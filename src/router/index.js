@@ -103,6 +103,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/report/outgoing-products",
+    name: "Stock outgoing products",
+    component: () => import("@/views/report/OutgoingProducts"),
+    beforeEnter: requireAuth
+  },
+  {
     path: "/settings/location",
     name: "location",
     component: () => import("@/views/settings/Location"),

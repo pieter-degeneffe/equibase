@@ -1,13 +1,14 @@
 <template>
   <v-card class="ma-5" outlined>
     <v-toolbar class="mt-4" flat dense light>
-      <v-toolbar-title>Geleverde producten</v-toolbar-title>
+      <v-toolbar-title>Uitgaande producten</v-toolbar-title>
     </v-toolbar>
     <mods
         :outgoing="outgoing"
         :datePicker="datePicker"
         :delivered="delivered"
-        :fitlers="filters"
+        :filters="filters"
+        :toFilter="toFilter"
     />
   </v-card>
 </template>
@@ -22,12 +23,11 @@ export default {
   name: "DeliveredProducts.vue",
   data() {
     return {
-      outgoing: false,
-      datePicker: true,
-      delivered: true,
-      filters: false,
-      toFilter: ['supplier'],
-
+      outgoing: true,
+      datePicker: false,
+      delivered: false,
+      filters: {},
+      toFilter: ['modTypes'],
     };
   }
 }
