@@ -5,7 +5,6 @@
           ref='fromDateMenu'
           v-model='fromDateMenu'
           :close-on-content-click='false'
-          :return-value.sync="options.from"
           transition='scale-transition'
           offset-y
           min-width="200"
@@ -33,7 +32,6 @@
           ref='toDateMenu'
           v-model='toDateMenu'
           :close-on-content-click='false'
-          :return-value.sync="options.to"
           transition='scale-transition'
           offset-y
           min-width="290"
@@ -60,6 +58,7 @@
       <FilterButton
           :toFilter="toFilter"
           :filters=false
+          :columns=true
           :headers="headers"
           :products="mods"
           @emit-headers="updateFilteredHeaders"
@@ -128,7 +127,7 @@ export default {
       loading: false,
       errored: false,
       errorMessage: '',
-      from: new Date('1/1/2020').toISOString().substr(0, 10),
+      from: new Date('09/1/2020').toISOString().substr(0, 10),
       to: new Date().toISOString().substr(0, 10),
       options: {},
     };
@@ -137,6 +136,18 @@ export default {
     this.getMods();
   },
   watch: {
+    from: {
+      handler() {
+        this.getMods();
+      },
+      deep: true
+    },
+    to: {
+      handler() {
+        this.getMods();
+      },
+      deep: true
+    },
     options: {
       handler() {
         this.getMods();
@@ -170,7 +181,6 @@ export default {
     },
   },
   methods: {
-
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers;
     },

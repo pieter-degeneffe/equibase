@@ -4,11 +4,11 @@
       <v-icon left>mdi-filter</v-icon>
       Filters
     </v-btn>
-    <v-btn color="primary" dark @click.stop="columnDialog = true" class="ml-4 d-print-none">
+    <v-btn v-if="columns" color="primary" dark @click.stop="columnDialog = true" class="ml-4 d-print-none">
       <v-icon left>mdi-cog</v-icon>
       Kolommen
     </v-btn>
-    <v-dialog v-model="filterDialog" max-width="490">
+    <v-dialog v-if="filters" v-model="filterDialog" max-width="490">
       <v-card>
         <v-card-text class="pt-5">
           <v-row dense>
@@ -64,7 +64,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="columnDialog" max-width="690">
+    <v-dialog v-if="columns" v-model="columnDialog" max-width="690">
       <v-card>
         <v-card-text>
           <v-list>
@@ -96,7 +96,7 @@ import {configAPI} from "@/services";
 
 export default {
   name: "FilterButton",
-  props: ['filters', 'headers', 'products', 'toFilter'],
+  props: ['filters', 'columns', 'headers', 'products', 'toFilter'],
   mounted() {
     this.getConfig();
     this.getModsConfig();

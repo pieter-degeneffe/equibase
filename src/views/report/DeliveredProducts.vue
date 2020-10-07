@@ -1,9 +1,8 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-toolbar flat dense light>
+    <v-toolbar class="mt-4" flat dense light>
       <v-toolbar-title>Geleverde producten</v-toolbar-title>
     </v-toolbar>
-    <v-divider/>
     <mods></mods>
   </v-card>
 </template>

@@ -11,6 +11,7 @@
       <FilterButton
           :toFilter="toFilter"
           :filters="filters"
+          :columns=true
           :headers="headers"
           :products="products"
           @emit-headers="updateFilteredHeaders"

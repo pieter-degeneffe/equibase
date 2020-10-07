@@ -5,6 +5,7 @@
       <FilterButton
         :toFilter="toFilter"
         :filters="filters"
+        :columns=true
         :headers="headers"
         :products="mods"
         @emit-headers="updateFilteredHeaders"

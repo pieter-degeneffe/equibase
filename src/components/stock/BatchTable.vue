@@ -33,6 +33,7 @@
       <FilterButton
         :toFilter="toFilter"
         :filters="filters"
+        :columns=true
         :headers="headers"
         :products="batches"
         @emit-headers="updateFilteredHeaders"
