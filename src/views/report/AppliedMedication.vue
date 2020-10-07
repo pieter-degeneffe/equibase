@@ -18,20 +18,20 @@ export default {
   components: {
     mods
   },
-  name: "DeliveredProducts.vue",
+  name: "AppliedMedication.vue",
   data() {
     return {
-      title: 'Geleverde producten',
+      title: 'Toegediende medicatie',
       outgoing: false,
-      datePicker: true,
-      preFilter: 'Aankoop',
+      datePicker: false,
+      preFilter: 'Toediening',
       filters: false,
-      toFilter: ['supplier'],
+      toFilter: ['horse'],
       headers: [
         {text: 'Type', value: 'type', selected: true},
         {text: 'Product', value: 'product', selected: true},
         {text: 'Lot nummer', value: 'batch', selected: true},
-        {text: 'Leverancier', value: 'batch.supplier', selected: true},
+        {text: 'Paard', value: 'horse', selected: true},
         {text: 'Aantal', value: 'amount', selected: true},
         {text: 'Datum', align: 'end', value: 'createdAt', selected: true},
       ],

@@ -87,26 +87,18 @@ export default {
             {
               text: "Hengsten",
               url: "/horse/stallion",
-              //icon: "mdi-alpha-h-circle"
-              //icon: "mdi-gender-male"
             },
             {
               text: "Merries",
               url: "/horse/mare",
-              //icon: "mdi-alpha-m-circle"
-              //icon: "mdi-gender-female"
             },
             {
               text: "Draagmoeders",
               url: "/horse/surrogate",
-              //icon: "mdi-alpha-d-circle"
-              //icon: "mdi-cached"
             },
             {
               text: "Dekhengsten",
               url: "/horse/studhorse",
-              //icon: "mdi-alpha-d-circle",
-              //icon: "mdi-arm-flex"
             }
           ]
         },
@@ -118,33 +110,31 @@ export default {
             {
               text: "Draagmoeders per locatie",
               url: "/report/location",
-              //icon: "mdi-map-marker"
             },
             {
               text: "Overleden paarden",
               url: "/report/death-horses",
-              //icon: "mdi-christianity"
             },
             {
               text: "Stock sperma productie",
               url: "/report/stock-semen-production",
-              //icon: "mdi-christianity"
             },
             {
               text: "Stock sperma import",
               url: "/report/stock-semen-import",
-              //icon: "mdi-christianity"
             },
             {
               text: "Geleverde producten",
               url: "/report/delivered-products",
-              //icon: "mdi-christianity"
             },
             {
               text: "Uitgaande producten",
               url: "/report/outgoing-products",
-              //icon: "mdi-christianity"
-            }
+            },
+            {
+              text: "Toegediende medicatie",
+              url: "/report/applied-medication",
+            },
           ]
         },
         {
@@ -155,22 +145,18 @@ export default {
             {
               text: "Locaties",
               url: "/settings/location",
-              //icon: "mdi-map-marker"
             },
             {
               text: "Stikstof vaten",
               url: "/settings/nitrogen-container",
-              //icon: "mdi-battery-outline"
             },
             {
               text: "Onderzoeksfiches downloaden",
               url: "/settings/research-sheets",
-              //icon: "mdi-battery-outline"
             },
             {
               text: "Producten",
               url: "/settings/products",
-              //icon: ""
             },
           ]
         }
