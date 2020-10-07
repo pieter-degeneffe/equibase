@@ -9,6 +9,7 @@
           hide-details
           @input="searchStock"
       />
+      <v-btn color="primary" dark class="ml-4 d-print-none" @click="getDelivery">import medini</v-btn>
       <FilterButton
           :toFilter="toFilter"
           :filters="filters"
@@ -49,7 +50,7 @@
 </template>
 
 <script>
-import { stockAPI } from '../../services';
+import { stockAPI, deliveryAPI } from '@/services';
 import FilterButton from '@/components/FilterButton';
 
 export default {
@@ -132,8 +133,19 @@ export default {
         this.totalProducts = total;
       } catch (err) {
         this.errored = true;
-        console.log(err)
         this.errorMessage = err.response.data.message;
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getDelivery() {
+      this.loading = true;
+      try {
+        const { data } = await deliveryAPI.getMediniDelivery();
+        console.log('delivery data: ', data);
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.respone.data.message;
       } finally {
         this.loading = false;
       }

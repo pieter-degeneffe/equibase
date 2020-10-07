@@ -8,5 +8,6 @@ export { default as nitrogenContainerAPI } from './NitrogenContainerAPI';
 export { default as productsAPI } from './ProductsAPI';
 export { default as stockAPI } from './StockAPI';
 export { default as configAPI } from './ConfigAPI';
+export { default as deliveryAPI } from './DeliveryAPI';
 export * from './SearchAPI';
 export * from './SemenAPI';
