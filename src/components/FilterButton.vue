@@ -44,20 +44,7 @@
               />
             </v-col>
             <v-col v-if="toFilter.includes('horse')" cols="12">
-              <SearchHorse
-                  v-model="filters.horse"
-                  @emit-horse="assignHorse"
-              />
-<!--              <v-autocomplete-->
-<!--                  v-model="filters.horse"-->
-<!--                  outlined-->
-<!--                  label="Filter op paard"-->
-<!--                  :items="horses"-->
-<!--                  item-text="name"-->
-<!--                  item-value="_id"-->
-<!--                  multiple-->
-<!--                  hide-details-->
-<!--              />-->
+              <SearchHorse @emit-horse="assignHorse" />
             </v-col>
             <v-col v-if="toFilter.includes('remaining')" cols="12">
               <v-autocomplete
@@ -72,6 +59,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
+          <v-btn v-if="toFilter.includes('horse')" color="grey darken-1" text @click="assignHorse(undefined)">Clear</v-btn>
           <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
@@ -152,11 +140,9 @@ export default {
   },
   methods: {
     assignHorse(id) {
-      console.log('filterButton emit to parent: ', id);
       this.currentHorse = id;
       this.filterDialog = false;
       this.$emit('emit-horse-parent', this.currentHorse);
-      return id
     },
     emitFiltered() {
       this.$emit('emit-headers', this.filteredHeaders);

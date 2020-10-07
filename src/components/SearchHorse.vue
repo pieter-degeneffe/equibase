@@ -12,7 +12,7 @@
       hide-selected
       item-text="Description"
       item-value="_id"
-      label="Zoeken"
+      label="Paard zoeken"
       autocomplete="off"
       outlined
       return-object

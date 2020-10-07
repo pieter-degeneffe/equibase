@@ -182,15 +182,9 @@ export default {
   methods: {
     updateFilters(id) {
       if (this.toFilter && this.toFilter.includes('horse')) {
-        console.log('parent received emit: ', id);
-        this.filters.horse = id;
+        this.URLParameters.horse = id;
+        this.getMods(this.outgoing);
       }
-    },
-    getHorses() {
-      this.mods.forEach(mod => {
-        this.horses[mod.horse._id] = mod.horse;
-      })
-      return this.horses;
     },
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers;
@@ -203,9 +197,6 @@ export default {
       try {
         const {data: {mods, total}} = await stockAPI.getStockMods(outgoing, this.URLParameters);
         this.mods = mods;
-        if (this.toFilter) {
-          this.toFilter.includes('horse') ? this.getHorses() : '';
-        }
         this.errored = false;
         this.totalMods = total;
       } catch (err) {
