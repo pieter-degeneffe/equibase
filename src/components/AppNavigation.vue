@@ -139,6 +139,11 @@ export default {
               text: "Geleverde producten",
               url: "/report/delivered-products",
               //icon: "mdi-christianity"
+            },
+            {
+              text: "Uitgaande producten",
+              url: "/report/outgoing-products",
+              //icon: "mdi-christianity"
             }
           ]
         },
