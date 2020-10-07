@@ -5,7 +5,8 @@
         :outgoing="outgoing"
         :datePicker="datePicker"
         :preFilter="preFilter"
-        :fitlers="filters"
+        :filters="filters"
+        :toFilter="toFilter"
         :headers="headers"
     />
   </v-card>
@@ -25,7 +26,7 @@ export default {
       outgoing: false,
       datePicker: false,
       preFilter: 'Toediening',
-      filters: false,
+      filters: {},
       toFilter: ['horse'],
       headers: [
         {text: 'Type', value: 'type', selected: true},

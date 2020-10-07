@@ -12,9 +12,8 @@
       <v-card>
         <v-card-text class="pt-5">
           <v-row dense>
-            <v-col cols="12">
+            <v-col v-if="toFilter.includes('type')" cols="12">
               <v-autocomplete
-                  v-if="toFilter.includes('type')"
                   v-model="filters.type"
                   outlined
                   label="Filter op type"
@@ -23,9 +22,8 @@
                   hide-details
               />
             </v-col>
-            <v-col cols="12">
+            <v-col v-if="toFilter.includes('modTypes')" cols="12">
               <v-autocomplete
-                  v-if="toFilter.includes('modTypes')"
                   v-model="filters.type"
                   outlined
                   label="Filter op modificatie"
@@ -34,9 +32,8 @@
                   hide-details
               />
             </v-col>
-            <v-col cols="12">
+            <v-col v-if="toFilter.includes('tax')" cols="12">
               <v-autocomplete
-                  v-if="toFilter.includes('tax')"
                   v-model="filters.tax"
                   outlined
                   label="Filter op BTW"
@@ -46,9 +43,20 @@
                   hide-details
               />
             </v-col>
-            <v-col cols="12">
+            <v-col v-if="toFilter.includes('horse')" cols="12">
               <v-autocomplete
-                  v-if="toFilter.includes('remaining')"
+                  v-model="filters.horse"
+                  outlined
+                  label="Filter op paard"
+                  :items="horses"
+                  item-text="name"
+                  item-value="_id"
+                  multiple
+                  hide-details
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('remaining')" cols="12">
+              <v-autocomplete
                   v-model="filters.remaining"
                   outlined
                   label="Filter op remaining"
@@ -96,7 +104,15 @@ import {configAPI} from "@/services";
 
 export default {
   name: "FilterButton",
-  props: ['filters', 'columns', 'headers', 'products', 'toFilter'],
+  props: [
+    'filters',
+    'columns',
+    'headers',
+    'products',
+    'toFilter',
+    'horses',
+    'suppliers'
+  ],
   mounted() {
     this.getConfig();
     this.getModsConfig();
@@ -127,12 +143,12 @@ export default {
   },
   methods: {
     emitFiltered() {
-      this.$emit('emit-headers',this.filteredHeaders);
+      this.$emit('emit-headers', this.filteredHeaders);
     },
     async getModsConfig() {
       this.errored = false;
       try {
-        const { data: { types }} = await configAPI.getModConfig();
+        const {data: {types}} = await configAPI.getModConfig();
         this.modsTypes = types;
       } catch (err) {
         this.errored = true;
@@ -142,7 +158,7 @@ export default {
     async getConfig() {
       this.errored = false;
       try {
-        const { data: { types, tax } } = await configAPI.getProductConfig();
+        const {data: {types, tax}} = await configAPI.getProductConfig();
         this.types = types;
         this.taxes = tax;
       } catch (err) {

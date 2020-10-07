@@ -9,6 +9,7 @@
           :columns=true
           :headers="headers"
           :products="mods"
+          :horses="Object.values(horses)"
           @emit-headers="updateFilteredHeaders"
       />
     </v-toolbar>
@@ -112,6 +113,8 @@ export default {
   data() {
     return {
       mods: [],
+      horses: {},
+      uniqueHorses: [],
       totalMods: 0,
       filteredHeaders: [],
       sortBy: 'createdAt',
@@ -171,10 +174,17 @@ export default {
         from: this.datePicker ? this.formatDate(this.from) : undefined,
         to: this.datePicker ? this.formatDate(this.to) : undefined,
         type: this.preFilter ? this.preFilter : this.filters.type !== null ? this.filters.type : undefined,
+        horse: !this.toFilter ? undefined : this.filters.horse !== null ? this.filters.horse : undefined,
       };
     },
   },
   methods: {
+    getHorses() {
+      this.mods.forEach(mod => {
+        this.horses[mod.horse._id] = mod.horse;
+      })
+      return this.horses;
+    },
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers;
     },
@@ -186,6 +196,9 @@ export default {
       try {
         const {data: {mods, total}} = await stockAPI.getStockMods(outgoing, this.URLParameters);
         this.mods = mods;
+        if (this.toFilter) {
+          this.toFilter.includes('horse') ? this.getHorses() : '';
+        }
         this.errored = false;
         this.totalMods = total;
       } catch (err) {
