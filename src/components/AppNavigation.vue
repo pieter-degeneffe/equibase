@@ -14,9 +14,6 @@
               </v-list-item>
             </template>
             <v-list-item v-for="(child, i) in item.submenu" :key="i" :to="child.url" class="pl-8">
-              <!-- <v-list-item-action v-if="child.icon">
-                <v-icon>{{ child.icon }}</v-icon>
-              </v-list-item-action> -->
               <v-list-item-content>
                 <v-list-item-title>
                   {{ child.text }}
@@ -25,9 +22,6 @@
             </v-list-item>
           </v-list-group>
           <v-list-item v-else :key="item.text" :to="item.url">
-            <!-- <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action> -->
             <v-list-item-content>
               <v-list-item-title>
                 {{ item.text }}
