@@ -39,7 +39,8 @@
             :product="product"
             :id="id"
             :refresh="refresh"
-            @update-refresh="refresh=false"/>
+            @update-refresh="refresh=false"
+        />
       </v-tab-item>
     </v-tabs>
   </v-card>
@@ -77,7 +78,7 @@ export default {
         {text: 'laatste update', value: 'updatedAt', align: 'end',selected: false},
       ],
       filters: {
-        remaining: null,
+        remaining: 'All',
       },
       sortBy: 'expirationDate',
       sortDesc: false,

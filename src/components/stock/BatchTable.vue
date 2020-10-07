@@ -30,17 +30,16 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-btn color="primary" dark @click="filterDialog = true" class="ml-4 d-print-none">
-        <v-icon left>mdi-filter</v-icon>
-        Filters
-      </v-btn>
-      <v-btn color="primary" dark @click.stop="columnDialog = true" class="ml-4 d-print-none">
-        <v-icon left>mdi-cog</v-icon>
-        Kolommen
-      </v-btn>
+      <FilterButton
+        :toFilter="toFilter"
+        :filters="filters"
+        :headers="headers"
+        :products="batches"
+        @emit-headers="updateFilteredHeaders"
+      />
     </v-toolbar>
     <v-data-table :headers='filteredHeaders'
-                  :items='filteredBatches'
+                  :items='batches'
                   :loading="loading"
                   loading-text="Bezig met laden..."
                   :server-items-length="totalBatches"
@@ -89,28 +88,6 @@
         Nieuw lot toevoegen
       </v-btn>
     </div>
-    <v-dialog v-model="filterDialog" max-width="490">
-      <v-card>
-        <v-card-title>Loten filteren</v-card-title>
-        <v-card-text>
-          <v-row dense>
-            <v-col cols="12">
-              <v-autocomplete
-                  v-model="options.remaining"
-                  outlined
-                  label="Filter op remaining"
-                  :items="remaining"
-                  hide-details
-              />
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer/>
-          <v-btn color="error" text @click="filterDialog = false">Sluiten</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-dialog v-model='createDialog' max-width='690'>
       <v-card>
         <v-card-title>Nieuw lot toevoegen</v-card-title>
@@ -273,25 +250,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="columnDialog" max-width="690">
-      <v-card>
-        <v-card-text>
-          <v-list>
-            <v-row dense>
-              <v-col cols="12" sm="6" md="4" v-for="header in headers" :key="header.text">
-                <v-list-item>
-                  <v-checkbox :label="header.text" v-model="header.selected" :value="header.selected"></v-checkbox>
-                </v-list-item>
-              </v-col>
-            </v-row>
-          </v-list>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer/>
-          <v-btn color="green darken-1" text @click="columnDialog = false">Sluiten</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-alert type='error' v-if='errored'>
       {{ errorMessage }}
     </v-alert>
@@ -306,9 +264,13 @@
 
 <script>
 import {stockAPI, configAPI, customerAPI, horseAPI} from '@/services'
+import FilterButton from "@/components/FilterButton";
 
 export default {
-  props: ['id', 'headers', 'filters', 'sortBy', 'sortDesc', 'product'],
+  components: {
+    FilterButton,
+  },
+  props: ['id', 'headers', 'sortBy', 'sortDesc', 'product'],
   data() {
     return {
       search: null,
@@ -316,8 +278,6 @@ export default {
       deliveryDateMenu: false,
       editDialog: false,
       createDialog: false,
-      filterDialog: false,
-      columnDialog: false,
       valid: false,
       loading: false,
       snackbar: false,
@@ -327,6 +287,10 @@ export default {
       singleRow: false,
       errored: false,
       errorMessage: '',
+      filters: {
+        remaining: 'All',
+      },
+      toFilter: ['remaining'],
       requiredNumber: [(v) => v > 0 || 'Dit veld is verplicht en moet groter zijn dan 0'],
       required: [v => !!v || 'Dit veld is verplicht'],
       editedRow: {
@@ -347,10 +311,10 @@ export default {
         { title: 'Toediening', action: this.openEditDialog, singleSelect: true },
         { title: 'Controle', action: this.openEditDialog, singleSelect: true },
       ],
-      options: {
-        remaining: 'All',
-      },
+      options: {},
       remaining: ['All', 'In stock', 'Out of stock'],
+      filteredHeaders: [],
+      filteredBatches: [],
     };
   },
   watch: {
@@ -359,7 +323,14 @@ export default {
         this.getStockProduct(this.id);
       },
       deep: true
-    }
+    },
+    filters: {
+      handler() {
+        console.log('filters called');
+        this.getStockProduct(this.id);
+      },
+      deep: true
+    },
   },
   mounted() {
     this.getStockProduct(this.id);
@@ -368,18 +339,6 @@ export default {
     this.getHorses();
   },
   computed: {
-    filteredHeaders() {
-      return this.headers.filter(header => header.selected);
-    },
-    filteredBatches() {
-      return this.batches.map(products => {
-        let filtered = {...products};
-        this.headers.forEach(header => {
-          if (!header.selected) delete filtered[header.value];
-        });
-        return filtered;
-      });
-    },
     computedExpirationDateFormatted() {
       return this.formatDate(this.editedRow.expirationDate);
     },
@@ -400,6 +359,12 @@ export default {
     }
   },
   methods: {
+    updateFilteredHeaders(headers) {
+      this.filteredHeaders = headers;
+    },
+    showColumn(col) {
+      return this.headers.find(header => header.value === col).selected;
+    },
     generateCustomerName(item) {
       return (`${item.last_name} ${item.first_name}`);
     },
@@ -424,9 +389,6 @@ export default {
         id: this.selectedBatches[0].id,
         type: e.target.innerText,
       };
-    },
-    showColumn(col) {
-      return this.headers.find(header => header.value === col).selected;
     },
     close() {
       this.$refs.form.resetValidation()
@@ -468,10 +430,11 @@ export default {
       this.loading = true;
       try {
         const {data: {batches, total}} = await stockAPI.getStockProduct(id, this.URLParameters);
-        if (this.options.remaining === 'All') {
+        this.batches = batches;
+        if (this.filters.remaining === 'All') {
           this.batches = batches;
         } else {
-          this.batches = batches.filter(prod => this.options.remaining === "Out of stock" ? (prod.remainingAmount === 0) : (prod.remainingAmount > 0));
+          this.batches = batches.filter(prod => this.filters.remaining === "Out of stock" ? (prod.remainingAmount === 0) : (prod.remainingAmount > 0));
         }
         this.totalBatches = total;
       } catch (err) {
@@ -520,7 +483,9 @@ export default {
       try {
         this.loading = true;
         await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.deactivateBatch(_id)));
+        console.log('deactivate async');
         await this.getStockProduct(this.id);
+        console.log('getStockProduct from deactivate async');
         this.selectedBatches = [];
         this.showSnackbar('success', 'lot succesvol gedeactiveerd');
       } catch (err) {

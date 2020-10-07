@@ -22,11 +22,7 @@
           {text: 'Resterend', value: 'remaining', align: 'end', sortable: true, selected: true},
         ],
         filters: {
-          type: null,
-          CNK: null,
-          tax: null,
-          eenheid: null,
-          remaining: null,
+          remaining: 'All',
         },
         sortBy: 'name',
       }
