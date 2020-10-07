@@ -55,9 +55,10 @@
         Geen batches gevonden
       </template>
       <template v-slot:item='props'>
-        <tr @click="selectRow(props.item)"
-            @mouseover="mouseOver(true)"
-            @mouseleave="mouseOver(false)"
+        <tr
+            @click="false && selectRow(props.item)"
+            @mouseover="false && ouseOver(true)"
+            @mouseleave=" false && mouseOver(false)"
             :style="{
               backgroundColor: (selectedBatches.includes(props.item) ? '#efefef' : (!props.item.active) ? '#f9f9f9' : ''),
               color: ((!props.item.active) ? '#999' : '')

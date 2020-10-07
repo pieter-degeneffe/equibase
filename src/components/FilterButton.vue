@@ -12,9 +12,8 @@
       <v-card>
         <v-card-text class="pt-5">
           <v-row dense>
-            <v-col cols="12">
+            <v-col v-if="toFilter.includes('type')" cols="12">
               <v-autocomplete
-                  v-if="toFilter.includes('type')"
                   v-model="filters.type"
                   outlined
                   label="Filter op type"
@@ -23,9 +22,8 @@
                   hide-details
               />
             </v-col>
-            <v-col cols="12">
+            <v-col v-if="toFilter.includes('modTypes')" cols="12">
               <v-autocomplete
-                  v-if="toFilter.includes('modTypes')"
                   v-model="filters.type"
                   outlined
                   label="Filter op modificatie"
@@ -34,9 +32,8 @@
                   hide-details
               />
             </v-col>
-            <v-col cols="12">
+            <v-col v-if="toFilter.includes('tax')" cols="12">
               <v-autocomplete
-                  v-if="toFilter.includes('tax')"
                   v-model="filters.tax"
                   outlined
                   label="Filter op BTW"
@@ -46,9 +43,11 @@
                   hide-details
               />
             </v-col>
-            <v-col cols="12">
+            <v-col v-if="toFilter.includes('horse')" cols="12">
+              <SearchHorse @emit-horse="assignHorse" />
+            </v-col>
+            <v-col v-if="toFilter.includes('remaining')" cols="12">
               <v-autocomplete
-                  v-if="toFilter.includes('remaining')"
                   v-model="filters.remaining"
                   outlined
                   label="Filter op remaining"
@@ -60,6 +59,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
+          <v-btn v-if="toFilter.includes('horse')" color="grey darken-1" text @click="assignHorse(undefined)">Clear</v-btn>
           <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
@@ -93,10 +93,22 @@
 
 <script>
 import {configAPI} from "@/services";
+import SearchHorse from "@/components/SearchHorse"
 
 export default {
   name: "FilterButton",
-  props: ['filters', 'columns', 'headers', 'products', 'toFilter'],
+  components: {
+    SearchHorse
+  },
+  props: [
+      'filters',
+      'columns',
+      'headers',
+      'products',
+      'toFilter',
+      'horses',
+      'suppliers'
+  ],
   mounted() {
     this.getConfig();
     this.getModsConfig();
@@ -110,6 +122,7 @@ export default {
       taxes: [],
       modsTypes: [],
       remaining: ['All', 'In stock', 'Out of stock'],
+      currentHorse: undefined
     };
   },
   watch: {
@@ -126,13 +139,18 @@ export default {
     },
   },
   methods: {
+    assignHorse(id) {
+      this.currentHorse = id;
+      this.filterDialog = false;
+      this.$emit('emit-horse-parent', this.currentHorse);
+    },
     emitFiltered() {
-      this.$emit('emit-headers',this.filteredHeaders);
+      this.$emit('emit-headers', this.filteredHeaders);
     },
     async getModsConfig() {
       this.errored = false;
       try {
-        const { data: { types }} = await configAPI.getModConfig();
+        const {data: {types}} = await configAPI.getModConfig();
         this.modsTypes = types;
       } catch (err) {
         this.errored = true;
@@ -142,7 +160,7 @@ export default {
     async getConfig() {
       this.errored = false;
       try {
-        const { data: { types, tax } } = await configAPI.getProductConfig();
+        const {data: {types, tax}} = await configAPI.getProductConfig();
         this.types = types;
         this.taxes = tax;
       } catch (err) {

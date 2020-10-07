@@ -9,7 +9,9 @@
           :columns=true
           :headers="headers"
           :products="mods"
+          :horses="Object.values(horses)"
           @emit-headers="updateFilteredHeaders"
+          @emit-horse-parent="updateFilters"
       />
     </v-toolbar>
     <v-toolbar v-if="datePicker" class="mt-5" flat dense>
@@ -112,6 +114,8 @@ export default {
   data() {
     return {
       mods: [],
+      horses: {},
+      uniqueHorses: [],
       totalMods: 0,
       filteredHeaders: [],
       sortBy: 'createdAt',
@@ -171,10 +175,17 @@ export default {
         from: this.datePicker ? this.formatDate(this.from) : undefined,
         to: this.datePicker ? this.formatDate(this.to) : undefined,
         type: this.preFilter ? this.preFilter : this.filters.type !== null ? this.filters.type : undefined,
+        horse: !this.toFilter ? undefined : this.filters.horse !== null ? this.filters.horse : undefined,
       };
     },
   },
   methods: {
+    updateFilters(id) {
+      if (this.toFilter && this.toFilter.includes('horse')) {
+        this.URLParameters.horse = id;
+        this.getMods(this.outgoing);
+      }
+    },
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers;
     },
