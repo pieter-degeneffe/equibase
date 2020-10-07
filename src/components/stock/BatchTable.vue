@@ -24,6 +24,7 @@
               v-for="(item, index) in actieMenu"
               :key="index"
               @click="item.action"
+              :disabled="item.singleSelect ? selectedBatches.length > 1 : false"
           >
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
@@ -54,28 +55,31 @@
         Geen batches gevonden
       </template>
       <template v-slot:item='props'>
-        <tr :style="{
-          backgroundColor: (selectedBatches.includes(props.item) ? '#efefef' : (!props.item.active) ? '#f9f9f9' : ''),
-          color: ((!props.item.active) ? '#999' : '')
-        }">
+        <tr @click="selectRow(props.item)"
+            @mouseover="mouseOver(true)"
+            @mouseleave="mouseOver(false)"
+            :style="{
+              backgroundColor: (selectedBatches.includes(props.item) ? '#efefef' : (!props.item.active) ? '#f9f9f9' : ''),
+              color: ((!props.item.active) ? '#999' : '')
+            }"
+        >
           <td>
             <v-checkbox
                 dense
                 :input-value="props.isSelected"
-                @click="logThis(selectedBatches)"
                 @change="props.select($event)"
             />
           </td>
           <td v-if="showColumn('lotNumber')">{{ props.item.lotNumber }}</td>
-          <td v-if="showColumn('expirationDate')">{{new Date(props.item.expirationDate) | dateFormat('DD/MM/YY')}}</td>
-          <td v-if="showColumn('deliveryDate')">{{ new Date(props.item.deliveryDate) | dateFormat('DD/MM/YY') }}</td>
+          <td v-if="showColumn('expirationDate')">{{new Date(props.item.expirationDate) | dateFormat('DD/MM/YYYY')}}</td>
+          <td v-if="showColumn('deliveryDate')">{{ new Date(props.item.deliveryDate) | dateFormat('DD/MM/YYYY') }}</td>
           <td v-if="showColumn('supplier')">{{ props.item.supplier }}</td>
           <td v-if="showColumn('buyInPrice')" align="end">€ {{ props.item.buyInPrice.toFixed(2) }}</td>
           <td v-if="showColumn('sellingPrice')" align="end">€ {{ props.item.sellingPrice.toFixed(2) }}</td>
           <td v-if="showColumn('sellingPricePerUnit')" align="end">€ {{ props.item.sellingPricePerUnit.toFixed(2) }}</td>
           <td v-if="showColumn('initialAmount')" align="end">{{ props.item.initialAmount }}</td>
           <td v-if="showColumn('remainingAmount')" align="end">{{ props.item.remainingAmount }}</td>
-          <td v-if="showColumn('updatedAt')" align="end">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YY') }}</td>
+          <td v-if="showColumn('updatedAt')" align="end">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YYYY') }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -202,6 +206,73 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model='editDialog' max-width='690'>
+      <v-card>
+        <v-card-title>Product aanpassen - type: {{ updateRow.type }}</v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-form ref="form" v-model="valid">
+              <v-row class="ml-5 mr-5">
+                <v-col cols="6">
+                  <v-select
+                      :rules="required"
+                      :items="modsTypes"
+                      disabled
+                      v-model="updateRow.type"
+                      label="type *"
+                      :loading="loading"
+                  />
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                      min="0"
+                      max="10"
+                      :rules="requiredNumber"
+                      type="number"
+                      v-model="updateRow.amount"
+                      label="aantal *"
+                      :loading="loading"
+                  />
+                </v-col>
+              </v-row>
+              <v-row v-if="updateRow.type === 'Verkoop'" class="ml-5 mr-5">
+                <v-col cols="12">
+                  <v-select
+                      :rules="required"
+                      :items="customers"
+                      item-value="_id"
+                      :item-text="generateCustomerName"
+                      v-model="updateRow.client"
+                      label="Klant *"
+                      :loading="loading"
+                      clearable
+                  />
+                </v-col>
+              </v-row>
+              <v-row v-if="updateRow.type === 'Toediening'" class="ml-5 mr-5">
+                <v-col cols="12">
+                  <v-select
+                      :rules="required"
+                      :items="horses"
+                      item-value="_id"
+                      item-text="name"
+                      v-model="updateRow.horse"
+                      label="Paard *"
+                      :loading="loading"
+                      clearable
+                  />
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer/>
+          <v-btn color="error" text @click="close">Annuleer</v-btn>
+          <v-btn color="success" :disabled="!valid" text @click="edit">Opslaan</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="columnDialog" max-width="690">
       <v-card>
         <v-card-text>
@@ -234,7 +305,7 @@
 </template>
 
 <script>
-import {stockAPI} from '@/services'
+import {stockAPI, configAPI, customerAPI, horseAPI} from '@/services'
 
 export default {
   props: ['id', 'headers', 'filters', 'sortBy', 'sortDesc', 'product'],
@@ -243,6 +314,7 @@ export default {
       search: null,
       expirationDateMenu: false,
       deliveryDateMenu: false,
+      editDialog: false,
       createDialog: false,
       filterDialog: false,
       columnDialog: false,
@@ -260,16 +332,20 @@ export default {
       editedRow: {
         lotNumber: ''
       },
+      updateRow: {},
       totalBatches: 0,
       batches: [],
       selectedBatches: [],
+      modsTypes: [],
+      customers: [],
+      horses: [],
       actieMenu: [
-        { title: 'Deactiveer', action: this.deactivate },
-        { title: 'Activeer', action: this.activate },
-        { title: 'Verkoop', action: '' },
-        { title: 'Toediening', action: '' },
-        { title: 'Vervallen', action: '' },
-        { title: 'Controle', action: '' },
+        { title: 'Deactiveer', action: this.deactivate, singleSelect: false },
+        { title: 'Activeer', action: this.activate, singleSelect: false },
+        { title: 'Beschadigd', action: this.openEditDialog, singleSelect: true },
+        { title: 'Verkoop', action: this.openEditDialog, singleSelect: true },
+        { title: 'Toediening', action: this.openEditDialog, singleSelect: true },
+        { title: 'Controle', action: this.openEditDialog, singleSelect: true },
       ],
       options: {
         remaining: 'All',
@@ -287,6 +363,9 @@ export default {
   },
   mounted() {
     this.getStockProduct(this.id);
+    this.getModsConfig();
+    this.getCustomers();
+    this.getHorses();
   },
   computed: {
     filteredHeaders() {
@@ -321,6 +400,12 @@ export default {
     }
   },
   methods: {
+    generateCustomerName(item) {
+      return (`${item.last_name} ${item.first_name}`);
+    },
+    selectRow(row) {
+      !this.selectedBatches.includes(row) ? this.selectedBatches.push(row) : this.selectedBatches = this.selectedBatches.filter(item => item !== row);
+    },
     showSnackbar(color, text) {
       this.snackbar = true;
       this.snackColor = color;
@@ -329,12 +414,16 @@ export default {
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
     },
-    logThis(item) {
-      console.log(item);
-    },
     openCreateDialog(item) {
       this.createDialog = true;
       this.editedRow = item;
+    },
+    openEditDialog(e) {
+      this.editDialog = true;
+      this.updateRow = {
+        id: this.selectedBatches[0].id,
+        type: e.target.innerText,
+      };
     },
     showColumn(col) {
       return this.headers.find(header => header.value === col).selected;
@@ -342,6 +431,38 @@ export default {
     close() {
       this.$refs.form.resetValidation()
       this.createDialog = false;
+      this.editDialog = false;
+      this.getStockProduct(this.id);
+    },
+    async getModsConfig() {
+      this.errored = false;
+      try {
+        const { data: { types }} = await configAPI.getModConfig();
+        this.modsTypes = types;
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
+    },
+    async getCustomers() {
+      this.errored = false;
+      try {
+        const { data } = await customerAPI.getCustomers();
+        this.customers = data;
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
+    },
+    async getHorses() {
+      this.errored = false;
+      try {
+        const { data: { horses } } = await horseAPI.getHorses();
+        this.horses = horses;
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
     },
     async getStockProduct(id) {
       this.loading = true;
@@ -357,6 +478,22 @@ export default {
         this.errored = true;
         this.errorMessage = err.response.data.message;
       } finally {
+        this.loading = false;
+      }
+    },
+    async edit() {
+      this.errored = false;
+      try {
+        this.loading = true;
+        await stockAPI.putStock(this.id, {...this.updateRow}, this.updateRow.id);
+        this.showSnackbar('success', `${this.product.name} aangepast`);
+      } catch (err) {
+        this.showSnackbar('error',`Fout opgetreden tijdens het aanpassen van ${this.product.name}`);
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.close();
+        this.selectedBatches = [];
         this.loading = false;
       }
     },
@@ -383,7 +520,7 @@ export default {
       try {
         this.loading = true;
         await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.deactivateBatch(_id)));
-        this.getStockProduct(this.id);
+        await this.getStockProduct(this.id);
         this.selectedBatches = [];
         this.showSnackbar('success', 'lot succesvol gedeactiveerd');
       } catch (err) {
@@ -399,7 +536,7 @@ export default {
       try {
         this.loading = true;
         await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.activateBatch(_id)));
-        this.getStockProduct(this.id);
+        await this.getStockProduct(this.id);
         this.selectedBatches = [];
         this.showSnackbar('success', 'lot succesvol geactiveerd');
       } catch (err) {
