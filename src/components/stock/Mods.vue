@@ -1,6 +1,18 @@
 <template>
-  <v-card class="mx-5 mt-5 mb-12" flat>
+  <v-card class="mx-5 mb-2" flat>
     <v-toolbar flat>
+      <v-toolbar-title>{{ title }}</v-toolbar-title>
+      <v-spacer/>
+      <FilterButton
+          :toFilter="toFilter"
+          :filters="filters"
+          :columns=true
+          :headers="headers"
+          :products="mods"
+          @emit-headers="updateFilteredHeaders"
+      />
+    </v-toolbar>
+    <v-toolbar v-if="datePicker" class="mt-5" flat dense>
       <v-menu
           v-if="datePicker"
           ref='fromDateMenu'
@@ -14,8 +26,6 @@
           <v-text-field
               v-model='computedFromDateFormatted'
               label='van'
-              hint="MM/DD/YYYY"
-              persistent-hint
               v-on='on'
               readonly
               class="mr-5"
@@ -42,8 +52,6 @@
           <v-text-field
               v-model='computedToDateFormatted'
               label='tot'
-              hint="MM/DD/YYYY"
-              persistent-hint
               v-on='on'
               readonly
           >
@@ -56,15 +64,6 @@
             @input='toDateMenu = false'
         />
       </v-menu>
-      <v-spacer/>
-      <FilterButton
-          :toFilter="toFilter"
-          :filters="filters"
-          :columns=true
-          :headers="headers"
-          :products="mods"
-          @emit-headers="updateFilteredHeaders"
-      />
     </v-toolbar>
     <v-data-table
         :headers="filteredHeaders"
@@ -84,7 +83,9 @@
           <td v-if="showColumn('type')">{{ props.item.type }}</td>
           <td v-if="showColumn('product')">{{ props.item.product ? props.item.product.name : '-' }}</td>
           <td v-if="showColumn('batch')">{{ props.item.batch ? props.item.batch.lotNumber : '-' }}</td>
-          <td v-if="showColumn('batch.supplier')">{{ props.item.batch.supplier }}</td>
+          <td v-if="(preFilter === 'Aankoop') && showColumn('batch.supplier')">{{ props.item.batch.supplier }}</td>
+          <td v-if="outgoing && showColumn('client')">{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
+          <td v-if="(preFilter === 'Toediening') || outgoing && showColumn('horse')">{{ props.item.horse ? props.item.horse.name : '-' }}</td>
           <td v-if="showColumn('amount')">{{ props.item.amount }}</td>
           <td v-if="showColumn('createdAt')" align="end">
             {{ new Date(props.item.createdAt) | dateFormat('DD/MM/YYYY - hh:mm') }}
@@ -107,20 +108,12 @@ export default {
   components: {
     FilterButton,
   },
-  props: ['outgoing', 'datePicker', 'delivered', 'filters', 'toFilter'],
+  props: ['outgoing', 'datePicker', 'delivered', 'filters', 'toFilter', 'preFilter', 'headers', 'title'],
   data() {
     return {
       mods: [],
       totalMods: 0,
       filteredHeaders: [],
-      headers: [
-        {text: 'Type', value: 'type', selected: true},
-        {text: 'Product', value: 'product', selected: true},
-        {text: 'Lot nummer', value: 'batch', selected: true},
-        {text: 'Leverancier', value: 'batch.supplier', selected: true},
-        {text: 'Aantal', value: 'amount', selected: true},
-        {text: 'Datum', align: 'end', value: 'createdAt', selected: true},
-      ],
       sortBy: 'createdAt',
       sortDesc: true,
       fromDateMenu: false,
@@ -177,7 +170,7 @@ export default {
         'sortDesc': this.options.sortDesc,
         from: this.datePicker ? this.formatDate(this.from) : undefined,
         to: this.datePicker ? this.formatDate(this.to) : undefined,
-        type: this.delivered ? 'Aankoop' : this.filters.type !== null ? this.filters.type : undefined,
+        type: this.preFilter ? this.preFilter : this.filters.type !== null ? this.filters.type : undefined,
       };
     },
   },

@@ -109,6 +109,12 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/report/applied-medication",
+    name: "Stock applied medication",
+    component: () => import("@/views/report/AppliedMedication"),
+    beforeEnter: requireAuth
+  },
+  {
     path: "/settings/location",
     name: "location",
     component: () => import("@/views/settings/Location"),
