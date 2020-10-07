@@ -44,16 +44,20 @@
               />
             </v-col>
             <v-col v-if="toFilter.includes('horse')" cols="12">
-              <v-autocomplete
+              <SearchHorse
                   v-model="filters.horse"
-                  outlined
-                  label="Filter op paard"
-                  :items="horses"
-                  item-text="name"
-                  item-value="_id"
-                  multiple
-                  hide-details
+                  @emit-horse="assignHorse"
               />
+<!--              <v-autocomplete-->
+<!--                  v-model="filters.horse"-->
+<!--                  outlined-->
+<!--                  label="Filter op paard"-->
+<!--                  :items="horses"-->
+<!--                  item-text="name"-->
+<!--                  item-value="_id"-->
+<!--                  multiple-->
+<!--                  hide-details-->
+<!--              />-->
             </v-col>
             <v-col v-if="toFilter.includes('remaining')" cols="12">
               <v-autocomplete
@@ -101,17 +105,21 @@
 
 <script>
 import {configAPI} from "@/services";
+import SearchHorse from "@/components/SearchHorse"
 
 export default {
   name: "FilterButton",
+  components: {
+    SearchHorse
+  },
   props: [
-    'filters',
-    'columns',
-    'headers',
-    'products',
-    'toFilter',
-    'horses',
-    'suppliers'
+      'filters',
+      'columns',
+      'headers',
+      'products',
+      'toFilter',
+      'horses',
+      'suppliers'
   ],
   mounted() {
     this.getConfig();
@@ -126,6 +134,7 @@ export default {
       taxes: [],
       modsTypes: [],
       remaining: ['All', 'In stock', 'Out of stock'],
+      currentHorse: undefined
     };
   },
   watch: {
@@ -142,6 +151,13 @@ export default {
     },
   },
   methods: {
+    assignHorse(id) {
+      console.log('filterButton emit to parent: ', id);
+      this.currentHorse = id;
+      this.filterDialog = false;
+      this.$emit('emit-horse-parent', this.currentHorse);
+      return id
+    },
     emitFiltered() {
       this.$emit('emit-headers', this.filteredHeaders);
     },

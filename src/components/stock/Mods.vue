@@ -11,6 +11,7 @@
           :products="mods"
           :horses="Object.values(horses)"
           @emit-headers="updateFilteredHeaders"
+          @emit-horse-parent="updateFilters"
       />
     </v-toolbar>
     <v-toolbar v-if="datePicker" class="mt-5" flat dense>
@@ -179,6 +180,12 @@ export default {
     },
   },
   methods: {
+    updateFilters(id) {
+      if (this.toFilter && this.toFilter.includes('horse')) {
+        console.log('parent received emit: ', id);
+        this.filters.horse = id;
+      }
+    },
     getHorses() {
       this.mods.forEach(mod => {
         this.horses[mod.horse._id] = mod.horse;
