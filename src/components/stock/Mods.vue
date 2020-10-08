@@ -136,9 +136,6 @@ export default {
       options: {},
     };
   },
-  mounted() {
-    this.getMods(this.outgoing);
-  },
   watch: {
     from: {
       handler() {
