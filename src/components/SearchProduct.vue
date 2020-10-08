@@ -1,14 +1,12 @@
 <template>
-  <div>
+  <v-col cols="4">
     <v-autocomplete
         v-model="select"
-        :loading="loading"
         :items="items"
         :search-input.sync="search"
         prepend-inner-icon="mdi-magnify"
-        flat
         dense
-        hide-no-data
+        :no-data-text="noDataText"
         hide-details
         hide-selected
         item-text="Description"
@@ -19,6 +17,7 @@
         outlined
         return-object
         no-filter
+        single-line
     >
       <template v-slot:prepend-item>
         <v-list-item @click="emitProduct(clearAll)">
@@ -41,7 +40,7 @@
         </v-list-item>
       </template>
     </v-autocomplete>
-  </div>
+  </v-col>
 </template>
 <script>
 import searchAPI from "@/services/SearchAPI.js";
@@ -67,6 +66,15 @@ export default {
     },
   },
   computed: {
+    noDataText() {
+      if (!this.search) {
+        return "Type om te zoeken";
+      }
+      if (this.search.length < 4) {
+        return "Probeer specifieker te zijn";
+      }
+      return "Geen producten gevonden";
+    },
     items() {
       return this.entries.map(entry => {
         const Description = entry.name
