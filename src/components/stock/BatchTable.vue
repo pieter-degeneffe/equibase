@@ -11,10 +11,13 @@
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
+              dark
               color="primary"
               class="ml-4 d-print-none"
-              v-bind="attrs" v-on="on"
-              dark :disabled="checkSelectedBatches">
+              v-bind="attrs"
+              v-on="on"
+              @click="loadActionsMenu"
+              :disabled="checkSelectedBatches">
             <v-icon left>mdi-chevron-down</v-icon>
             Acties
           </v-btn>
@@ -335,9 +338,6 @@ export default {
   },
   mounted() {
     this.getStockProduct(this.id);
-    this.getModsConfig();
-    this.getCustomers();
-    this.getHorses();
   },
   computed: {
     computedExpirationDateFormatted() {
@@ -360,6 +360,11 @@ export default {
     }
   },
   methods: {
+    loadActionsMenu(){
+      this.getModsConfig();
+      this.getCustomers();
+      this.getHorses();
+    },
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers;
     },
