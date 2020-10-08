@@ -93,6 +93,7 @@
         this.filteredHeaders = headers;
       },
       openICSIPage(id) {
+        document.body.style.cursor = 'default';
         this.$router.push('/icsi/' + id);
       },
       mouseOver(hoverState) {

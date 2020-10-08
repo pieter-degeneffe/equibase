@@ -108,7 +108,7 @@
           </v-btn>
         </v-snackbar>
     </v-form>
-    <v-card outlined class="ma-5" v-if="valid">
+    <v-card outlined class="ma-5" v-if="icsi.amount && icsi.code">
       <v-toolbar flat dense light>
         <v-toolbar-title>
           Embryo selecteren
