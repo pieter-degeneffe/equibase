@@ -29,35 +29,6 @@
         </tr>
       </template>
     </v-data-table>
-    <v-dialog v-model="filterDialog" max-width="490">
-      <v-card>
-        <v-card-text class="pt-5">
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer/>
-          <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="columnDialog" max-width="690">
-      <v-card>
-        <v-card-text>
-          <v-list>
-            <v-row dense>
-              <v-col cols="12" sm="6" md="4" v-for="header in headers" :key="header.text">
-                <v-list-item>
-                  <v-checkbox :label="header.text" v-model="header.selected" :value="header.selected"></v-checkbox>
-                </v-list-item>
-              </v-col>
-            </v-row>
-          </v-list>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="columnDialog = false">Sluiten</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-alert type="error" v-if="errored">
       {{ errorMessage }}
     </v-alert>
@@ -75,8 +46,6 @@
     data() {
       return {
         sortDesc: true,
-        filterDialog: false,
-        columnDialog: false,
         totalICSIs: 0,
         icsis: [],
         loading: true,
