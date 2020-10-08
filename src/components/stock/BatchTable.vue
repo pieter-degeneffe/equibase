@@ -328,7 +328,6 @@ export default {
     },
     filters: {
       handler() {
-        console.log('filters called');
         this.getStockProduct(this.id);
       },
       deep: true
@@ -485,9 +484,7 @@ export default {
       try {
         this.loading = true;
         await Promise.all(this.selectedBatches.map(({_id}) => stockAPI.deactivateBatch(_id)));
-        console.log('deactivate async');
         await this.getStockProduct(this.id);
-        console.log('getStockProduct from deactivate async');
         this.selectedBatches = [];
         this.showSnackbar('success', 'lot succesvol gedeactiveerd');
       } catch (err) {

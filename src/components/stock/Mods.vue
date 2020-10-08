@@ -3,6 +3,10 @@
     <v-toolbar flat>
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer/>
+      <SearchHorse
+          v-if="toFilter && toFilter.includes('horse')"
+          @emit-horse="updateFilters"
+      />
       <FilterButton
           :toFilter="toFilter"
           :filters="filters"
@@ -104,11 +108,13 @@
 <script>
 import {stockAPI} from '@/services'
 import FilterButton from "@/components/FilterButton";
+import SearchHorse from "@/components/SearchHorse";
 
 export default {
   name: "Mods",
   components: {
     FilterButton,
+    SearchHorse
   },
   props: ['outgoing', 'datePicker', 'delivered', 'filters', 'toFilter', 'preFilter', 'headers', 'title'],
   data() {
