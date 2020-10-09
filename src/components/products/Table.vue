@@ -150,7 +150,6 @@
         try {
           const { data } = await productsAPI.getProduct(id);
           this.products = [data];
-          console.log(data);
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
