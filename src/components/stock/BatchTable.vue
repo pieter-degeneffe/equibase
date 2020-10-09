@@ -63,11 +63,7 @@
             }"
         >
           <td>
-            <v-checkbox
-                dense
-                :input-value="props.isSelected"
-                @change="props.select($event)"
-            />
+            <v-checkbox dense :input-value="props.isSelected" @change="props.select($event)"/>
           </td>
           <td v-if="showColumn('lotNumber')">{{ props.item.lotNumber }}</td>
           <td v-if="showColumn('expirationDate')">{{ formatDate(props.item.expirationDate) }}</td>
@@ -358,9 +354,6 @@ export default {
       deep: true
     },
   },
-  mounted() {
-    this.getStockProduct(this.id);
-  },
   computed: {
     computedExpirationDateFormatted() {
       return this.formatDate(this.editedRow.expirationDate);
@@ -377,7 +370,6 @@ export default {
         'limit': this.options.itemsPerPage,
         'sortBy': this.options.sortBy,
         'sortDesc': this.options.sortDesc,
-        'query': this.options.search,
       };
     }
   },

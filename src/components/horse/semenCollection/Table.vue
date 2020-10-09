@@ -3,7 +3,7 @@
     <v-data-table :headers="headers" :items="filteredSemenCollections()" :loading="loading" loading-text="Bezig met laden..." class="ma-5">
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn color="primary" dark  @click="openDialog('create')" class="mr-2 d-print-none">Sperma lot toevoegen</v-btn>
           <v-btn color="primary" dark @click="filterDialog = true" class="d-print-none"><v-icon left>mdi-filter</v-icon>Filters</v-btn>
         </v-toolbar>
@@ -17,7 +17,7 @@
           <td>{{ ownerName(props.item.owner) }}</td>
           <td>{{ props.item.initial_inventory }}</td>
           <td>{{ props.item.current_inventory }}</td>
-          <td><span v-if="props.item.production_date">{{ new Date(props.item.production_date) | dateFormat('DD/MM/YY')}}</span></td>
+          <td><span v-if="props.item.production_date">{{ formatDate(props.item.production_date) }}</span></td>
           <td>
             <v-icon v-if="props.item.color" small class="mr-2" :class="strawColor(props.item.color)">mdi-checkbox-blank-circle</v-icon>
             {{ props.item.location.container.name }} - Koker {{ props.item.location.tube }} - {{ props.item.location.position }}
@@ -55,7 +55,7 @@
             <td colspan="2" class="pl-8">Stockwijziging</td>
             <td>{{ modification.amount }}</td>
             <td>&nbsp;</td>
-            <td>{{ new Date(modification.createdAt) | dateFormat('DD/MM/YY')}}</td>
+            <td>{{ formatDate(modification.createdAt) }}</td>
             <td>&nbsp;</td>
             <td>{{ modification.type }}</td>
             <td>&nbsp;</td>
@@ -94,6 +94,7 @@
   </div>
 </template>
 <script>
+import { formatDate } from "@/Helpers";
 import semenAPI from "@/services/SemenAPI.js";
 import editDialog from "@/components/horse/semenCollection/EditDialog";
 import createDialog from "@/components/horse/semenCollection/CreateDialog";
@@ -154,6 +155,7 @@ export default {
     },
   },
   methods: {
+    formatDate,
     async getSemenCollections() {
       this.loading = true;
       try {

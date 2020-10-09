@@ -63,18 +63,18 @@
           <v-btn v-if="customer._id" color="warning" depressed @click="deleteDialog = true">
             Klant verwijderen
           </v-btn>
-          <v-dialog v-model="deleteDialog" persistent max-width="350">
-            <v-card>
-              <v-card-title class="headline">Klant verwijderen?</v-card-title>
-              <v-card-text>Ben je zeker dat je de klant <b>{{ customer.first_name }} {{ customer.last_name }}</b> wilt verwijderen? Dit kan niet meer ongedaan gemaakt worden</v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="success" depressed @click="deleteDialog = false">Annuleren</v-btn>
-                <v-btn color="error" depressed @click="deleteCustomer()">Verwijderen</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
       </v-row>
+      <v-dialog v-model="deleteDialog" persistent max-width="350">
+        <v-card>
+          <v-card-title class="headline">Klant verwijderen?</v-card-title>
+          <v-card-text>Ben je zeker dat je de klant <b>{{ customer.first_name }} {{ customer.last_name }}</b> wilt verwijderen? Dit kan niet meer ongedaan gemaakt worden</v-card-text>
+          <v-card-actions>
+            <v-spacer/>
+            <v-btn color="success" depressed @click="deleteDialog = false">Annuleren</v-btn>
+            <v-btn color="error" depressed @click="deleteCustomer()">Verwijderen</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-snackbar v-model="snackbar">
         Klant is succesvol opgeslaan
         <v-btn color="pink" text @click="snackbar = false">
@@ -140,10 +140,12 @@ export default {
       this.errored = false;
       try {
         const response = await customerAPI.postCustomer(this.customer);
+        console.log(response);
         this.$emit('update-horse', response.data);
-        this.$router.push("/customer/" + response.data._id);
+        this.$router.push(`/customer/${response.data._id}`);
         this.snackbar = true;
       } catch (err) {
+        console.log(err);
         this.errored = true;
         this.errorMessage = err.response.data.message;
       }
@@ -163,7 +165,8 @@ export default {
       this.errored = false;
       try {
         await customerAPI.deleteCustomer(this.customer._id);
-        this.$emit('close-dialog',false)
+        this.$emit('close-dialog',false);
+        this.$router.push('/customer/');
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;

@@ -94,7 +94,7 @@
                   multiple
               />
             </v-col>
-            <v-col v-if="toFilter.includes('nitrogen')" cols="3">
+            <v-col v-if="toFilter.includes('nitrogen')" cols="6">
               <v-autocomplete
                   v-model="filters.location.container"
                   label="Container"
@@ -106,7 +106,7 @@
                   outlined
               />
             </v-col>
-            <v-col v-if="toFilter.includes('nitrogen') && filters.location.container" cols="3">
+            <v-col v-if="toFilter.includes('nitrogen') && filters.location.container" cols="6">
               <v-autocomplete
                   v-model="filters.location.tube"
                   label="Koker"
@@ -172,9 +172,6 @@ export default {
       'horses',
       'suppliers'
   ],
-  mounted() {
-    this.emitFiltered();
-  },
   data() {
     return {
       filterDialog: false,
@@ -196,6 +193,7 @@ export default {
       handler() {
         this.emitFiltered();
       },
+      immediate: true,
       deep: true
     }
   },
@@ -271,8 +269,8 @@ export default {
     },
     async getOwners() {
       try {
-        const { data } = await customerAPI.getCustomers();
-        this.owners = data;
+        const { data: { customers} } = await customerAPI.getCustomers();
+        this.owners = customers;
       } catch (e) {
         this.errored = true;
         this.errorMessage = e.response.data.message;

@@ -1,6 +1,16 @@
 <template>
   <v-card class="mx-5 mt-5 mb-12" outlined>
-    <v-data-table :headers="filteredHeaders" :items="filteredHorses" :options.sync="options" :server-items-length="totalHorses" :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc" loading-text="Bezig met laden..." class="ma-5">
+    <v-data-table
+        :headers="filteredHeaders"
+        :items="filteredHorses"
+        :options.sync="options"
+        :server-items-length="totalHorses"
+        :loading="loading"
+        :sortBy="sortBy"
+        :sortDesc="sortDesc"
+        loading-text="Bezig met laden..."
+        class="ma-5"
+    >
       <template v-slot:top>
        <v-row dense class="mx-1">
          <v-col cols="8" sm="6">
@@ -28,9 +38,9 @@
           <td v-if="showColumn('location')"><span v-if="props.item.location">{{ props.item.location.name }}</span></td>
           <td v-if="showColumn('owner')"><span v-if="props.item.owner">{{ ownerName(props.item.owner) }}</span></td>
           <td v-if="showColumn('surrogate')"><v-icon v-if="props.item.surrogate" class="green--text">mdi-check</v-icon></td>
-          <td v-if="showColumn('createdAt')">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
-          <td v-if="showColumn('updatedAt')">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YY')}}</td>
-          <td v-if="showColumn('date_of_birth')"><span v-if="props.item.date_of_birth">{{ new Date(props.item.date_of_birth) | dateFormat('DD/MM/YY')}}</span></td>
+          <td v-if="showColumn('createdAt')">{{ formatDate(props.item.createdAt) }}</td>
+          <td v-if="showColumn('updatedAt')">{{ formatDate(props.item.updatedAt) }}</td>
+          <td v-if="showColumn('date_of_birth')"><span v-if="props.item.date_of_birth">{{ formatDate(props.item.date_of_birth) }}</span></td>
         </tr>
       </template>
     </v-data-table>
@@ -39,20 +49,41 @@
         <v-card-text class="pt-5">
           <v-row dense>
             <v-col cols="12">
-              <v-select v-model="filters.type.value" outlined label="Filter op type paard" :items="filters.type.options" hide-details></v-select>
-              <v-checkbox v-if="filters.type.value === 'merrie'" label="Toon enkel draagmoeders" v-model="filters.surrogate.value" class="mb-O"></v-checkbox>
-              <v-checkbox v-if="filters.type.value === 'hengst'" label="Toon enkel dekhengsten" v-model="filters.stud_horse.value" class="mb-O"></v-checkbox>
+              <v-select v-model="filters.type.value" outlined label="Filter op type paard" :items="filters.type.options" hide-details/>
+              <v-checkbox v-if="filters.type.value === 'merrie'" label="Toon enkel draagmoeders" v-model="filters.surrogate.value" class="mb-O"/>
+              <v-checkbox v-if="filters.type.value === 'hengst'" label="Toon enkel dekhengsten" v-model="filters.stud_horse.value" class="mb-O"/>
             </v-col>
             <v-col cols="12">
-              <v-select v-model="filters.location.options" outlined label="Filter op locatie" :items="locations" :item-text="item => item.stable +' - '+ item.name" return-object item-value="_id" multiple :loading="loadingLocations" hide-details></v-select>
+              <v-select
+                  v-model="filters.location.options"
+                  label="Filter op locatie"
+                  :items="locations"
+                  :item-text="item => item.stable +' - '+ item.name"
+                  item-value="_id"
+                  :loading="loadingLocations"
+                  return-object
+                  hide-details
+                  outlined
+                  multiple
+              />
             </v-col>
             <v-col cols="12">
-              <v-autocomplete v-model="filters.owner" outlined label="Filter op eigenaar" :items="owners" :item-text="ownerName" return-object item-value="_id" multiple hide-details></v-autocomplete>
+              <v-autocomplete
+                  v-model="filters.owner"
+                  label="Filter op eigenaar"
+                  :items="owners"
+                  :item-text="ownerName"
+                  item-value="_id"
+                  return-object
+                  hide-details
+                  outlined
+                  multiple
+              />
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
@@ -64,14 +95,14 @@
             <v-row dense>
               <v-col cols="12" sm="6" md="4" v-for="header in headers" :key="header.text">
                 <v-list-item>
-                  <v-checkbox :label="header.text" v-model="header.selected" :value="header.selected" ></v-checkbox>
+                  <v-checkbox :label="header.text" v-model="header.selected" :value="header.selected"/>
                 </v-list-item>
               </v-col>
             </v-row>
           </v-list>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn color="green darken-1" text @click="columnDialog = false">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
@@ -82,7 +113,7 @@
   </v-card>
 </template>
 <script>
-  import { ownerName } from '@/Helpers';
+  import { ownerName, mouseOver,formatDate } from '@/Helpers';
   import { customerAPI, horseAPI, locationAPI } from '@/services';
 
   export default {
@@ -115,9 +146,6 @@
         },
         deep: true
       }
-    },
-    mounted () {
-      this.getHorses()
     },
     computed: {
       title() {
@@ -179,12 +207,11 @@
       }
     },
     methods: {
+      formatDate,
       ownerName,
+      mouseOver,
       openHorsePage(id){
         this.$router.push("/horse/" + id);
-      },
-      mouseOver(hoverState) {
-        hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
       },
       openFilterDialog() {
         this.filterDialog = true;

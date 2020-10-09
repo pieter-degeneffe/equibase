@@ -1,7 +1,7 @@
 import API from "@/services/API";
 export default {
   postCustomer: (customer) => API().post("/api/customer", {customer}),
-  getCustomers: () => API().get("/api/customer"),
+  getCustomers: (params) => API().get("/api/customer", {params}),
   getCustomerSearch: (id) => API().get(`/api/customer/search/${id}`),
   // getCustomerCount() {
   //   return API().get("/api/customer/count");

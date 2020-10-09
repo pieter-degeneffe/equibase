@@ -1,7 +1,18 @@
 <template>
   <div>
-    <v-select class="d-print-none" v-model="horseFilter" outlined label="Filter op type paard" :items="horseTypes"></v-select>
-    <v-data-table :headers="headers" :items="filteredHorses" :loading="loading" loading-text="Bezig met laden...">
+    <v-select
+        class="d-print-none"
+        v-model="horseFilter"
+        outlined
+        label="Filter op type paard"
+        :items="horseTypes"
+    />
+    <v-data-table
+        :headers="headers"
+        :items="filteredHorses"
+        :loading="loading"
+        loading-text="Bezig met laden..."
+    >
       <template v-slot:item="props">
         <tr @click="openHorsePage(props.item._id)" @mouseover="mouseOver(true)" @mouseleave="mouseOver(false)">
           <td>{{ props.item.name }}</td>
@@ -16,6 +27,7 @@
   </div>
 </template>
 <script>
+import { mouseOver } from "@/Helpers";
 import customerAPI from "@/services/CustomerAPI.js";
 export default {
   props: ['customer'],
@@ -26,21 +38,9 @@ export default {
       horseTypes: ['Alle paarden','Hengsten','Merries','Draagmoeders'],
       horses: [],
       headers: [
-        {
-          text: 'Naam paard',
-          value: 'name',
-          align: 'left',
-          sortable: true
-        },
-        {
-          text: 'Stamboom',
-          align: 'left',
-          sortable: false
-        },
-        {
-          text: 'Type paard',
-          sortable: false
-        },
+        { text: 'Naam paard', value: 'name', align: 'left', sortable: true },
+        { text: 'Stamboom', align: 'left', sortable: false },
+        { text: 'Type paard', sortable: false },
       ],
     };
   },
@@ -66,10 +66,11 @@ export default {
     }
   },
   methods: {
+    mouseOver,
     async getCustomerHorses(id) {
       try {
-        const response = await customerAPI.getCustomerHorses(id);
-        this.horses = response.data;
+        const { data } = await customerAPI.getCustomerHorses(id);
+        this.horses = data;
       } catch (e) {
         this.errored = true;
       } finally {
@@ -78,9 +79,6 @@ export default {
     },
     openHorsePage(id) {
       this.$router.push("/horse/" + id);
-    },
-    mouseOver(hoverState) {
-      hoverState ? document.body.style.cursor = "pointer" : document.body.style.cursor = "default";
     },
   }
 }

@@ -29,11 +29,11 @@
           <td v-if="showColumn('outgoingUnit')">{{ props.item.outgoingUnit }}</td>
           <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
           <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
-          <td v-if="showColumn('supplementAdministration')" align="end">€
+          <td v-if="showColumn('supplementAdministration')" class="text-right">€
             {{ props.item.supplementAdministration.toFixed(2) }}
           </td>
-          <td v-if="showColumn('value')" align="end">€ {{ props.item.value }}</td>
-          <td v-if="showColumn('remaining')" align="end">{{ props.item.remaining }}</td>
+          <td v-if="showColumn('value')" class="text-right">€ {{ props.item.value }}</td>
+          <td v-if="showColumn('remaining')" class="text-right">{{ props.item.remaining }}</td>
         </tr>
       </template>
     </v-data-table>
