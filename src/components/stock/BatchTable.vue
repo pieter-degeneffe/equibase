@@ -1,13 +1,6 @@
 <template>
   <v-card flat>
     <v-toolbar flat>
-<!--      <v-text-field-->
-<!--          v-model="search"-->
-<!--          append-icon="mdi-magnify"-->
-<!--          label="Zoeken"-->
-<!--          single-line-->
-<!--          hide-details-->
-<!--      />-->
       <v-spacer/>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
