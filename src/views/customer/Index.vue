@@ -47,6 +47,7 @@ export default {
     async loadCustomers() {
       try {
         const response = await customerAPI.getCustomers();
+        console.log(response);
         this.customers= response.data;
       } catch (e) {
         this.errored = true;
