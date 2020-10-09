@@ -113,7 +113,7 @@ export default {
       return this.headers.find(header => header.value === col).selected;
     },
     updateList(id) {
-      !id ? this.getAllStock() : this.getStock(id);
+      id ? this.getStock(id) : this.getAllStock();
     },
     openStockProductPage(id) {
       document.body.style.cursor = 'default';
