@@ -1,13 +1,10 @@
 <template>
   <v-card class="mx-5 mt-5 mb-5" outlined>
     <v-toolbar flat>
-      <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Zoeken"
-          single-line
-          hide-details
+      <SearchProduct
+        @emit-product="updateList"
       />
+      <v-spacer/>
       <FilterButton
           :toFilter="toFilter"
           :filters="filters"
@@ -86,10 +83,12 @@
 <script>
   import productsAPI from '@/services/ProductsAPI';
   import FilterButton from "@/components/FilterButton";
+  import SearchProduct from "@/components/SearchProduct";
 
   export default {
     components: {
       FilterButton,
+      SearchProduct
     },
     props: ['title', 'headers'],
     data() {
@@ -137,11 +136,26 @@
       }
     },
     methods: {
+      updateList(id) {
+        !id ? this.getProducts() : this.getProduct(id);
+      },
       updateFilteredHeaders(headers) {
         this.filteredHeaders = headers;
       },
       showColumn(col) {
         return this.headers.find(header => header.value === col).selected;
+      },
+      async getProduct(id) {
+        this.loading = true;
+        try {
+          const { data } = await productsAPI.getProduct(id);
+          this.products = [data];
+        } catch (err) {
+          this.errored = true;
+          this.errorMessage = err.response.data.message;
+        } finally {
+          this.loading = false;
+        }
       },
       async getProducts() {
         this.loading = true;

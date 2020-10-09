@@ -1,14 +1,10 @@
 <template>
   <v-card class="mx-5 mt-5 mb-12" outlined>
     <v-toolbar flat>
-      <v-text-field
-          v-model="search"
-          prepend-inner-icon="mdi-magnify"
-          label="Zoeken"
-          single-line
-          hide-details
-          @input="searchStock"
+      <SearchProduct
+          @emit-product="updateList"
       />
+      <v-spacer/>
       <v-btn color="primary" dark class="ml-4 d-print-none" @click="getDelivery">import medini</v-btn>
       <FilterButton
           :toFilter="toFilter"
@@ -33,7 +29,9 @@
           <td v-if="showColumn('outgoingUnit')">{{ props.item.outgoingUnit }}</td>
           <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
           <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
-          <td v-if="showColumn('supplementAdministration')" align="end">€ {{ props.item.supplementAdministration.toFixed(2) }}</td>
+          <td v-if="showColumn('supplementAdministration')" align="end">€
+            {{ props.item.supplementAdministration.toFixed(2) }}
+          </td>
           <td v-if="showColumn('value')" align="end">€ {{ props.item.value }}</td>
           <td v-if="showColumn('remaining')" align="end">{{ props.item.remaining }}</td>
         </tr>
@@ -50,12 +48,14 @@
 </template>
 
 <script>
-import { stockAPI, deliveryAPI } from '@/services';
+import {stockAPI, deliveryAPI} from '@/services';
 import FilterButton from '@/components/FilterButton';
+import SearchProduct from '@/components/SearchProduct';
 
 export default {
   components: {
     FilterButton,
+    SearchProduct
   },
   props: ['title', 'headers', 'filters', 'sortBy'],
   data() {
@@ -101,6 +101,7 @@ export default {
         type: this.filters.type !== null ? this.filters.type : undefined,
         tax: this.filters.tax !== null ? this.filters.tax : undefined,
         outgoingUnit: this.filters.eenheid !== null ? this.filters.eenheid : undefined,
+        product: this.filters.product !== null ? this.filters.product : undefined,
       };
     }
   },
@@ -111,21 +112,33 @@ export default {
     showColumn(col) {
       return this.headers.find(header => header.value === col).selected;
     },
-    searchStock(item) {
-      this.search = item;
+    updateList(id) {
+      !id ? this.getAllStock() : this.getStock(id);
     },
     openStockProductPage(id) {
       document.body.style.cursor = 'default';
-      this.$router.push(`/stock/${ id }`);
+      this.$router.push(`/stock/${id}`);
     },
     mouseOver(hoverState) {
       hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
     },
+    async getStock(id) {
+      this.loading = true;
+      try {
+        const { data: { product } } = await stockAPI.getStockProduct(id);
+        this.products = [product];
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.loading = false;
+      }
+    },
     async getAllStock() {
       this.loading = true;
       try {
-        const { data: {products, total}} = await stockAPI.getAllStock(this.URLParameters);
-        if(this.filters.remaining === 'All'){
+        const {data: {products, total}} = await stockAPI.getAllStock(this.URLParameters);
+        if (this.filters.remaining === 'All') {
           this.products = products;
         } else {
           this.products = products.filter(prod => this.filters.remaining === "Out of stock" ? (prod.remaining === 0) : (prod.remaining > 0));
@@ -141,7 +154,7 @@ export default {
     async getDelivery() {
       this.loading = true;
       try {
-        const { data } = await deliveryAPI.getMediniDelivery();
+        const {data} = await deliveryAPI.getMediniDelivery();
         console.log('delivery data: ', data);
       } catch (err) {
         this.errored = true;

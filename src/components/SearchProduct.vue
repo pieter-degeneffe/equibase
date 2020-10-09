@@ -11,8 +11,8 @@
         hide-selected
         item-text="Description"
         item-value="_id"
-        :placeholder="selectedHorse.Description !== 'Alle paarden' ? selectedHorse.Description : ''"
-        label="Paard zoeken"
+        :placeholder="selected.Description !== 'Alle producten' ? selected.Description : ''"
+        label="Product zoeken"
         autocomplete="off"
         outlined
         return-object
@@ -20,7 +20,7 @@
         single-line
     >
       <template v-slot:prepend-item>
-        <v-list-item @click="emitHorse(clearAll)">
+        <v-list-item @click="emitProduct(clearAll)">
           <v-list-item-action>
             <v-icon>{{ clearAll.icon }}</v-icon>
           </v-list-item-action>
@@ -30,13 +30,12 @@
         </v-list-item>
       </template>
       <template v-slot:item="{ item }">
-        <v-list-item @click="emitHorse(item)">
+        <v-list-item @click="emitProduct(item)">
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>{{ item.Description }}</v-list-item-title>
-            <v-list-item-subtitle>{{ item.type }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -53,9 +52,9 @@ export default {
       entries: [],
       search: null,
       select: null,
-      selectedHorse: {},
+      selected: {},
       clearAll: {
-        Description: 'Alle paarden',
+        Description: 'Alle producten',
         icon: 'mdi-playlist-star',
         id: undefined
       }
@@ -74,13 +73,13 @@ export default {
       if (this.search.length < 4) {
         return "Probeer specifieker te zijn";
       }
-      return "Geen paarden gevonden";
+      return "Geen producten gevonden";
     },
     items() {
       return this.entries.map(entry => {
         const Description = entry.name
         const id = entry._id
-        const icon = "mdi-horseshoe";
+        const icon = "mdi-pill";
         return Object.assign({}, entry, {Description, icon, id})
       })
     }
@@ -89,7 +88,7 @@ export default {
     async querySelections(v) {
       this.loading = true
       try {
-        const respons = await searchAPI.getSearchHorse(v);
+        const respons = await searchAPI.getSearchProduct(v);
         const filteredRespons = respons.data.filter(e => e.confidenceScore > 6)
         this.entries = filteredRespons;
       } catch (err) {
@@ -98,9 +97,9 @@ export default {
         this.loading = false;
       }
     },
-    emitHorse(item) {
-      !item ? this.$emit('emit-horse', item) : this.$emit('emit-horse', item.id);
-      this.selectedHorse = item;
+    emitProduct(item) {
+      !item ? this.$emit('emit-product', item) : this.$emit('emit-product', item.id);
+      this.selected = item;
     },
     openPage(url) {
       this.$router.push(url);

@@ -26,7 +26,7 @@ export default {
       outgoing: false,
       datePicker: false,
       preFilter: 'Toediening',
-      filters: {},
+      filters: false,
       toFilter: ['horse'],
       headers: [
         {text: 'Type', value: 'type', selected: true},

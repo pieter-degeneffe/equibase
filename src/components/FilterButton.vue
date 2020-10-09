@@ -43,7 +43,7 @@
                   hide-details
               />
             </v-col>
-            <v-col v-if="toFilter.includes('horse')" cols="12">
+            <v-col v-if="toFilter.includes('searchHorse')" cols="12">
               <SearchHorse @emit-horse="assignHorse" />
             </v-col>
             <v-col v-if="toFilter.includes('remaining')" cols="12">
