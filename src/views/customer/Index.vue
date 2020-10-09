@@ -33,30 +33,10 @@ export default {
       loading: true,
       customers: [],
       headers: [
-        {
-          text: 'Voornaam',
-          value: 'first_name',
-          align: 'left',
-          sortable: true
-        },
-        {
-          text: 'Achternaam',
-          value: 'last_name',
-          align: 'left',
-          sortable: true
-        },
-        {
-          text: 'Bedrijf',
-          value: 'company',
-          align: 'left',
-          sortable: true
-        },
-        {
-          text: 'Aangemaakt op',
-          value: 'company',
-          align: 'right',
-          sortable: false
-        }
+        { text: 'Voornaam', value: 'first_name', align: 'left', sortable: true },
+        { text: 'Achternaam', value: 'last_name', align: 'left', sortable: true },
+        { text: 'Bedrijf', value: 'company', align: 'left', sortable: true },
+        { text: 'Aangemaakt op', value: 'company', align: 'right', sortable: false }
       ],
     };
   },
