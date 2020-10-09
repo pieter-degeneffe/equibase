@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { mouseOver } from '@/Helpers'
 import {stockAPI, deliveryAPI} from '@/services';
 import FilterButton from '@/components/FilterButton';
 import SearchProduct from '@/components/SearchProduct';
@@ -119,9 +120,7 @@ export default {
       document.body.style.cursor = 'default';
       this.$router.push(`/stock/${id}`);
     },
-    mouseOver(hoverState) {
-      hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
-    },
+    mouseOver,
     async getStock(id) {
       this.loading = true;
       try {

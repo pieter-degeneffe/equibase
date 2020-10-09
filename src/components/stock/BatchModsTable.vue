@@ -33,7 +33,7 @@
           <td v-if="showColumn('client')">{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
           <td v-if="showColumn('horse')">{{ props.item.horse ? props.item.horse.name : '-' }}</td>
           <td v-if="showColumn('amount')">{{ props.item.amount }}</td>
-          <td v-if="showColumn('createdAt')" align="end">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YYYY - hh:mm') }}</td>
+          <td v-if="showColumn('createdAt')" align="end">{{ formatDate(props.item.createdAt) }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { formatDate } from "@/Helpers";
 import { stockAPI } from '@/services'
 import FilterButton from "@/components/FilterButton";
 
@@ -110,6 +111,7 @@ export default {
     }
   },
   methods: {
+    formatDate,
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers;
     },
@@ -118,9 +120,6 @@ export default {
     },
     refresher() {
       this.$emit('update-refresh', false);
-    },
-    generateCustomerName(item) {
-      return (`${item.last_name} ${item.first_name}`);
     },
     async getStockProductMods(id) {
       this.loading = true;

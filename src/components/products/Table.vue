@@ -35,8 +35,8 @@
           <td v-if="showColumn('outgoingUnit')">{{ props.item.outgoingUnit }}</td>
           <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
           <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
-          <td v-if="showColumn('supplementAdministration')" align="end">€ {{ props.item.supplementAdministration.toFixed(2) }}</td>
-          <td align="end" class="d-print-none">
+          <td v-if="showColumn('supplementAdministration')" class="text-right">€ {{ props.item.supplementAdministration.toFixed(2) }}</td>
+          <td class="text-right d-print-none">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-icon dark color="primary" class="mr-2" @click="openProductPage(props.item._id)" v-on="on">
