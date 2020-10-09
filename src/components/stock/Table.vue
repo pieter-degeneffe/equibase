@@ -74,6 +74,7 @@ export default {
       products: [],
       filteredHeaders: [],
       filteredProducts: [],
+      deliveries: {},
     };
   },
   watch: {
@@ -154,6 +155,7 @@ export default {
       this.loading = true;
       try {
         const {data} = await deliveryAPI.getMediniDelivery();
+        this.deliveries = data;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.respone.data.message;
