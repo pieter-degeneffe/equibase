@@ -89,8 +89,7 @@ export default {
       this.loading = true
       try {
         const respons = await searchAPI.getSearchProduct(v);
-        const filteredRespons = respons.data.filter(e => e.confidenceScore > 6)
-        this.entries = filteredRespons;
+        this.entries = respons.data.filter(e => e.confidenceScore > 6)
       } catch (err) {
         console.log(err);
       } finally {
