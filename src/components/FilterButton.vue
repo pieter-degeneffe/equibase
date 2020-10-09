@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn v-if="filters" color="primary" dark @click="filterDialog = true" class="ml-4 d-print-none">
+    <v-btn v-if="filters" color="primary" dark @click="openFilterDialog" class="ml-4 d-print-none">
       <v-icon left>mdi-filter</v-icon>
       Filters
     </v-btn>
@@ -12,7 +12,7 @@
       <v-card>
         <v-card-text class="pt-5">
           <v-row dense>
-            <v-col v-if="toFilter.includes('type')" cols="12">
+            <v-col v-if="toFilter.includes('type')" :cols="checkAmountFilters">
               <v-autocomplete
                   v-model="filters.type"
                   outlined
@@ -22,7 +22,7 @@
                   hide-details
               />
             </v-col>
-            <v-col v-if="toFilter.includes('modTypes')" cols="12">
+            <v-col v-if="toFilter.includes('modTypes')" :cols="checkAmountFilters">
               <v-autocomplete
                   v-model="filters.type"
                   outlined
@@ -32,7 +32,7 @@
                   hide-details
               />
             </v-col>
-            <v-col v-if="toFilter.includes('tax')" cols="12">
+            <v-col v-if="toFilter.includes('tax')" :cols="checkAmountFilters">
               <v-autocomplete
                   v-model="filters.tax"
                   outlined
@@ -43,16 +43,78 @@
                   hide-details
               />
             </v-col>
-            <v-col v-if="toFilter.includes('searchHorse')" cols="12">
+            <v-col v-if="toFilter.includes('searchHorse')" :cols="checkAmountFilters">
               <SearchHorse @emit-horse="assignHorse" />
             </v-col>
-            <v-col v-if="toFilter.includes('remaining')" cols="12">
+            <v-col v-if="toFilter.includes('remaining')" :cols="checkAmountFilters">
               <v-autocomplete
                   v-model="filters.remaining"
                   outlined
                   label="Filter op remaining"
                   :items="remaining"
                   hide-details
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('donor_mare')" cols="12">
+              <v-autocomplete
+                  v-model="filters.donor_mare"
+                  label="Filter op merrie"
+                  :items="mares"
+                  :item-text="horseName"
+                  item-value="_id"
+                  return-object
+                  hide-details
+                  outlined
+                  multiple
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('donor_stallion')" cols="12">
+              <v-autocomplete
+                  v-model="filters.donor_stallion"
+                  label="Filter op hengst"
+                  :items="stallions"
+                  :item-text="horseName"
+                  item-value="_id"
+                  return-object
+                  hide-details
+                  outlined
+                  multiple
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('owner')" cols="6">
+              <v-autocomplete
+                  v-model="filters.owner"
+                  label="Filter op eigenaar"
+                  :items="owners"
+                  :item-text="ownerName"
+                  item-value="_id"
+                  return-object
+                  hide-details
+                  outlined
+                  multiple
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('nitrogen')" cols="3">
+              <v-autocomplete
+                  v-model="filters.location.container"
+                  label="Container"
+                  :items="nitrogenContainers"
+                  :item-text="horseName"
+                  item-value="_id"
+                  return-object
+                  hide-details
+                  outlined
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('nitrogen') && filters.location.container" cols="3">
+              <v-autocomplete
+                  v-model="filters.location.tube"
+                  label="Koker"
+                  :items="tubesAvailable(filters.location.container)"
+                  item-value="_id"
+                  return-object
+                  hide-details
+                  outlined
               />
             </v-col>
           </v-row>
@@ -92,7 +154,8 @@
 </template>
 
 <script>
-import {configAPI} from "@/services";
+import { ownerName } from '@/Helpers';
+import {configAPI, customerAPI, horseAPI, nitrogenContainerAPI} from "@/services";
 import SearchHorse from "@/components/SearchHorse"
 
 export default {
@@ -110,8 +173,6 @@ export default {
       'suppliers'
   ],
   mounted() {
-    this.getConfig();
-    this.getModsConfig();
     this.emitFiltered();
   },
   data() {
@@ -120,6 +181,11 @@ export default {
       columnDialog: false,
       types: [],
       taxes: [],
+      mares: [],
+      stallions: [],
+      owners: [],
+      nitrogenContainers: [],
+      tubes: [],
       modsTypes: [],
       remaining: ['All', 'In stock', 'Out of stock'],
       currentHorse: undefined
@@ -134,16 +200,32 @@ export default {
     }
   },
   computed: {
+    checkAmountFilters() {
+      return this.toFilter.length > 1 ? 6 : 12;
+    },
     filteredHeaders() {
       return this.headers.filter(header => header.selected);
     },
   },
   methods: {
+    openFilterDialog(){
+      this.filterDialog = true;
+      this.toFilter.includes('tax' || 'type') ? this.getConfig() : '';
+      this.toFilter.includes('modTypes') ? this.getModsConfig() : '';
+      this.toFilter.includes('donor_mare') ? this.getMares() : '';
+      this.toFilter.includes('donor_stallion') ? this.getStallions() : '';
+      this.toFilter.includes('owner') ? this.getOwners() : '';
+      this.toFilter.includes('nitrogen') ? this.getNitrogenContainers() : '';
+    },
     assignHorse(id) {
       this.currentHorse = id;
       this.filterDialog = false;
       this.$emit('emit-horse-parent', this.currentHorse);
     },
+    horseName(horse) {
+      return horse.name;
+    },
+    ownerName,
     emitFiltered() {
       this.$emit('emit-headers', this.filteredHeaders);
     },
@@ -167,7 +249,56 @@ export default {
         this.errored = true;
         this.errorMessage = err.response.data.message;
       }
-    }
+    },
+    async getMares() {
+      try {
+        const response = await horseAPI.getHorses({type: 'merrie'});
+        this.mares = response.data.horses;
+      } catch (e) {
+        console.log('Arne: e= ', e);
+        this.errored = true;
+        this.errorMessage = e.response.data.message;
+      }
+    },
+    async getStallions() {
+      try {
+        const response = await horseAPI.getHorses({type: 'hengst'});
+        this.stallions = response.data.horses;
+      } catch (e) {
+        this.errored = true;
+        this.errorMessage = e.response.data.message;
+      }
+    },
+    async getOwners() {
+      try {
+        const { data } = await customerAPI.getCustomers();
+        this.owners = data;
+      } catch (e) {
+        this.errored = true;
+        this.errorMessage = e.response.data.message;
+      }
+    },
+    async getNitrogenContainers() {
+      try {
+        const { data } = await nitrogenContainerAPI.getNitrogenContainers();
+        this.nitrogenContainers = [{name: 'All', value: undefined}, ...data];
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
+    },
+    tubesAvailable(container) {
+      if (container) {
+        let tubesAvailable = [{text: 'All', value: undefined}];
+        for (let i = 1; i <= container.available_places; i++) {
+          tubesAvailable.push({
+            text: `koker ${ i }`,
+            value: i
+          });
+        }
+        return tubesAvailable;
+      }
+    },
   }
 }
 </script>

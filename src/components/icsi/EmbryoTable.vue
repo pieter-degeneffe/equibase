@@ -1,5 +1,24 @@
 <template>
   <v-card class="mx-5 mt-5 mb-12" outlined>
+    <v-toolbar flat>
+      <v-toolbar-title>Embryos {{ id? `- ${id}`:'' }}</v-toolbar-title>
+      <v-spacer/>
+      <v-toolbar-title v-if="!showDonors">
+        <v-icon medium>mdi-gender-female</v-icon>
+        {{horseName(data.donor_mare) }} -
+        <v-icon medium>mdi-gender-male</v-icon>
+        {{horseName(data.donor_stallion) }}
+      </v-toolbar-title>
+      <v-spacer/>
+      <FilterButton
+          :columns=true
+          :headers="headers"
+          @emit-headers="updateFilteredHeaders"
+          :products="filteredData"
+          :filters=false
+          :toFilter="toFilter"
+      />
+    </v-toolbar>
     <v-data-table
         :headers="filteredHeaders"
         :items="filteredData"
@@ -11,35 +30,6 @@
         loading-text="Bezig met laden..."
         class="ma-5"
     >
-      <template v-slot:top>
-        <v-row dense class="mx-1">
-          <v-col cols="4" sm="4">
-            <v-toolbar-title class="float-left">Embryos {{ id? `- ${id}`:'' }}</v-toolbar-title>
-          </v-col>
-          <v-col cols="4" sm="4">
-            <v-toolbar-title class="float-left" v-if="!showDonors">
-              <v-icon medium>mdi-gender-female</v-icon>
-              {{horseName(data.donor_mare) }} -
-              <v-icon medium>mdi-gender-male</v-icon>
-              {{horseName(data.donor_stallion) }}
-            </v-toolbar-title>
-          </v-col>
-          <v-col cols="4" sm="4">
-            <div fixed right>
-              <div class="float-right">
-                <v-btn color="primary" dark @click="openFilterDialog" class="mr-2 d-print-none">
-                  <v-icon left>mdi-filter</v-icon>
-                  Filters
-                </v-btn>
-                <v-btn color="primary" dark @click.stop="columnDialog = true" class="d-print-none">
-                  <v-icon left>mdi-settings</v-icon>
-                  Kolommen
-                </v-btn>
-              </div>
-            </div>
-          </v-col>
-        </v-row>
-      </template>
       <template v-slot:no-data>
         Geen Embryos gevonden
       </template>
@@ -81,7 +71,6 @@
               />
             </v-col>
             <v-col cols="12" md="6">
-
               <v-switch v-if="actionLabel === 'Export'"
                         v-model="inHouse"
                         :label="`${inHouse? 'In house stockage':'Stockage bij de eigenaar'}`"
@@ -124,50 +113,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="filterDialog" max-width="490">
-      <v-card>
-        <v-card-text class="pt-5">
-          <v-row dense>
-            <v-col cols="6">
-              <v-autocomplete
-                  v-model="filters.donor_mare"
-                  outlined
-                  label="Filter op merrie"
-                  :items="mares"
-                  :item-text="horseName"
-                  return-object
-                  item-value="_id"
-                  multiple
-                  hide-details
-              />
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer/>
-          <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="columnDialog" max-width="690">
-      <v-card>
-        <v-card-text>
-          <v-list>
-            <v-row dense>
-              <v-col cols="12" sm="6" md="4" v-for="header in headers" :key="header.text">
-                <v-list-item>
-                  <v-checkbox :label="header.text" v-model="header.selected" :value="header.selected"/>
-                </v-list-item>
-              </v-col>
-            </v-row>
-          </v-list>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer/>
-          <v-btn color="green darken-1" text @click="columnDialog = false">Sluiten</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-alert type="error" v-if="errored">
       {{ errorMessage }}
     </v-alert>
@@ -175,11 +120,14 @@
 </template>
 
 <script>
-  import { ownerName } from '@/Helpers';
-  import { horseAPI, icsiAPI } from '@/services';
-  import { formatDate } from '../../Helpers';
+  import { ownerName, formatDate } from '@/Helpers';
+  import { icsiAPI } from '@/services';
+  import FilterButton from "@/components/FilterButton";
 
   export default {
+    components: {
+      FilterButton,
+    },
     props: ['id', 'title', 'showDonors', 'showInactive', 'customerId', 'horseId', 'onClick', 'action', 'actionLabel'],
     data() {
       return {
@@ -191,6 +139,7 @@
         columnDialog: false,
         actionDialog: false,
         total: 0,
+        filteredHeaders: [],
         data: {
           embryos: [],
           donor_mare: {},
@@ -223,7 +172,8 @@
           donor_mare: null,
           donor_stallion: null,
         },
-        sortBy: 'amount'
+        toFilter: ['donor_mare', 'donor_stallion'],
+        sortBy: 'amount',
       };
     },
     watch: {
@@ -239,9 +189,6 @@
       this.getEmbryos();
     },
     computed: {
-      filteredHeaders() {
-        return this.headers.filter(header => header.selected);
-      },
       computedActionDateFormatted() {
         return this.formatDate(this.actionDate);
       },
@@ -261,6 +208,9 @@
       }
     },
     methods: {
+      updateFilteredHeaders(headers) {
+        this.filteredHeaders = headers;
+      },
       ownerName,
       formatDate,
       async executeAction() {
@@ -322,33 +272,6 @@
           this.errorMessage = e.response.data.message;
         } finally {
           this.loading = false;
-        }
-      },
-      async getMares() {
-        try {
-          const response = await horseAPI.getHorses({
-            type: 'merrie'
-          });
-          this.mares = response.data.horses;
-        } catch (e) {
-          console.log('Arne: e= ', e);
-          this.errored = true;
-          this.errorMessage = e.response.data.message;
-        }
-      },
-      async getStallions() {
-        try {
-          const response = await horseAPI.getHorses({
-            page: this.options.page,
-            limit: this.options.itemsPerPage,
-            sortBy: this.options.sortBy,
-            sortDesc: this.options.sortDesc,
-            type: 'hengst'
-          });
-          this.stallions = response.data.horses;
-        } catch (e) {
-          this.errored = true;
-          this.errorMessage = e.response.data.message;
         }
       },
     },

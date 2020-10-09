@@ -9,9 +9,9 @@
         :no-data-text="noDataText"
         hide-details
         hide-selected
-        item-text="Description"
+        item-text="description"
         item-value="_id"
-        :placeholder="selected.Description !== 'Alle producten' ? selected.Description : ''"
+        :placeholder="selected.description !== 'Alle producten' ? selected.description : ''"
         label="Product zoeken"
         autocomplete="off"
         outlined
@@ -25,7 +25,7 @@
             <v-icon>{{ clearAll.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>{{ clearAll.Description }}</v-list-item-title>
+            <v-list-item-title>{{ clearAll.description }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -35,7 +35,7 @@
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>{{ item.Description }}</v-list-item-title>
+            <v-list-item-title>{{ item.description }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -54,7 +54,7 @@ export default {
       select: null,
       selected: {},
       clearAll: {
-        Description: 'Alle producten',
+        description: 'Alle producten',
         icon: 'mdi-playlist-star',
         id: undefined
       }
@@ -76,21 +76,21 @@ export default {
       return "Geen producten gevonden";
     },
     items() {
-      return this.entries.map(entry => {
-        const Description = entry.name
-        const id = entry._id
-        const icon = "mdi-pill";
-        return Object.assign({}, entry, {Description, icon, id})
-      })
+      return this.entries.map(entry => ({
+            ...entry,
+            description: entry.name,
+            icon: "mdi-pill",
+            id: entry._id,
+          }
+      ))
     }
   },
   methods: {
     async querySelections(v) {
       this.loading = true
       try {
-        const respons = await searchAPI.getSearchProduct(v);
-        const filteredRespons = respons.data.filter(e => e.confidenceScore > 6)
-        this.entries = filteredRespons;
+        const response = await searchAPI.getSearchProduct(v);
+        this.entries = response.data.filter(e => e.confidenceScore > 6)
       } catch (err) {
         console.log(err);
       } finally {
