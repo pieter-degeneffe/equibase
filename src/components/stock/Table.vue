@@ -155,7 +155,6 @@ export default {
       this.loading = true;
       try {
         const {data} = await deliveryAPI.getMediniDelivery();
-        console.log('delivery data: ', data);
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.respone.data.message;
