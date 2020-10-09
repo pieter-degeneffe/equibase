@@ -185,7 +185,6 @@ export default {
   methods: {
     updateFilters(id) {
       if (this.toFilter && this.toFilter.includes('horse')) {
-        console.log(id);
         this.URLParameters.horse = id;
         this.getMods(this.outgoing);
       }
