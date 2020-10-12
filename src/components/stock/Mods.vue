@@ -93,7 +93,7 @@
           <td v-if="outgoing && showColumn('client')">{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
           <td v-if="(preFilter === 'Toediening') || outgoing && showColumn('horse')">{{ props.item.horse ? props.item.horse.name : '-' }}</td>
           <td v-if="showColumn('amount')">{{ props.item.amount }}</td>
-          <td v-if="showColumn('createdAt')" align="end">{{ formatDate(props.item.createdAt) }}</td>
+          <td v-if="showColumn('createdAt')" class="text-right">{{ formatDate(props.item.createdAt) }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -183,7 +183,7 @@ export default {
   },
   methods: {
     updateFilters(id) {
-      if (this.toFilter && this.toFilter.includes('horse')) {
+      if (this.toFilter && this.toFilter.includes('horseSearch')) {
         this.URLParameters.horse = id;
         this.getMods(this.outgoing);
       }

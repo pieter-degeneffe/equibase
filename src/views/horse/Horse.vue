@@ -78,7 +78,6 @@
     },
     methods: {
       async transferEmbryo(embryoId, transferDate) {
-        console.log(embryoId);
         await icsiAPI.transferEmbryo({
           embryoId,
           surrogateId: this.id,
@@ -110,5 +109,3 @@
     },
   };
 </script>
-
-<style lang="css"></style>

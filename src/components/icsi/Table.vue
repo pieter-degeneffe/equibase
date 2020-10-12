@@ -24,8 +24,8 @@
           <td v-if="showColumn('donor_mare')">{{ props.item.donor_mare.name||'' }}</td>
           <td v-if="showColumn('donor_stallion')">{{ props.item.donor_stallion.name||'' }}</td>
           <td v-if="showColumn('amount')">{{ props.item.embryos.filter(el=>el.active).length}}</td>
-          <td v-if="showColumn('createdAt')">{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
-          <td v-if="showColumn('updatedAt')">{{ new Date(props.item.updatedAt) | dateFormat('DD/MM/YY')}}</td>
+          <td v-if="showColumn('createdAt')">{{ formatDate(props.item.createdAt) }}</td>
+          <td v-if="showColumn('updatedAt')">{{ formatDate(props.item.updatedAt) }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -35,7 +35,7 @@
   </v-card>
 </template>
 <script>
-  import { mouseOver } from "@/Helpers";
+  import { mouseOver, formatDate } from "@/Helpers";
   import { icsiAPI } from '../../services';
   import FilterButton from "@/components/FilterButton";
 
@@ -87,6 +87,7 @@
       }
     },
     methods: {
+      formatDate,
       mouseOver,
       updateFilteredHeaders(headers) {
         this.filteredHeaders = headers;
