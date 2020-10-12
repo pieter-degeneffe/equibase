@@ -163,8 +163,8 @@ export default {
   methods: {
     async getLocations() {
       try {
-        const response = await locationAPI.getLocations();
-        this.locations = response.data;
+        const { data: {locations}} = await locationAPI.getLocations();
+        this.locations = locations;
       } catch (e) {
         this.errored = true;
       }

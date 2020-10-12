@@ -1,18 +1,19 @@
 <template>
-  <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :search="search" :items="locations" :loading="loading"
-                  loading-text="Bezig met laden..." :sort-by="['stable', 'name']" multi-sort>
-      <template v-slot:top>
-        <v-toolbar flat color="white">
-          <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Zoeken"
-              single-line
-              hide-details
-          />
-        </v-toolbar>
-      </template>
+  <v-card class="mx-5 mt-5 mb-12" outlined>
+    <v-toolbar flat>
+      <v-toolbar-title>Locaties</v-toolbar-title>
+    </v-toolbar>
+    <v-data-table
+        :headers="headers"
+        :items="locations"
+        :loading="loading"
+        loading-text="Bezig met laden..."
+        :server-items-length="totalLocations"
+        :sort-by="sortBy"
+        :sort-desc="sortDesc"
+        :options.sync="options"
+        class="ma-5"
+    >
       <template v-slot:item.action="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)">
           mdi-pencil
@@ -40,23 +41,38 @@
           <v-container>
             <v-form ref="form" v-model="valid">
               <v-row>
-                <v-col cols="12" sm="12" md="12">
-                  <v-select v-model="editedItem.stable" :items="stables" label="Stal" outlined/>
+                <v-col cols="12">
+                  <v-autocomplete
+                      v-model="editedItem.stable"
+                      :items="stables"
+                      label="Stal"
+                      clearable
+                      outlined
+                  />
                 </v-col>
-                <v-col cols="12" sm="12" md="12">
-                  <v-text-field v-model="editedItem.name" :rules="required" label="Naam locatie*"
-                                outlined/>
+                <v-col cols="12">
+                  <v-text-field
+                      v-model="editedItem.name"
+                      :rules="required"
+                      label="Naam locatie*"
+                      outlined
+                  />
                 </v-col>
-                <v-col cols="12" sm="12" md="12">
-                  <v-text-field v-model="editedItem.places" :rules="required" type="number" label="Aantal plaatsen*"
-                                outlined/>
+                <v-col cols="12">
+                  <v-text-field
+                      v-model="editedItem.places"
+                      :rules="required"
+                      type="number"
+                      label="Aantal plaatsen*"
+                      outlined
+                  />
                 </v-col>
               </v-row>
             </v-form>
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn color="blue darken-1" text @click="close">Annuleer</v-btn>
           <v-btn color="blue darken-1" :disabled="!valid" text @click="save">Opslaan</v-btn>
         </v-card-actions>
@@ -73,7 +89,6 @@ import locationAPI from "@/services/LocationAPI.js";
 export default {
   data() {
     return {
-      search: '',
       dialog: false,
       loading: null,
       valid: false,
@@ -83,15 +98,20 @@ export default {
         v => !!v || 'Dit veld is verplicht'
       ],
       headers: [
-        {text: 'Stal', align: 'left', sortable: false, value: 'stable'},
-        {text: 'Naam locatie', align: 'left', sortable: false, value: 'name'},
-        {text: '# Plaatsen', align: 'left', sortable: false, value: 'places'},
-        {text: '# Paarden', align: 'left', sortable: false, value: 'horses.length'},
+        {text: 'Stal', align: 'left', value: 'stable', sortable: true},
+        {text: 'Naam locatie', align: 'left', value: 'name', sortable: true},
+        {text: '# Plaatsen', align: 'left', value: 'places', sortable: true},
+        {text: '# Paarden', align: 'left', value: 'horses.length', sortable: true},
         {text: 'Bewerken', align: 'right', value: 'action', sortable: false},
       ],
       stables: ['Stal Zoutleeuw', 'Stal Dormaal', 'Wei'],
       locations: [],
+      totalLocations: 0,
       editedIndex: -1,
+      options: {},
+      filters: {},
+      sortBy: 'stable',
+      sortDesc: false,
       editedItem: {
         name: ''
       },
@@ -104,74 +124,92 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? 'Nieuwe locatie' : 'locatie bewerken'
     },
-  },
-  mounted() {
-    this.loadLocations();
+    URLParameters() {
+      return {
+        'page': this.options.page,
+        'limit': this.options.itemsPerPage,
+        'sortBy': this.options.sortBy,
+        'sortDesc': this.options.sortDesc,
+        name: this.filters.name !== null ? this.filters.name : undefined,
+        stable: this.filters.stable !== null ? this.filters.stable : undefined,
+      };
+    }
   },
   watch: {
+    options: {
+      handler() {
+        this.getAllLocations();
+      },
+      deep: true
+    },
+    filters: {
+      handler() {
+        this.getAllLocations();
+      },
+      deep: true
+    },
     dialog(val) {
       val || this.close()
     },
   },
   methods: {
-    async loadLocations() {
+    async getAllLocations() {
       this.loading = true;
       try {
-        const response = await locationAPI.getLocations();
-        this.locations = response.data;
-      } catch (e) {
+        const { data: {locations, total} } = await locationAPI.getLocations(this.URLParameters);
+        this.locations = locations;
+        this.totalLocations = total;
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       } finally {
         this.loading = false;
       }
     },
     editItem(item) {
       this.editedIndex = this.locations.indexOf(item)
-      this.editedItem = Object.assign({}, item)
+      this.editedItem = item
       this.dialog = true
     },
     async deleteItem(item) {
       try {
         this.loading = true;
         this.errored = false;
-        const respons = await locationAPI.deleteLocation(item._id);
-        if (respons) {
+        const response = await locationAPI.deleteLocation(item._id);
+        if (response) {
           const index = this.locations.indexOf(item)
           this.locations.splice(index, 1)
         }
-      } catch (e) {
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       } finally {
         this.loading = false;
       }
     },
     close() {
-      this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
+      this.dialog = false;
+      this.editedIndex = -1;
+      this.editedItem = this.defaultItem;
     },
     async save() {
       try {
         this.loading = true;
         this.errored = false;
         if (this.editedIndex > -1) {
-          const respons = await locationAPI.putLocation(this.editedItem);
-          if (respons) {
-            Object.assign(this.locations[this.editedIndex], respons.data)
+          const response = await locationAPI.putLocation(this.editedItem);
+          if (response) {
+            Object.assign(this.locations[this.editedIndex], response.data)
           }
         } else {
-          const respons = await locationAPI.postLocation(this.editedItem);
-          if (respons) {
-            this.locations.push(respons.data);
+          const response = await locationAPI.postLocation(this.editedItem);
+          if (response) {
+            this.locations.push(response.data);
           }
         }
-      } catch (e) {
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       } finally {
         this.close()
         this.loading = false;

@@ -23,7 +23,8 @@
         :sortBy="sortBy"
         :sortDesc="sortDesc"
         :options.sync="options"
-        loading-text="Bezig met laden..." class="ma-5"
+        loading-text="Bezig met laden..."
+        class="ma-5"
     >
       <template v-slot:no-data>
         Geen producten gevonden
