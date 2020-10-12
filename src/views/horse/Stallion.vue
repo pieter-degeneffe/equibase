@@ -1,6 +1,6 @@
 <template>
   <div>
-    <horse-table :headers="headers" :filters="filters"></horse-table>
+    <horse-table :headers="headers" :filters="filters" :toFilter="toFilter"/>
     <v-btn bottom color="primary" class="ma-2 white--text" depressed dark @click="openHorsePage()" fixed right>
       {{ $route.name }} toevoegen
       <v-icon right dark>mdi-plus</v-icon>
@@ -24,25 +24,13 @@ export default {
         { text: 'Gewijzigd op', value: 'updatedAt', sortable: true, selected: true },
         { text: 'Geboortedatum', value: 'date_of_birth', selected: false}
       ],
+      toFilter: ['stud_horse', 'location', 'owner'],
       filters: {
         type: {
           options: ["hengst", "merrie"],
           value: "hengst"
         },
-        surrogate: {
-          value: false,
-          label: null
-        },
-        stud_horse: {
-          value: null,
-          label: null
-        },
-        location: {
-          options: null,
-          value: null
-        },
-        owner: null,
-        death: false
+        stud_horse: false,
       },
       sortBy: 'updatedAt'
     }

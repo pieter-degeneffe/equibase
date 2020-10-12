@@ -15,44 +15,70 @@
             <v-col v-if="toFilter.includes('type')" :cols="checkAmountFilters">
               <v-autocomplete
                   v-model="filters.type"
-                  outlined
                   label="Filter op type"
                   :items="types"
-                  multiple
                   hide-details
+                  clearable
+                  outlined
+                  multiple
               />
             </v-col>
             <v-col v-if="toFilter.includes('modTypes')" :cols="checkAmountFilters">
               <v-autocomplete
                   v-model="filters.type"
-                  outlined
                   label="Filter op modificatie"
                   :items="modsTypes"
-                  multiple
                   hide-details
+                  clearable
+                  outlined
+                  multiple
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('horseType')" cols="12">
+              <v-autocomplete
+                  v-model="filters.type.value"
+                  label="Filter op type paard"
+                  :items="filters.type.options"
+                  hide-details
+                  clearable
+                  outlined
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('surrogate')" cols="12">
+              <v-switch
+                  v-model="filters.surrogate"
+                  label="Toon enkel draagmoeders"
+                  class="mb-O"
+                  inset
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('stud_horse')" cols="12">
+              <v-switch
+                  label="Toon enkel dekhengsten"
+                  v-model="filters.stud_horse"
+                  class="mb-O"
+                  inset
               />
             </v-col>
             <v-col v-if="toFilter.includes('tax')" :cols="checkAmountFilters">
               <v-autocomplete
                   v-model="filters.tax"
-                  outlined
                   label="Filter op BTW"
                   :items="taxes"
                   item-value="tax"
-                  multiple
                   hide-details
+                  clearable
+                  outlined
+                  multiple
               />
-            </v-col>
-            <v-col v-if="toFilter.includes('searchHorse')" :cols="checkAmountFilters">
-              <SearchHorse @emit-horse="assignHorse" />
             </v-col>
             <v-col v-if="toFilter.includes('remaining')" :cols="checkAmountFilters">
               <v-autocomplete
                   v-model="filters.remaining"
-                  outlined
                   label="Filter op remaining"
                   :items="remaining"
                   hide-details
+                  outlined
               />
             </v-col>
             <v-col v-if="toFilter.includes('donor_mare')" cols="12">
@@ -64,6 +90,7 @@
                   item-value="_id"
                   return-object
                   hide-details
+                  clearable
                   outlined
                   multiple
               />
@@ -77,6 +104,7 @@
                   item-value="_id"
                   return-object
                   hide-details
+                  clearable
                   outlined
                   multiple
               />
@@ -88,8 +116,8 @@
                   :items="owners"
                   :item-text="ownerName"
                   item-value="_id"
-                  return-object
                   hide-details
+                  clearable
                   outlined
                   multiple
               />
@@ -103,6 +131,7 @@
                   item-value="_id"
                   return-object
                   hide-details
+                  clearable
                   outlined
               />
             </v-col>
@@ -114,14 +143,27 @@
                   item-value="_id"
                   return-object
                   hide-details
+                  clearable
                   outlined
+              />
+            </v-col>
+            <v-col v-if="toFilter.includes('location')" cols="6">
+              <v-select
+                  v-model="filters.location"
+                  label="Filter op locatie"
+                  :items="locations"
+                  :item-text="item => item.stable +' - '+ item.name"
+                  item-value="_id"
+                  hide-details
+                  clearable
+                  outlined
+                  multiple
               />
             </v-col>
           </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
-          <v-btn v-if="toFilter.includes('horse')" color="grey darken-1" text @click="assignHorse(undefined)">Clear</v-btn>
           <v-btn color="green darken-1" text @click="filterDialog = false">Sluiten</v-btn>
         </v-card-actions>
       </v-card>
@@ -155,14 +197,10 @@
 
 <script>
 import { ownerName } from '@/Helpers';
-import {configAPI, customerAPI, horseAPI, nitrogenContainerAPI} from "@/services";
-import SearchHorse from "@/components/SearchHorse"
+import {configAPI, customerAPI, horseAPI, locationAPI, nitrogenContainerAPI} from "@/services";
 
 export default {
   name: "FilterButton",
-  components: {
-    SearchHorse
-  },
   props: [
       'filters',
       'columns',
@@ -185,6 +223,7 @@ export default {
       tubes: [],
       modsTypes: [],
       remaining: ['All', 'In stock', 'Out of stock'],
+      locations: [],
       currentHorse: undefined
     };
   },
@@ -214,11 +253,7 @@ export default {
       this.toFilter.includes('donor_stallion') ? this.getStallions() : '';
       this.toFilter.includes('owner') ? this.getOwners() : '';
       this.toFilter.includes('nitrogen') ? this.getNitrogenContainers() : '';
-    },
-    assignHorse(id) {
-      this.currentHorse = id;
-      this.filterDialog = false;
-      this.$emit('emit-horse-parent', this.currentHorse);
+      this.toFilter.includes('location') ? this.getLocations() : '';
     },
     horseName(horse) {
       return horse.name;
@@ -252,34 +287,42 @@ export default {
       try {
         const response = await horseAPI.getHorses({type: 'merrie'});
         this.mares = response.data.horses;
-      } catch (e) {
-        console.log('Arne: e= ', e);
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       }
     },
     async getStallions() {
       try {
         const response = await horseAPI.getHorses({type: 'hengst'});
         this.stallions = response.data.horses;
-      } catch (e) {
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       }
     },
     async getOwners() {
       try {
-        const { data: { customers} } = await customerAPI.getCustomers();
+        const { data: { customers } } = await customerAPI.getCustomers();
         this.owners = customers;
-      } catch (e) {
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       }
     },
     async getNitrogenContainers() {
       try {
         const { data } = await nitrogenContainerAPI.getNitrogenContainers();
         this.nitrogenContainers = [{name: 'All', value: undefined}, ...data];
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      }
+    },
+    async getLocations() {
+      try {
+        const { data } = await locationAPI.getLocations();
+        this.locations = data;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;

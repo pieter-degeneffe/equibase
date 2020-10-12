@@ -183,7 +183,7 @@ export default {
   },
   methods: {
     updateFilters(id) {
-      if (this.toFilter && this.toFilter.includes('horse')) {
+      if (this.toFilter && this.toFilter.includes('horseSearch')) {
         this.URLParameters.horse = id;
         this.getMods(this.outgoing);
       }

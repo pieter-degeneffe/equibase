@@ -1,5 +1,5 @@
 <template>
-  <horse-table :headers="headers" :filters="filters"></horse-table>
+  <horse-table :headers="headers" :filters="filters" :toFilter="toFilter"/>
 </template>
 <script>
 import horseTable from "@/components/horse/Table";
@@ -18,26 +18,14 @@ export default {
         { text: 'Gewijzigd op', value: 'updatedAt', sortable: true, selected: true },
         { text: 'Geboortedatum', value: 'date_of_birth', selected: false}
       ],
+      toFilter: ['horseType', 'location', 'owner'],
       filters: {
         type: {
           options: ["hengst", "merrie"],
           value: null
         },
-        surrogate: {
-          value: null,
-          label: null
-        },
-        stud_horse: {
-          value: false,
-          label: null
-        },
-        location: {
-          options: null,
-          value: null
-        },
-        owner: null,
         death: true
-      },      
+      },
       sortBy: 'updatedAt'
     }
   },
