@@ -93,9 +93,7 @@
           <td v-if="outgoing && showColumn('client')">{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
           <td v-if="(preFilter === 'Toediening') || outgoing && showColumn('horse')">{{ props.item.horse ? props.item.horse.name : '-' }}</td>
           <td v-if="showColumn('amount')">{{ props.item.amount }}</td>
-          <td v-if="showColumn('createdAt')" align="end">
-            {{ new Date(props.item.createdAt) | dateFormat('DD/MM/YYYY - hh:mm') }}
-          </td>
+          <td v-if="showColumn('createdAt')" align="end">{{ formatDate(props.item.createdAt) }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -106,6 +104,7 @@
 </template>
 
 <script>
+import { formatDate } from "@/Helpers";
 import {stockAPI} from '@/services'
 import FilterButton from "@/components/FilterButton";
 import SearchHorse from "@/components/SearchHorse";
@@ -175,8 +174,8 @@ export default {
         'limit': this.options.itemsPerPage,
         'sortBy': this.options.sortBy,
         'sortDesc': this.options.sortDesc,
-        from: this.datePicker ? this.formatDate(this.from) : undefined,
-        to: this.datePicker ? this.formatDate(this.to) : undefined,
+        from: this.datePicker ? this.formatDateMDY(this.from) : undefined,
+        to: this.datePicker ? this.formatDateMDY(this.to) : undefined,
         type: this.preFilter ? this.preFilter : this.filters.type !== null ? this.filters.type : undefined,
         horse: !this.toFilter ? undefined : this.filters.horse !== null ? this.filters.horse : undefined,
       };
@@ -209,7 +208,8 @@ export default {
         this.loading = false;
       }
     },
-    formatDate(date) {
+    formatDate,
+    formatDateMDY(date) {
       if (!date) return null;
       date = new Date(date).toISOString().substr(0, 10);
       const [year, month, day] = date.split('-');
@@ -218,7 +218,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-</style>

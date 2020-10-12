@@ -215,11 +215,10 @@
       formatDate,
       async executeAction() {
         this.executingAction = true;
-        await this.action(this.embryoToAdd._id, this.actionDate);
+        await this.action(this.embryoToAdd._id, this.inHouse, this.actionDate);
         this.executingAction = false;
         await this.getEmbryos();
         this.closeActionDialog();
-
       },
       openActionDialog() {
         this.actionDialog = true;

@@ -6,7 +6,7 @@
       </template>
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-spacer></v-spacer>
+            <v-spacer/>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark class="mb-2" v-on="on">Contact toevoegen</v-btn>
@@ -19,19 +19,19 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.first_name" label="Voornaam" outlined></v-text-field>
+                        <v-text-field v-model="editedItem.first_name" label="Voornaam" outlined/>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.last_name" label="Achternaam" outlined></v-text-field>
+                        <v-text-field v-model="editedItem.last_name" label="Achternaam" outlined/>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.telephone" label="Telefoon" outlined></v-text-field>
+                        <v-text-field v-model="editedItem.telephone" label="Telefoon" outlined/>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field v-model="editedItem.email" label="Email" outlined></v-text-field>
+                        <v-text-field v-model="editedItem.email" label="Email" outlined/>
                       </v-col>
                       <v-col cols="12" sm="12" md="12">
-                        <v-select v-model="editedItem.role" :rules="required" :items="role" label="Rol" outlined></v-select>
+                        <v-select v-model="editedItem.role" :rules="required" :items="role" label="Rol" outlined/>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -85,6 +85,9 @@ export default {
         email: '',
         role: ''
       },
+      required: [
+        v => !!v || 'Dit veld is verplicht'
+      ],
       defaultItem: {
         first_name: '',
         last_name: '',
@@ -113,19 +116,19 @@ export default {
       this.loading = false;
     },
     editItem (item) {
-      this.editedIndex = this.contacts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      this.editedIndex = this.contacts.indexOf(item);
+      this.editedItem = item;
+      this.dialog = true;
     },
     deleteItem (item) {
-      const index = this.contacts.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.contacts.splice(index, 1)
+      const index = this.contacts.indexOf(item);
+      confirm('Are you sure you want to delete this item?') && this.contacts.splice(index, 1);
     },
     close () {
       this.dialog = false
       setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
+        this.editedItem = this.defaultItem;
+        this.editedIndex = -1;
       }, 300)
     },
     async save() {
@@ -141,7 +144,6 @@ export default {
       } catch (e) {
         this.errored = true;
       } finally {
-        console.log("succes");
         this.close()
         this.loading = false;
         this.snackbar = true;

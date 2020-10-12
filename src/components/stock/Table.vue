@@ -15,9 +15,16 @@
           @emit-headers="updateFilteredHeaders"
       />
     </v-toolbar>
-    <v-data-table :headers="filteredHeaders" :items="products" :server-items-length="totalProducts"
-                  :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc" :options.sync="options"
-                  loading-text="Bezig met laden..." class="ma-5">
+    <v-data-table
+        :headers="filteredHeaders"
+        :items="products"
+        :server-items-length="totalProducts"
+        :loading="loading"
+        :sortBy="sortBy"
+        :sortDesc="sortDesc"
+        :options.sync="options"
+        loading-text="Bezig met laden..." class="ma-5"
+    >
       <template v-slot:no-data>
         Geen producten gevonden
       </template>
@@ -29,11 +36,11 @@
           <td v-if="showColumn('outgoingUnit')">{{ props.item.outgoingUnit }}</td>
           <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
           <td v-if="showColumn('waitingTime')">{{ props.item.waitingTime }}</td>
-          <td v-if="showColumn('supplementAdministration')" align="end">€
+          <td v-if="showColumn('supplementAdministration')" class="text-right">€
             {{ props.item.supplementAdministration.toFixed(2) }}
           </td>
-          <td v-if="showColumn('value')" align="end">€ {{ props.item.value }}</td>
-          <td v-if="showColumn('remaining')" align="end">{{ props.item.remaining }}</td>
+          <td v-if="showColumn('value')" class="text-right">€ {{ props.item.value }}</td>
+          <td v-if="showColumn('remaining')" class="text-right">{{ props.item.remaining }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -74,6 +81,7 @@ export default {
       products: [],
       filteredHeaders: [],
       filteredProducts: [],
+      deliveries: {},
     };
   },
   watch: {
@@ -154,9 +162,10 @@ export default {
       this.loading = true;
       try {
         const {data} = await deliveryAPI.getMediniDelivery();
+        this.deliveries = data;
       } catch (err) {
         this.errored = true;
-        this.errorMessage = err.respone.data.message;
+        this.errorMessage = err.response.data.message;
       } finally {
         this.loading = false;
       }

@@ -33,7 +33,7 @@
           <td v-if="showColumn('client')">{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
           <td v-if="showColumn('horse')">{{ props.item.horse ? props.item.horse.name : '-' }}</td>
           <td v-if="showColumn('amount')">{{ props.item.amount }}</td>
-          <td v-if="showColumn('createdAt')" align="end">{{ formatDate(props.item.createdAt) }}</td>
+          <td v-if="showColumn('createdAt')" class="text-right">{{ formatDate(props.item.createdAt) }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -138,7 +138,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-
-</style>

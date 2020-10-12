@@ -35,6 +35,7 @@
   </v-card>
 </template>
 <script>
+  import { mouseOver } from "@/Helpers";
   import { icsiAPI } from '../../services';
   import FilterButton from "@/components/FilterButton";
 
@@ -53,7 +54,7 @@
         errored: false,
         errorMessage: '',
         filteredHeaders: [],
-        toFilter: ['donor_mare', 'donor_stallion', 'nitrogen', 'owner'],
+        toFilter: ['donor_mare', 'donor_stallion', 'nitrogen'],
       };
     },
     watch: {
@@ -61,7 +62,7 @@
         handler() {
           this.getICSIs();
         },
-        deep:true
+        deep: true
       },
       filters: {
         handler() {
@@ -69,9 +70,6 @@
         },
         deep: true
       }
-    },
-    mounted() {
-      this.getICSIs();
     },
     computed: {
       URLParameters() {
@@ -89,15 +87,13 @@
       }
     },
     methods: {
+      mouseOver,
       updateFilteredHeaders(headers) {
         this.filteredHeaders = headers;
       },
       openICSIPage(id) {
         document.body.style.cursor = 'default';
         this.$router.push('/icsi/' + id);
-      },
-      mouseOver(hoverState) {
-        hoverState ? document.body.style.cursor = 'pointer' : document.body.style.cursor = 'default';
       },
       showColumn(col) {
         return this.headers.find(header => header.value === col).selected;
