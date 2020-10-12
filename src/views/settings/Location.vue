@@ -14,13 +14,31 @@
         :options.sync="options"
         class="ma-5"
     >
-      <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
-        <v-icon small @click="deleteItem(item)">
-          mdi-delete
-        </v-icon>
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.stable }}</td>
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.places }}</td>
+          <td>{{ props.item.horses.length }}</td>
+          <td class="text-right d-print-none">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon dark color="primary" class="mr-2" @click="editItem(props.item._id)" v-on="on">
+                  mdi-pencil
+                </v-icon>
+              </template>
+              <span>Product bewerken</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon dark color="primary" @click="deleteLocation(props.item)" v-on="on">
+                  mdi-delete
+                </v-icon>
+              </template>
+              <span>Product verwijderen</span>
+            </v-tooltip>
+          </td>
+        </tr>
       </template>
       <template v-slot:no-data>
         Geen locaties in de database
@@ -46,6 +64,7 @@
                       v-model="editedItem.stable"
                       :items="stables"
                       label="Stal"
+                      class="mb-0"
                       clearable
                       outlined
                   />
@@ -55,6 +74,7 @@
                       v-model="editedItem.name"
                       :rules="required"
                       label="Naam locatie*"
+                      class="mb-0"
                       outlined
                   />
                 </v-col>
@@ -64,6 +84,7 @@
                       :rules="required"
                       type="number"
                       label="Aantal plaatsen*"
+                      class="mb-0"
                       outlined
                   />
                 </v-col>
@@ -171,15 +192,12 @@ export default {
       this.editedItem = item
       this.dialog = true
     },
-    async deleteItem(item) {
+    async deleteLocation(location) {
       try {
         this.loading = true;
         this.errored = false;
-        const response = await locationAPI.deleteLocation(item._id);
-        if (response) {
-          const index = this.locations.indexOf(item)
-          this.locations.splice(index, 1)
-        }
+        await locationAPI.deleteLocation(location._id);
+        await this.getAllLocations();
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
