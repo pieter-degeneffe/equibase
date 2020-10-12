@@ -72,8 +72,8 @@ export default {
     async loadCustomer(id) {
       try {
         this.loading = true;
-        const response = await customerAPI.getCustomer(id);
-        this.customer = response.data;
+        const { data } = await customerAPI.getCustomer(id);
+        this.customer = data;
       } catch(e) {
         console.log(e);
       } finally {
@@ -83,10 +83,10 @@ export default {
     updateCustomer(customer) {
       this.customer = customer;
     },
-    async exportEmbryo(embryoId, exportDate) {
-      console.log(embryoId);
+    async exportEmbryo(embryoId, inHouse,exportDate) {
       await icsiAPI.exportEmbryo({
         embryoId,
+        inHouse,
         customerId: this.id,
         exportDate,
       });

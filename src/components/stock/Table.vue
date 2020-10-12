@@ -15,9 +15,16 @@
           @emit-headers="updateFilteredHeaders"
       />
     </v-toolbar>
-    <v-data-table :headers="filteredHeaders" :items="products" :server-items-length="totalProducts"
-                  :loading="loading" :sortBy="sortBy" :sortDesc="sortDesc" :options.sync="options"
-                  loading-text="Bezig met laden..." class="ma-5">
+    <v-data-table
+        :headers="filteredHeaders"
+        :items="products"
+        :server-items-length="totalProducts"
+        :loading="loading"
+        :sortBy="sortBy"
+        :sortDesc="sortDesc"
+        :options.sync="options"
+        loading-text="Bezig met laden..." class="ma-5"
+    >
       <template v-slot:no-data>
         Geen producten gevonden
       </template>
@@ -158,7 +165,7 @@ export default {
         this.deliveries = data;
       } catch (err) {
         this.errored = true;
-        this.errorMessage = err.respone.data.message;
+        this.errorMessage = err.response.data.message;
       } finally {
         this.loading = false;
       }

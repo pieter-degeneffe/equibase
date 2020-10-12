@@ -127,6 +127,7 @@
         horses: [],
         locations: [],
         owners: [],
+        totalOwners: 0,
         loading: true,
         loadingLocations: false,
         options: {},
@@ -248,8 +249,9 @@
       },
       async getOwners() {
         try {
-          const response = await customerAPI.getCustomers();
-          this.owners = response.data;
+          const { data: { customers, total}} = await customerAPI.getCustomers();
+          this.owners = customers;
+          this.totalOwners = total;
         } catch (e) {
           this.errored = true;
           this.errorMessage = e.response.data.message;
