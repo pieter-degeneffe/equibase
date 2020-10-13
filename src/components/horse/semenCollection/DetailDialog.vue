@@ -14,8 +14,8 @@
               <tr>
                 <td>{{ props.item.type }}</td>
                 <td>{{ props.item.amount }}</td>
-                <td>{{ new Date(props.item.createdAt) | dateFormat('DD/MM/YY')}}</td>
-                <td align='right' class="d-print-none">
+                <td>{{ formatDate(props.item.createdAt) }}</td>
+                <td class="d-print-none text-right">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                       <v-icon dark color="primary" @click="deleteModification(props.item)" v-on="on">mdi-delete</v-icon>
@@ -37,6 +37,8 @@
 </template>
 <script>
 import semenAPI from "@/services/SemenAPI.js";
+import { formatDate } from "@/Helpers";
+
 export default {
   props: ['semenCollection','detailDialog'],
   data() {
@@ -51,13 +53,14 @@ export default {
     }
   },
   methods: {
+    formatDate,
     closeDialog() {
       this.$emit('close-dialog',false)
     },
     async deleteModification(modification) {
       try {
-        const response = await semenAPI.deleteSemenCollectionModification(this.semenCollection, modification);
-        this.$emit('update-semen-collection', response.data);
+        const { data } = await semenAPI.deleteSemenCollectionModification(this.semenCollection, modification);
+        this.$emit('update-semen-collection', data);
       } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;

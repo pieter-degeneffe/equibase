@@ -7,16 +7,16 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="form" v-model="valid">
-            <v-select v-model="semenCollectionModification.type" :items="semenCollectionModificationType" label="Type" outlined :rules="required"></v-select>
-            <select-customer v-if="semenCollectionModification.type === 'Export'" @update-customer="updateCustomer" label="Export naar"></select-customer>
-            <v-text-field v-model="semenCollectionModification.amount" type="number" label="Aantal rietjes" outlined :hint="controleHint" :rules="required"></v-text-field>
+            <v-select v-model="semenCollectionModification.type" :items="semenCollectionModificationType" label="Type" outlined :rules="required"/>
+            <select-customer v-if="semenCollectionModification.type === 'Export'" @update-customer="updateCustomer" label="Export naar"/>
+            <v-text-field v-model="semenCollectionModification.amount" type="number" label="Aantal rietjes" outlined :hint="controleHint" :rules="required"/>
             <v-alert type="error" v-if="errored" >
               {{ errorMessage }}
             </v-alert>
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer/>
           <v-btn color="blue darken-1" text @click="closeDialog">Annuleer</v-btn>
           <v-btn :disabled="!valid" color="success" class="mr-4" @click="createSemenCollectionModification()" depressed>
             Opslaan

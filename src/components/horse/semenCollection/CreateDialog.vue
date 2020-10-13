@@ -74,7 +74,7 @@
                   <v-select
                       v-if="editSemenCollection.location"
                       v-model="editSemenCollection.location.container"
-                      label="Locatie - stikstof vat"
+                      label="Stikstof vat"
                       :items="nitrogenContainers"
                       :rules="required"
                       item-text="name"
@@ -82,20 +82,24 @@
                       return-object
                       outlined required
                   />
+                </v-col>
+                <v-col cols="6" v-if="editSemenCollection.location.container">
                   <v-select
-                      v-if="editSemenCollection.location.container"
                       v-model="editSemenCollection.location.tube"
                       :items="tubesAvailable(editSemenCollection.location.container)"
-                      label="Locatie - stikstof vat - koker"
+                      label="Koker"
                       outlined required :rules="required"
                   />
+                </v-col>
+                <v-col cols="6" v-if="editSemenCollection.location.container">
                   <v-select
-                      v-if="editSemenCollection.location.container"
                       v-model="editSemenCollection.location.position"
                       :items="nitrogenContainerPosition"
-                      label="Locatie - stikstof vat - koker - positie"
+                      label="Positie"
                       outlined required :rules="required"
                   />
+                </v-col>
+                <v-col cols="6">
                   <v-text-field
                       v-model="editSemenCollection.initial_inventory"
                       :disabled="!!editSemenCollection._id"
@@ -103,12 +107,16 @@
                       label="Aantal rietjes"
                       outlined
                   />
+                </v-col>
+                <v-col cols="6">
                   <v-select
                       v-model="editSemenCollection.color"
                       :items="semenCollectionColor"
                       label="Kleur rietjes" outlined
                   />
-                  <v-alert type="error" v-if="errored" >
+                </v-col>
+                <v-col cols="12">
+                  <v-alert type="error" v-if="errored">
                     {{ errorMessage }}
                   </v-alert>
                 </v-col>
@@ -119,8 +127,12 @@
         <v-card-actions>
           <v-spacer/>
           <v-btn color="error" text @click="closeDialog">Annuleren</v-btn>
-          <v-btn v-if="!editSemenCollection._id" color="success" text :disabled="!valid" @click="createSemenCollection">Opslaan</v-btn>
-          <v-btn v-if="editSemenCollection._id" color="success" text :disabled="!valid" @click="updateSemenCollection">Bijwerken</v-btn>
+          <v-btn v-if="!editSemenCollection._id" color="success" text :disabled="!valid" @click="createSemenCollection">
+            Opslaan
+          </v-btn>
+          <v-btn v-if="editSemenCollection._id" color="success" text :disabled="!valid" @click="updateSemenCollection">
+            Bijwerken
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -142,7 +154,7 @@ export default {
   data() {
     return {
       valid: false,
-      required: [ v => !!v || 'Dit veld is verplicht' ],
+      required: [v => !!v || 'Dit veld is verplicht'],
       editSemenCollection: {
         location: {
           container: null
@@ -158,19 +170,19 @@ export default {
     }
   },
   computed: {
-    computedProductionDateFormatted () {
+    computedProductionDateFormatted() {
       return this.formatDate(this.editSemenCollection.production_date)
     },
   },
   methods: {
     closeDialog() {
-      this.$emit('close-dialog',false)
+      this.$emit('close-dialog', false)
     },
     async createSemenCollection() {
-      if(!this.editSemenCollection.owner) this.editSemenCollection.owner = this.horse.owner._id;
-      if(!this.editSemenCollection.stallion) this.editSemenCollection.stallion = this.horse._id;
+      if (!this.editSemenCollection.owner) this.editSemenCollection.owner = this.horse.owner._id;
+      if (!this.editSemenCollection.stallion) this.editSemenCollection.stallion = this.horse._id;
       try {
-        const { data } = await semenAPI.postSemenCollection(this.editSemenCollection);
+        const {data} = await semenAPI.postSemenCollection(this.editSemenCollection);
         this.$emit('created-semen-collection', data);
         this.closeDialog();
       } catch (err) {
@@ -180,7 +192,7 @@ export default {
     },
     async updateSemenCollection() {
       try {
-        const { data } = await semenAPI.putSemenCollection(this.editSemenCollection);
+        const {data} = await semenAPI.putSemenCollection(this.editSemenCollection);
         this.$emit('update-semen-collection', data);
         this.closeDialog();
       } catch (err) {
@@ -190,7 +202,7 @@ export default {
     },
     async getNitrogenContainers() {
       try {
-        const { data } = await nitrogenContainerAPI.getNitrogenContainers();
+        const {data} = await nitrogenContainerAPI.getNitrogenContainers();
         this.nitrogenContainers = data;
       } catch (err) {
         this.errored = true;
@@ -203,7 +215,7 @@ export default {
     ownerName,
     formatDate,
     tubesAvailable(container) {
-      if(container) {
+      if (container) {
         let tubesAvailable = [];
         for (let i = 1; i <= container.available_places; i++) {
           tubesAvailable.push({
@@ -218,7 +230,7 @@ export default {
   components: {
     selectCustomer
   },
-  created () {
+  created() {
     if (this.semenCollection) {
       this.editSemenCollection = this.semenCollection;
     }

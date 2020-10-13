@@ -9,13 +9,29 @@
         :loading="loading"
         loading-text="Bezig met laden..."
         sort-by="name">
-      <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
-        <v-icon small @click="deleteItem(item)">
-          mdi-delete
-        </v-icon>
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.available_places }}</td>
+          <td class="text-right d-print-none">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon dark color="primary" class="mr-2" @click="editContainer(props.item)" v-on="on">
+                  mdi-pencil
+                </v-icon>
+              </template>
+              <span>Container bewerken</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon dark color="primary" @click="deleteContainer(props.item)" v-on="on">
+                  mdi-delete
+                </v-icon>
+              </template>
+              <span>Container verwijderen</span>
+            </v-tooltip>
+          </td>
+        </tr>
       </template>
       <template v-slot:no-data>
         Geen containers in de database
@@ -124,7 +140,7 @@ export default {
     async getContainers() {
       this.loading = true;
       try {
-        const { data } = await nitrogenContainerAPI.getNitrogenContainers();
+        const {data} = await nitrogenContainerAPI.getNitrogenContainers();
         this.containers = data;
         this.totalContainers;
       } catch (err) {
@@ -134,12 +150,12 @@ export default {
         this.loading = false;
       }
     },
-    editItem(item) {
+    editContainer(item) {
       this.editedIndex = this.containers.indexOf(item)
       this.editedItem = item
       this.dialog = true
     },
-    async deleteItem(item) {
+    async deleteContainer(item) {
       try {
         this.loading = true;
         this.errored = false;
@@ -166,7 +182,7 @@ export default {
         this.loading = true;
         this.errored = false;
         if (this.editedIndex > -1) {
-          const { data } = await nitrogenContainerAPI.putNitrogenContainer(this.editedItem);
+          const {data} = await nitrogenContainerAPI.putNitrogenContainer(this.editedItem);
           if (data) {
             Object.assign(this.containers[this.editedIndex], data)
             await this.getContainers()

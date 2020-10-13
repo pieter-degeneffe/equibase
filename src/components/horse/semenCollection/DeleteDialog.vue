@@ -8,7 +8,7 @@
         <v-card-text>
             <v-form ref="form" v-model="valid">
               <p color="red">Vul de naam in van de hengst (<b>{{ semenCollection.stallion.name }}</b>) om te bevestigen dat je dit sperma lot wilt verwijderen.</p>
-              <v-text-field label="Naam hengst" outlined :rules="[(v) => v === this.semenCollection.stallion.name || 'Dit veld is verplicht']"></v-text-field>
+              <v-text-field label="Naam hengst" outlined :rules="[(v) => v === this.semenCollection.stallion.name || 'Dit veld is verplicht']"/>
               <v-alert type="error" v-if="errored" >
                 {{ errorMessage }}
               </v-alert>

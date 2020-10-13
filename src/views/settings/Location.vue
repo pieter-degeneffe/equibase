@@ -27,7 +27,7 @@
                   mdi-pencil
                 </v-icon>
               </template>
-              <span>Product bewerken</span>
+              <span>Locatie bewerken</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -35,7 +35,7 @@
                   mdi-delete
                 </v-icon>
               </template>
-              <span>Product verwijderen</span>
+              <span>Locatie verwijderen</span>
             </v-tooltip>
           </td>
         </tr>

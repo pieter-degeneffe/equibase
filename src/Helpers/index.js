@@ -6,3 +6,9 @@ export const formatDate = (date) => {
   const [year, month, day] = date.split('-');
   return `${ day }/${ month }/${ year }`;
 };
+export const formatDateMDY = (date) => {
+  if (!date) return '';
+  date = new Date(date).toISOString().substr(0, 10);
+  const [year, month, day] = date.split('-');
+  return `${ month }/${ day }/${ year }`;
+};
