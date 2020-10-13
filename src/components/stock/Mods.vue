@@ -20,12 +20,7 @@
           min-width="200"
       >
         <template v-slot:activator='{ on }'>
-          <v-btn
-              v-on='on'
-              readonly
-              text
-              color="primary"
-          >
+          <v-btn v-on='on' text color="primary">
             {{ computedDateFormatted }}
           </v-btn>
         </template>
