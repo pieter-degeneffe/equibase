@@ -23,7 +23,7 @@
           <td class="text-right d-print-none">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <v-icon dark color="primary" class="mr-2" @click="editItem(props.item._id)" v-on="on">
+                <v-icon dark color="primary" class="mr-2" @click="editItem(props.item)" v-on="on">
                   mdi-pencil
                 </v-icon>
               </template>
@@ -206,6 +206,7 @@ export default {
       }
     },
     close() {
+      this.$refs.form.reset();
       this.dialog = false;
       this.editedIndex = -1;
       this.editedItem = this.defaultItem;
@@ -215,16 +216,11 @@ export default {
         this.loading = true;
         this.errored = false;
         if (this.editedIndex > -1) {
-          const response = await locationAPI.putLocation(this.editedItem);
-          if (response) {
-            Object.assign(this.locations[this.editedIndex], response.data)
-          }
+          await locationAPI.putLocation(this.editedItem);
         } else {
-          const response = await locationAPI.postLocation(this.editedItem);
-          if (response) {
-            this.locations.push(response.data);
-          }
+          await locationAPI.postLocation(this.editedItem);
         }
+        await this.getAllLocations();
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
