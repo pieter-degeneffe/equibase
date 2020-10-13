@@ -11,26 +11,103 @@
             <v-form ref="form" v-model="valid">
               <v-row dense>
                 <v-col cols="12" sm="12" md="12">
-                  <v-text-field v-model="horse.name" label="Hengst" outlined disabled></v-text-field>
-                  <select-customer :owner="horse.owner" @update-customer="updateCustomer" label="Eigenaar lot" required></select-customer>
-                  <v-select v-model="editSemenCollection.type" :items="semenCollectionType" label="Type sperma lot" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']" :disabled="!!editSemenCollection._id"></v-select>
-                  <v-menu v-if="editSemenCollection.type === 'Productie'" v-model="productionDateMenu" :close-on-content-click="false"  transition="scale-transition" offset-y min-width="290px">
+                  <v-text-field
+                      v-model="horse.name"
+                      label="Hengst"
+                      outlined disabled
+                  />
+                  <select-customer
+                      @update-customer="updateCustomer"
+                      :owner="horse.owner"
+                      label="Eigenaar lot"
+                      required
+                  />
+                  <v-select
+                      :disabled="!!editSemenCollection._id"
+                      v-model="editSemenCollection.type"
+                      :items="semenCollectionType"
+                      label="Type sperma lot"
+                      :rules="required"
+                      outlined required
+                  />
+                  <v-menu
+                      v-if="editSemenCollection.type === 'Productie'"
+                      v-model="productionDateMenu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      min-width="290px" offset-y
+                  >
                     <template v-slot:activator="{ on }">
-                      <v-text-field v-model="computedProductionDateFormatted" label="Datum productie sperma" v-on="on" readonly outlined required :rules="required"></v-text-field>
+                      <v-text-field
+                          v-model="computedProductionDateFormatted"
+                          label="Datum productie sperma"
+                          required :rules="required"
+                          v-on="on" readonly outlined
+                      />
                     </template>
-                    <v-date-picker v-model="editSemenCollection.production_date" no-title @input="productionDateMenu = false"></v-date-picker>
+                    <v-date-picker
+                        v-model="editSemenCollection.production_date"
+                        @input="productionDateMenu = false"
+                        no-title
+                    />
                   </v-menu>
-                  <v-menu v-if="editSemenCollection.type === 'Import'" v-model="productionDateMenu" :close-on-content-click="false"  transition="scale-transition" offset-y min-width="290px">
+                  <v-menu
+                      v-if="editSemenCollection.type === 'Import'"
+                      v-model="productionDateMenu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      min-width="290px" offset-y
+                  >
                     <template v-slot:activator="{ on }">
-                      <v-text-field v-model="computedProductionDateFormatted" label="Datum productie sperma" v-on="on" readonly outlined></v-text-field>
+                      <v-text-field
+                          v-model="computedProductionDateFormatted"
+                          label="Datum productie sperma"
+                          v-on="on" readonly outlined
+                      />
                     </template>
-                    <v-date-picker v-model="editSemenCollection.production_date" no-title @input="productionDateMenu = false"></v-date-picker>
+                    <v-date-picker
+                        v-model="editSemenCollection.production_date"
+                        @input="productionDateMenu = false"
+                        no-title
+                    />
                   </v-menu>
-                  <v-select v-if="editSemenCollection.location" v-model="editSemenCollection.location.container" :items="nitrogenContainers" item-text="name" item-value="_id" label="Locatie - stikstof vat" outlined return-object required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
-                  <v-select v-if="editSemenCollection.location.container" v-model="editSemenCollection.location.tube" :items="tubesAvailable(editSemenCollection.location.container)" label="Locatie - stikstof vat - koker" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
-                  <v-select v-if="editSemenCollection.location.container" v-model="editSemenCollection.location.position" :items="nitrogenContainerPosition" label="Locatie - stikstof vat - koker - positie" outlined required :rules="[(v) => !!v || 'Dit veld is verplicht']"></v-select>
-                  <v-text-field v-model="editSemenCollection.initial_inventory" :rules="required" type="number" label="Aantal rietjes" outlined :disabled="!!editSemenCollection._id"></v-text-field>
-                  <v-select v-model="editSemenCollection.color" :items="semenCollectionColor" label="Kleur rietjes" outlined></v-select>
+                  <v-select
+                      v-if="editSemenCollection.location"
+                      v-model="editSemenCollection.location.container"
+                      label="Locatie - stikstof vat"
+                      :items="nitrogenContainers"
+                      :rules="required"
+                      item-text="name"
+                      item-value="_id"
+                      return-object
+                      outlined required
+                  />
+                  <v-select
+                      v-if="editSemenCollection.location.container"
+                      v-model="editSemenCollection.location.tube"
+                      :items="tubesAvailable(editSemenCollection.location.container)"
+                      label="Locatie - stikstof vat - koker"
+                      outlined required :rules="required"
+                  />
+                  <v-select
+                      v-if="editSemenCollection.location.container"
+                      v-model="editSemenCollection.location.position"
+                      :items="nitrogenContainerPosition"
+                      label="Locatie - stikstof vat - koker - positie"
+                      outlined required :rules="required"
+                  />
+                  <v-text-field
+                      v-model="editSemenCollection.initial_inventory"
+                      :disabled="!!editSemenCollection._id"
+                      :rules="required" type="number"
+                      label="Aantal rietjes"
+                      outlined
+                  />
+                  <v-select
+                      v-model="editSemenCollection.color"
+                      :items="semenCollectionColor"
+                      label="Kleur rietjes" outlined
+                  />
                   <v-alert type="error" v-if="errored" >
                     {{ errorMessage }}
                   </v-alert>
@@ -40,10 +117,10 @@
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeDialog">Annuleren</v-btn>
-          <v-btn v-if="!editSemenCollection._id" color="blue darken-1" text :disabled="!valid" @click="createSemenCollection">Opslaan</v-btn>
-          <v-btn v-if="editSemenCollection._id" color="blue darken-1" text :disabled="!valid" @click="updateSemenCollection">Bijwerken</v-btn>
+          <v-spacer/>
+          <v-btn color="error" text @click="closeDialog">Annuleren</v-btn>
+          <v-btn v-if="!editSemenCollection._id" color="success" text :disabled="!valid" @click="createSemenCollection">Opslaan</v-btn>
+          <v-btn v-if="editSemenCollection._id" color="success" text :disabled="!valid" @click="updateSemenCollection">Bijwerken</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -53,6 +130,7 @@
 import selectCustomer from "@/components/customer/SelectCustomer";
 import semenAPI from "@/services/SemenAPI.js";
 import nitrogenContainerAPI from "@/services/NitrogenContainerAPI.js";
+import {formatDate, ownerName} from "@/Helpers";
 import {colors} from '@/consts';
 
 export default {
@@ -64,9 +142,7 @@ export default {
   data() {
     return {
       valid: false,
-      required: [
-        v => !!v || 'Dit veld is verplicht'
-      ],
+      required: [ v => !!v || 'Dit veld is verplicht' ],
       editSemenCollection: {
         location: {
           container: null
@@ -94,8 +170,8 @@ export default {
       if(!this.editSemenCollection.owner) this.editSemenCollection.owner = this.horse.owner._id;
       if(!this.editSemenCollection.stallion) this.editSemenCollection.stallion = this.horse._id;
       try {
-        const response = await semenAPI.postSemenCollection(this.editSemenCollection);
-        this.$emit('created-semen-collection', response.data);
+        const { data } = await semenAPI.postSemenCollection(this.editSemenCollection);
+        this.$emit('created-semen-collection', data);
         this.closeDialog();
       } catch (err) {
         this.errored = true;
@@ -104,8 +180,8 @@ export default {
     },
     async updateSemenCollection() {
       try {
-        const response = await semenAPI.putSemenCollection(this.editSemenCollection);
-        this.$emit('update-semen-collection', response.data);
+        const { data } = await semenAPI.putSemenCollection(this.editSemenCollection);
+        this.$emit('update-semen-collection', data);
         this.closeDialog();
       } catch (err) {
         this.errored = true;
@@ -114,25 +190,18 @@ export default {
     },
     async getNitrogenContainers() {
       try {
-        const response = await nitrogenContainerAPI.getNitrogenContainers();
-        this.nitrogenContainers = response.data;
+        const { data } = await nitrogenContainerAPI.getNitrogenContainers();
+        this.nitrogenContainers = data;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
       }
     },
-    ownerName(owner){
-      return owner.type === "particulier" ? `${owner.first_name} ${owner.last_name}` : `${owner.company}`
-    },
     updateCustomer(customer) {
       this.editSemenCollection.owner = customer._id;
     },
-    formatDate (date) {
-      if (!date) return null
-      date = new Date(date).toISOString().substr(0, 10)
-      const [year, month, day] = date.split('-')
-      return `${day}/${month}/${year}`
-    },
+    ownerName,
+    formatDate,
     tubesAvailable(container) {
       if(container) {
         let tubesAvailable = [];

@@ -223,8 +223,8 @@
       },
       async getNitrogenContainers() {
         try {
-          const response = await nitrogenContainerAPI.getNitrogenContainers();
-          this.nitrogenContainers = response.data;
+          const { data } = await nitrogenContainerAPI.getNitrogenContainers();
+          this.nitrogenContainers = data;
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
