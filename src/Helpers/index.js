@@ -12,3 +12,4 @@ export const formatDateMDY = (date) => {
   const [year, month, day] = date.split('-');
   return `${ month }/${ day }/${ year }`;
 };
+export const sum = (a, b) => a - b;
