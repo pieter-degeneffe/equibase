@@ -1,5 +1,5 @@
 <template>
-  <v-card class="ma-5" outlined>
+  <v-card class="mx-5 mt-5 mb-12" outlined>
     <mods
         :title="title"
         :outgoing="outgoing"

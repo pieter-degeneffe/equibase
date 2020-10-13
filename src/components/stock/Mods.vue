@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-5 mb-2" flat>
+  <v-card flat>
     <v-toolbar flat>
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer/>
@@ -80,6 +80,7 @@
         :sort-desc="sortDesc"
         :loading="loading"
         loading-text="Bezig met laden..."
+        class="ma-5"
     >
       <template v-slot:no-data>
         Geen stock modificaties voor product gevonden.
