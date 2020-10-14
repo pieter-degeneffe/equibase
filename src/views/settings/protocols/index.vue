@@ -1,6 +1,6 @@
 <template>
   <div>
-    <protocolsTable/>
+    <protocolsTable :headers="headers" :title="title"/>
     <v-btn button color="primary" class="ma-2" depressed dark @click="openProtocolPage()" fixed bottom right>
       protocol toevoegen
       <v-icon right dark>mdi-plus</v-icon>
@@ -15,6 +15,7 @@ export default {
   components: { protocolsTable },
   data() {
     return {
+      title: 'Protocolen',
       headers: [
         {text: 'Protocolnaam', value: 'name', selected: true},
         {text: 'Account', value: 'account', selected: true},
