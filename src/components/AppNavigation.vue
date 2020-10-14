@@ -152,6 +152,10 @@ export default {
               text: "Producten",
               url: "/settings/products",
             },
+            {
+              text: "Protocols",
+              url: "/settings/protocols",
+            },
           ]
         }
       ],
