@@ -31,14 +31,14 @@
           <td v-if="showColumn('price')">{{ props.item.price }}</td>
           <td v-if="showColumn('fixedPrice')"><v-icon v-if="props.item.fixedPrice" class="green--text">mdi-check</v-icon></td>
           <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
-          <td class="text-right d-print-none">
+          <td v-if="showColumn('action')" class="text-right d-print-none">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-icon dark color="primary" class="mr-2" @click="openProtocolPage(props.item._id)" v-on="on">
                   mdi-pencil
                 </v-icon>
               </template>
-              <span>Product bewerken</span>
+              <span>Protocol bewerken</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -46,7 +46,7 @@
                   mdi-delete
                 </v-icon>
               </template>
-              <span>Product verwijderen</span>
+              <span>Protocol verwijderen</span>
             </v-tooltip>
           </td>
         </tr>
