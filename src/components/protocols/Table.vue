@@ -52,6 +52,12 @@
         </tr>
       </template>
     </v-data-table>
+    <deleteDialog
+        :delete-dialog="deleteDialog"
+        item="protocol"
+        :delete-queue="deleteQueue"
+        @delete="deleteItem"
+    />
     <v-row v-if="errored">
       <v-col cols="12">
         <v-alert type="error" v-if="errored" class="mx-5">
@@ -66,9 +72,10 @@
 <script>
 import { protocolAPI } from "@/services";
 import FilterButton from "@/components/FilterButton";
+import deleteDialog from "@/components/DeleteDialog";
 
 export default {
-  components: { FilterButton },
+  components: { FilterButton, deleteDialog },
   props: ['title', 'headers'],
   data() {
     return {
@@ -82,7 +89,7 @@ export default {
       filters: {},
       toFilter: [],
       deleteDialog: false,
-      deleteQueue: {},
+      deleteQueue: {}
     }
   },
   created() {
@@ -123,17 +130,37 @@ export default {
     openProtocolPage() {
       console.log('todo');
     },
-    openDeleteDialog() {
-      console.log('todo');
+    openDeleteDialog(item) {
+      this.deleteQueue = item;
+      this.deleteDialog = true;
+    },
+
+    async deleteItem(item) {
+      try {
+        this.loading = true;
+        this.errored = false;
+        await protocolAPI.deleteProtocol(item._id);
+        this.deleteDialog = false;
+        this.deleteQueue = {};
+        await this.getAllProtocols();
+      } catch (err) {
+        this.errored = true;
+        this.errorMessage = err.response.data.message;
+      } finally {
+        this.loading = false;
+      }
     },
     async getAllProtocols() {
       try {
+        this.loading = true;
         const { data: {protocols, total}} = await protocolAPI.getAllProtocols(this.URLParameters);
         this.protocols = protocols;
         this.totalProtocols = total;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
+      } finally {
+        this.loading = false;
       }
     }
   }
