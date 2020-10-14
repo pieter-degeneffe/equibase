@@ -1,18 +1,18 @@
 import {formatDate, formatDateMDY, ownerName, sum} from './index';
 
 test('adds 1 + 2 to equal 3', () => {
-    const expected = sum(1, 2);
-    expect(expected).toBe(3);
+    const actual = sum(1, 2);
+    expect(actual).toBe(3);
 });
 test('adds 1 + (-2) to equal -1', () => {
-    const expected = sum(1, -2);
-    expect(expected).toBe(-1);
+    const actual = sum(1, -2);
+    expect(actual).toBe(-1);
 });
 
 describe("formatDate tests", () => {
     test('should return empty', () => {
-        const expected = formatDate();
-        expect(expected).toEqual('');
+        const actual = formatDate();
+        expect(actual).toEqual('');
     });
     test('should return DD/MM/YYYY with ISOinput', () => {
         const date = formatDate('1996-02-16T12:34:56');
@@ -31,14 +31,18 @@ describe("formatDate tests", () => {
         expect(date).not.toEqual('1996/02/16');
     });
     test('should throw error on wrong month', () => {
-        expect(() =>
+        try {
             formatDate('1996-13-16T12:34:56')
-        ).toThrowError();
+        } catch (e) {
+            expect(e).toEqual(new Error("Invalid Date"));
+        }
     });
     test('should throw error on wrong day, ISO', () => {
-        expect(() =>
+        try {
             formatDate('32 augustus 1997 12:00')
-        ).toThrowError();
+        } catch (e) {
+            expect(e).toEqual(new Error("Invalid Date"));
+        }
     });
     test('should throw error on wrong day, new Date', () => {
         expect(() =>
@@ -46,7 +50,7 @@ describe("formatDate tests", () => {
         ).toThrowError();
     });
     test('should throw error on wrong input', () => {
-        expect( () =>
+        expect(() =>
             formatDate('bananas')
         ).toThrowError();
     });
@@ -75,17 +79,21 @@ describe("formatDateMDY tests", () => {
         ).toThrowError();
     });
     test('should throw error on wrong day, ISO', () => {
-        expect(() =>
+        try {
             formatDateMDY('1996-01-32T12:34:56')
-        ).toThrowError(/Invalid time/);
+        } catch (e) {
+            expect(e).toEqual(new Error("Invalid Date"));
+        }
     });
     test('should throw error on wrong day, new Date', () => {
-        expect(() =>
+        try {
             formatDateMDY('32 janueri 1996 12:00 GMT+0200')
-        ).toThrowError(/Invalid time/);
+        } catch (e) {
+            expect(e).toEqual(new Error("Invalid Date"));
+        }
     });
     test('should throw error on wrong input', () => {
-        expect( () =>
+        expect(() =>
             formatDateMDY('apples')
         ).toThrowError();
     });
