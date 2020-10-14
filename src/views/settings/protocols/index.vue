@@ -22,7 +22,7 @@ export default {
         {text: 'Prijs', value: 'price', selected: true},
         {text: 'Vaste prijs', value: 'fixedPrice', selected: true},
         {text: 'BTW', value: 'tax', align: 'left', selected: true},
-        {text: 'Bewerken', value: 'action', align: 'end', sortable: false, selected: true},
+        {text: '', value: 'action', align: 'end', sortable: false, selected: true},
       ],
     };
   },

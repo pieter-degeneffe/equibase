@@ -26,11 +26,11 @@
       </template>
       <template v-slot:item="props">
         <tr>
-          <td>{{ props.item.name.nl }}</td>
-          <td>{{ props.item.account }}</td>
-          <td>{{ props.item.price }}</td>
-          <td><v-icon v-if="props.item.fixedPrice" class="green--text">mdi-check</v-icon></td>
-          <td>{{ props.item.tax }}</td>
+          <td v-if="showColumn('name')">{{ props.item.name.nl }}</td>
+          <td v-if="showColumn('account')">{{ props.item.account }}</td>
+          <td v-if="showColumn('price')">{{ props.item.price }}</td>
+          <td v-if="showColumn('fixedPrice')"><v-icon v-if="props.item.fixedPrice" class="green--text">mdi-check</v-icon></td>
+          <td v-if="showColumn('tax')">{{ props.item.tax }}</td>
           <td class="text-right d-print-none">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -117,11 +117,14 @@ export default {
     updateFilteredHeaders(headers) {
       this.filteredHeaders = headers
     },
+    showColumn(col) {
+      return this.headers.find(header => header.value === col).selected;
+    },
     openProtocolPage() {
-      console.log('todo')
+      console.log('todo');
     },
     openDeleteDialog() {
-      console.log('todo')
+      console.log('todo');
     },
     async getAllProtocols() {
       try {
