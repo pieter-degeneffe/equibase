@@ -8,7 +8,7 @@
     "dev": "vue-cli-service serve --open --watch",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^1.6.4",
