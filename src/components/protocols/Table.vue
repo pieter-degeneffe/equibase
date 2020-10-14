@@ -18,6 +18,8 @@
       :items="protocols"
       :loading="loading"
       loading-text="Bezig met laden..."
+      :server-items-length="totalProtocols"
+      :options.sync="options"
     >
       <template v-slot:no-data>
         Geen {{ title }} gevonden
@@ -76,18 +78,40 @@ export default {
       loading: false,
       errored: false,
       errorMessage: '',
+      options: {},
       filters: {},
       toFilter: [],
+      deleteDialog: false,
+      deleteQueue: {},
     }
   },
   created() {
     this.getAllProtocols();
   },
   watch: {
-
+    options: {
+      handler() {
+        this.getAllProtocols();
+      },
+      deep: true
+    },
+    filters: {
+      handler() {
+        this.getAllProtocols();
+      },
+      deep: true
+    },
   },
   computed: {
-
+    URLParameters() {
+      return {
+        'page': this.options.page,
+        'limit': this.options.itemsPerPage,
+        'sortBy': this.options.sortBy,
+        'sortDesc': this.options.sortDesc,
+        name: this.filters.name !== null ? this.filters.name : undefined,
+      };
+    }
   },
   methods: {
     updateFilteredHeaders(headers) {
@@ -101,7 +125,7 @@ export default {
     },
     async getAllProtocols() {
       try {
-        const { data: {protocols, total}} = await protocolAPI.getAllProtocols();
+        const { data: {protocols, total}} = await protocolAPI.getAllProtocols(this.URLParameters);
         this.protocols = protocols;
         this.totalProtocols = total;
       } catch (err) {
