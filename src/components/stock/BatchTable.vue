@@ -204,7 +204,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model='editDialog' max-width='690'>
+    <v-dialog v-model='editDialog' max-width='690' persistent>
       <v-card>
         <v-card-title>Product aanpassen - type: {{ updateRow.type }}</v-card-title>
         <v-card-text>
@@ -276,10 +276,6 @@
     </v-alert>
     <v-snackbar v-model='snackbar' :timeout='timeout' :color='snackColor' bottom>
       {{ snackText }}
-      <v-spacer/>
-      <v-btn dark text @click='snackbar = false'>
-        sluiten
-      </v-btn>
     </v-snackbar>
   </v-card>
 </template>
@@ -410,7 +406,7 @@ export default {
       };
     },
     close() {
-      this.$refs.form.resetValidation()
+      this.$refs.form.reset()
       this.createDialog = false;
       this.editDialog = false;
       this.getStockProduct(this.id);
@@ -428,8 +424,8 @@ export default {
     async getCustomers() {
       this.errored = false;
       try {
-        const { data } = await customerAPI.getCustomers();
-        this.customers = data;
+        const { data: { customers } } = await customerAPI.getCustomers();
+        this.customers = customers;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;

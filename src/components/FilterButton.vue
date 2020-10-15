@@ -321,8 +321,8 @@ export default {
     },
     async getLocations() {
       try {
-        const { data } = await locationAPI.getLocations();
-        this.locations = data;
+        const { data: { locations } } = await locationAPI.getLocations();
+        this.locations = locations;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;

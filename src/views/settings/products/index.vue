@@ -22,7 +22,7 @@
           {text: 'Wachttijd (dagen)', value: 'waitingTime', sortable: false, selected: true},
           {text: 'BTW', value: 'tax', align: 'left', sortable: false, selected: true},
           {text: 'Supplement (€)', value: 'supplementAdministration', align: 'end', sortable: false, selected: true},
-          {text: '', value: 'action', align: 'end', sortable: false, selected: true},
+          {text: 'Bewerken', value: 'action', align: 'end', sortable: false, selected: true},
         ],
       }
     },

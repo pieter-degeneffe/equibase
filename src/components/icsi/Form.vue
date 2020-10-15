@@ -223,8 +223,8 @@
       },
       async getNitrogenContainers() {
         try {
-          const response = await nitrogenContainerAPI.getNitrogenContainers();
-          this.nitrogenContainers = response.data;
+          const { data } = await nitrogenContainerAPI.getNitrogenContainers();
+          this.nitrogenContainers = data;
         } catch (err) {
           this.errored = true;
           this.errorMessage = err.response.data.message;
@@ -232,8 +232,8 @@
       },
       async getLocations() {
         try {
-          const response = await locationAPI.getLocations();
-          this.locations = response.data;
+          const { data: { locations }} = await locationAPI.getLocations();
+          this.locations = locations;
         } catch (e) {
           this.errored = true;
         }

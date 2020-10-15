@@ -18,7 +18,6 @@
         class="ma-5"
         :headers="filteredHeaders"
         :items="products"
-        :search="search"
         :loading="loading"
         loading-text="Bezig met laden..."
         :server-items-length="totalProducts"

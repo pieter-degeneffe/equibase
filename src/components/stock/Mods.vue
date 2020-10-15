@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-5 mb-2" flat>
+  <v-card flat>
     <v-toolbar flat>
       <v-toolbar-title>{{ title }}</v-toolbar-title>
       <v-spacer/>
@@ -7,6 +7,32 @@
           v-if="toFilter && toFilter.includes('horse')"
           @emit-horse="updateFilters"
       />
+      <v-btn v-if="rangeSelector.filteredValue" text color="error" @click="clear">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+      <v-menu
+          v-if="datePicker"
+          ref='fromDateMenu'
+          v-model='fromDateMenu'
+          :close-on-content-click='false'
+          transition='scale-transition'
+          offset-y
+          min-width="200"
+      >
+        <template v-slot:activator='{ on }'>
+          <v-btn v-on='on' text color="primary">
+            {{ computedDateFormatted }}
+          </v-btn>
+        </template>
+        <v-date-picker
+            v-model='rangeSelector.value'
+            @change="formatDateRange(rangeSelector.value[0], rangeSelector.value[1])"
+            locale="nl"
+            range
+            no-title
+            first-day-of-week='1'
+        />
+      </v-menu>
       <FilterButton
           :toFilter="toFilter"
           :filters="filters"
@@ -18,59 +44,6 @@
           @emit-horse-parent="updateFilters"
       />
     </v-toolbar>
-    <v-toolbar v-if="datePicker" class="mt-5" flat dense>
-      <v-menu
-          v-if="datePicker"
-          ref='fromDateMenu'
-          v-model='fromDateMenu'
-          :close-on-content-click='false'
-          transition='scale-transition'
-          offset-y
-          min-width="200"
-      >
-        <template v-slot:activator='{ on }'>
-          <v-text-field
-              v-model='computedFromDateFormatted'
-              label='van'
-              v-on='on'
-              readonly
-              class="mr-5"
-          >
-          </v-text-field>
-        </template>
-        <v-date-picker
-            v-model='from'
-            no-title
-            first-day-of-week='1'
-            @input='fromDateMenu = false'
-        />
-      </v-menu>
-      <v-menu
-          v-if="datePicker"
-          ref='toDateMenu'
-          v-model='toDateMenu'
-          :close-on-content-click='false'
-          transition='scale-transition'
-          offset-y
-          min-width="290"
-      >
-        <template v-slot:activator='{ on }'>
-          <v-text-field
-              v-model='computedToDateFormatted'
-              label='tot'
-              v-on='on'
-              readonly
-          >
-          </v-text-field>
-        </template>
-        <v-date-picker
-            v-model='to'
-            no-title
-            first-day-of-week='1'
-            @input='toDateMenu = false'
-        />
-      </v-menu>
-    </v-toolbar>
     <v-data-table
         :headers="filteredHeaders"
         :items="mods"
@@ -80,6 +53,7 @@
         :sort-desc="sortDesc"
         :loading="loading"
         loading-text="Bezig met laden..."
+        class="ma-5"
     >
       <template v-slot:no-data>
         Geen stock modificaties voor product gevonden.
@@ -89,7 +63,7 @@
           <td v-if="showColumn('type')">{{ props.item.type }}</td>
           <td v-if="showColumn('product')">{{ props.item.product ? props.item.product.name : '-' }}</td>
           <td v-if="showColumn('batch')">{{ props.item.batch ? props.item.batch.lotNumber : '-' }}</td>
-          <td v-if="(preFilter === 'Aankoop') && showColumn('batch.supplier')">{{ props.item.batch.supplier }}</td>
+          <td v-if="(preFilter === 'Aankoop') && showColumn('batch.supplier')">{{ props.item.batch && props.item.batch.supplier ? props.item.batch.supplier : '-' }}</td>
           <td v-if="outgoing && showColumn('client')">{{ props.item.client ? `${props.item.client.last_name} ${props.item.client.first_name}` : '-' }}</td>
           <td v-if="(preFilter === 'Toediening') || outgoing && showColumn('horse')">{{ props.item.horse ? props.item.horse.name : '-' }}</td>
           <td v-if="showColumn('amount')">{{ props.item.amount }}</td>
@@ -104,7 +78,7 @@
 </template>
 
 <script>
-import { formatDate } from "@/Helpers";
+import { formatDate, formatDateMDY } from "@/Helpers";
 import {stockAPI} from '@/services'
 import FilterButton from "@/components/FilterButton";
 import SearchHorse from "@/components/SearchHorse";
@@ -130,19 +104,17 @@ export default {
       loading: false,
       errored: false,
       errorMessage: '',
+      rangeSelector: {
+        value: [null, null],
+        filteredValue: null
+      },
       from: new Date('09/1/2020').toISOString().substr(0, 10),
       to: new Date().toISOString().substr(0, 10),
       options: {},
     };
   },
   watch: {
-    from: {
-      handler() {
-        this.getMods(this.outgoing);
-      },
-      deep: true
-    },
-    to: {
+    rangeSelector: {
       handler() {
         this.getMods(this.outgoing);
       },
@@ -162,11 +134,13 @@ export default {
     }
   },
   computed: {
-    computedFromDateFormatted() {
-      return this.formatDate(this.from);
-    },
-    computedToDateFormatted() {
-      return this.formatDate(this.to);
+    computedDateFormatted() {
+      if (this.rangeSelector.filteredValue) {
+        const fromDate = formatDate(this.rangeSelector.filteredValue[0]);
+        const toDate = formatDate(this.rangeSelector.filteredValue[1]);
+        return `van: ${fromDate} - tot: ${toDate}`;
+      }
+      return 'Kies een datum bereik';
     },
     URLParameters() {
       return {
@@ -174,14 +148,18 @@ export default {
         'limit': this.options.itemsPerPage,
         'sortBy': this.options.sortBy,
         'sortDesc': this.options.sortDesc,
-        from: this.datePicker ? this.formatDateMDY(this.from) : undefined,
-        to: this.datePicker ? this.formatDateMDY(this.to) : undefined,
+        from: !this.datePicker ? undefined : this.rangeSelector.filteredValue ? this.formatDateMDY(this.rangeSelector.filteredValue[0]) : undefined,
+        to: !this.datePicker ? undefined : this.rangeSelector.filteredValue ? this.formatDateMDY(this.rangeSelector.filteredValue[1]) : undefined,
         type: this.preFilter ? this.preFilter : this.filters.type !== null ? this.filters.type : undefined,
         horse: !this.toFilter ? undefined : this.filters.horse !== null ? this.filters.horse : undefined,
       };
     },
   },
   methods: {
+    clear(){
+      this.rangeSelector.filteredValue = null;
+      this.rangeSelector.value = [null, null];
+    },
     updateFilters(id) {
       if (this.toFilter && this.toFilter.includes('horseSearch')) {
         this.URLParameters.horse = id;
@@ -209,11 +187,11 @@ export default {
       }
     },
     formatDate,
-    formatDateMDY(date) {
-      if (!date) return null;
-      date = new Date(date).toISOString().substr(0, 10);
-      const [year, month, day] = date.split('-');
-      return `${month}/${day}/${year}`;
+    formatDateMDY,
+    formatDateRange(...dates) {
+      this.rangeSelector.filteredValue = dates.sort().map(date => formatDateMDY(date));
+      this.from = this.rangeSelector.filteredValue[0];
+      this.to = this.rangeSelector.filteredValue[1];
     },
   }
 }

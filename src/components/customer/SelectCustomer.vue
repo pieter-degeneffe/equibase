@@ -1,6 +1,8 @@
 <template>
   <div>
-    <v-autocomplete v-model="model" :items="items" :loading="loading" :placeholder="placeholder" :search-input.sync="search" hide-no-data hide-selected item-text="Description" item-value="_id" :label="label" return-object>
+    <v-autocomplete v-model="model" :items="items" :loading="loading" :placeholder="placeholder"
+                    :search-input.sync="search" hide-no-data hide-selected item-text="Description" item-value="_id"
+                    :label="label" return-object outlined>
       <template v-slot:item="{ item }">
         <v-list-item-content>
           <v-list-item-title>{{ item.first_name }} {{ item.last_name }}</v-list-item-title>
@@ -11,9 +13,10 @@
   </div>
 </template>
 <script>
-import { customerAPI } from "@/services";
+import {customerAPI} from "@/services";
+
 export default {
-  props: ['owner','label'],
+  props: ['owner', 'label'],
   data() {
     return {
       descriptionLimit: 60,
@@ -24,18 +27,18 @@ export default {
     };
   },
   computed: {
-    items () {
+    items() {
       return this.entries.map(entry => {
-        if(entry.company) {
+        if (entry.company) {
           const Description = entry.company + " - " + entry.first_name + " " + entry.last_name
-          return Object.assign({}, entry, { Description })
+          return Object.assign({}, entry, {Description})
         } else {
           const Description = entry.first_name + " " + entry.last_name
-          return Object.assign({}, entry, { Description })
+          return Object.assign({}, entry, {Description})
         }
       })
     },
-    placeholder () {
+    placeholder() {
       if (this.owner) {
         if (this.owner.type == "bedrijf") return this.owner.company + ' - ' + this.owner.first_name + ' ' + this.owner.last_name;
         if (this.owner.type == "particulier") return this.owner.first_name + ' ' + this.owner.last_name;
@@ -44,7 +47,7 @@ export default {
     }
   },
   watch: {
-    search (val) {
+    search(val) {
       this.querySelections(val);
     },
     model() {
@@ -52,11 +55,11 @@ export default {
     }
   },
   methods: {
-    async querySelections (v) {
+    async querySelections(v) {
       this.loading = true
       try {
-        const respons = await customerAPI.getCustomerSearch(v);
-        const filteredRespons = respons.data.filter(e => e.confidenceScore > 6)
+        const response = await customerAPI.getCustomerSearch(v);
+        const filteredRespons = response.data.filter(e => e.confidenceScore > 6)
         this.entries = filteredRespons;
       } catch (err) {
         console.log(err);

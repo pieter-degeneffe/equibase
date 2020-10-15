@@ -1,27 +1,37 @@
 <template>
   <v-card class="ma-5" outlined>
-    <v-data-table :headers="headers" :search="search" :items="containers" :loading="loading"
-                  loading-text="Bezig met laden..."
-                  :sort-by="['name']">
-      <template v-slot:top>
-        <v-toolbar flat>
-          <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              label="Zoeken"
-              single-line
-              hide-details
-          >
-          </v-text-field>
-        </v-toolbar>
-      </template>
-      <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)">
-          mdi-pencil
-        </v-icon>
-        <v-icon small @click="deleteItem(item)">
-          mdi-delete
-        </v-icon>
+    <v-toolbar flat>
+      <v-toolbar-title>Locaties</v-toolbar-title>
+    </v-toolbar>
+    <v-data-table
+        :headers="headers"
+        :items="containers"
+        :loading="loading"
+        loading-text="Bezig met laden..."
+        sort-by="name">
+      <template v-slot:item="props">
+        <tr>
+          <td>{{ props.item.name }}</td>
+          <td>{{ props.item.available_places }}</td>
+          <td class="text-right d-print-none">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon dark color="primary" class="mr-2" @click="editContainer(props.item)" v-on="on">
+                  mdi-pencil
+                </v-icon>
+              </template>
+              <span>Container bewerken</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon dark color="primary" @click="deleteContainer(props.item)" v-on="on">
+                  mdi-delete
+                </v-icon>
+              </template>
+              <span>Container verwijderen</span>
+            </v-tooltip>
+          </td>
+        </tr>
       </template>
       <template v-slot:no-data>
         Geen containers in de database
@@ -43,19 +53,28 @@
             <v-form ref="form" v-model="valid">
               <v-row>
                 <v-col cols="12" sm="12" md="12">
-                  <v-text-field v-model="editedItem.name" :rules="required" label="Naam vat"
-                                outlined></v-text-field>
-                  <v-text-field v-model="editedItem.available_places" :rules="required" type="number"
-                                label="Aantal kokers" outlined></v-text-field>
+                  <v-text-field
+                      v-model="editedItem.name"
+                      :rules="required"
+                      label="Naam vat"
+                      outlined
+                  />
+                  <v-text-field
+                      v-model="editedItem.available_places"
+                      :rules="required"
+                      type="number"
+                      label="Aantal kokers"
+                      outlined
+                  />
                 </v-col>
               </v-row>
             </v-form>
           </v-container>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="close">Annuleer</v-btn>
-          <v-btn color="blue darken-1" :disabled="!valid" text @click="save">Opslaan</v-btn>
+          <v-spacer/>
+          <v-btn color="error" text @click="close">Annuleer</v-btn>
+          <v-btn color="success" :disabled="!valid" text @click="save">Opslaan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -86,6 +105,7 @@ export default {
       ],
       stables: ['Stal Zoutleeuw', 'Stal Dormaal', 'Wei'],
       containers: [],
+      totalContainers: 0,
       editedIndex: -1,
       editedItem: {
         name: ''
@@ -99,6 +119,14 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? 'Nieuwe container' : 'Container bewerken'
     },
+    URLParameters() {
+      return {
+        'page': this.options.page,
+        'limit': this.options.itemsPerPage,
+        'sortBy': this.options.sortBy,
+        'sortDesc': this.options.sortDesc,
+      };
+    }
   },
   mounted() {
     this.getContainers();
@@ -112,21 +140,22 @@ export default {
     async getContainers() {
       this.loading = true;
       try {
-        const response = await nitrogenContainerAPI.getNitrogenContainers();
-        this.containers = response.data;
-      } catch (e) {
+        const {data} = await nitrogenContainerAPI.getNitrogenContainers();
+        this.containers = data;
+        this.totalContainers;
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       } finally {
         this.loading = false;
       }
     },
-    editItem(item) {
+    editContainer(item) {
       this.editedIndex = this.containers.indexOf(item)
-      this.editedItem = Object.assign({}, item)
+      this.editedItem = item
       this.dialog = true
     },
-    async deleteItem(item) {
+    async deleteContainer(item) {
       try {
         this.loading = true;
         this.errored = false;
@@ -135,38 +164,36 @@ export default {
           const index = this.containers.indexOf(item)
           this.containers.splice(index, 1)
         }
-      } catch (e) {
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       } finally {
         this.loading = false;
       }
     },
     close() {
-      this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
+      this.$refs.form.reset();
+      this.dialog = false;
+      this.editedItem = this.defaultItem;
+      this.editedIndex = -1;
     },
     async save() {
       try {
         this.loading = true;
         this.errored = false;
         if (this.editedIndex > -1) {
-          const response = await nitrogenContainerAPI.putNitrogenContainer(this.editedItem);
-          if (response) {
-            Object.assign(this.containers[this.editedIndex], response.data)
+          const {data} = await nitrogenContainerAPI.putNitrogenContainer(this.editedItem);
+          if (data) {
+            Object.assign(this.containers[this.editedIndex], data)
+            await this.getContainers()
           }
         } else {
-          const response = await nitrogenContainerAPI.postNitrogenContainer(this.editedItem);
-          if (response) {
-            this.containers.push(response.data);
-          }
+          await nitrogenContainerAPI.postNitrogenContainer(this.editedItem);
+          await this.getContainers();
         }
-      } catch (e) {
+      } catch (err) {
         this.errored = true;
-        this.errorMessage = e.response.data.message;
+        this.errorMessage = err.response.data.message;
       } finally {
         this.close()
         this.loading = false;
