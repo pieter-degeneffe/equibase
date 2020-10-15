@@ -98,7 +98,7 @@ export default {
       }
     },
     emitProduct(item) {
-      !item ? this.$emit('emit-product', item) : this.$emit('emit-product', item.id);
+      !item ? this.$emit('emit-product', item) : this.$emit('emit-product', item);
       this.selected = item;
     },
     openPage(url) {

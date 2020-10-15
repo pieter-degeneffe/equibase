@@ -5,7 +5,7 @@
       <v-spacer/>
       <FilterButton
           :toFilter="toFilter"
-          :filters="filters"
+          :filters=false
           :columns=true
           :headers="headers"
           :products="protocols"
@@ -127,14 +127,13 @@ export default {
     showColumn(col) {
       return this.headers.find(header => header.value === col).selected;
     },
-    openProtocolPage() {
-      console.log('todo');
-    },
     openDeleteDialog(item) {
       this.deleteQueue = item;
       this.deleteDialog = true;
     },
-
+    openProtocolPage(id) {
+      this.$router.push(`/settings/protocol/${id}`);
+    },
     async deleteItem(item) {
       try {
         this.loading = true;

@@ -27,8 +27,8 @@ export default {
     };
   },
   methods: {
-    openProtocolPage() {
-      console.log('todo');
+    openProtocolPage(id) {
+      this.$router.push({ path: `/settings/protocol/${id}` });
     }
   }
 }

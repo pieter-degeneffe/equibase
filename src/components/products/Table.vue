@@ -135,8 +135,8 @@
       }
     },
     methods: {
-      updateList(id) {
-        !id ? this.getProducts() : this.getProduct(id);
+      updateList(product) {
+        !product ? this.getProducts() : this.getProduct(product._id);
       },
       updateFilteredHeaders(headers) {
         this.filteredHeaders = headers;

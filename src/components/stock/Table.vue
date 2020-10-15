@@ -122,8 +122,8 @@ export default {
     showColumn(col) {
       return this.headers.find(header => header.value === col).selected;
     },
-    updateList(id) {
-      id ? this.getStock(id) : this.getAllStock();
+    updateList(product) {
+      product ? this.getStock(product._id) : this.getAllStock();
     },
     openStockProductPage(id) {
       document.body.style.cursor = 'default';

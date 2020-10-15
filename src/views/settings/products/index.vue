@@ -1,6 +1,6 @@
 <template>
   <div>
-    <productsTable title="Productenlijst" :headers="headers"></productsTable>
+    <productsTable title="Productenlijst" :headers="headers"/>
     <v-btn button color="primary" class="ma-2" depressed dark @click="openProductPage()" fixed bottom right>
       product toevoegen
       <v-icon right dark>mdi-plus</v-icon>

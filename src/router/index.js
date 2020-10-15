@@ -151,6 +151,11 @@ const routes = [
     beforeEnter: requireAuth
   },
   {
+    path: "/settings/protocol/:id",
+    component: () => import("@/views/settings/protocols/protocol"),
+    beforeEnter: requireAuth
+  },
+  {
     path: "/stock",
     name: "Stock overview",
     component: () => import("@/views/stock/index"),

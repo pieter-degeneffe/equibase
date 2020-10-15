@@ -1,24 +1,24 @@
 <template>
-  <products-form
-      :product="product"
+  <protocol-form
+      :protocol="protocol"
       :loading="loading"
-      callbackURL="/settings/products"
+      callbackURL="/settings/protocols"
       :disabled="disabled"
-      @update-product="updateProduct"
+      @update-protocol="updateProtocol"
   />
 </template>
 
 <script>
-import productsAPI from '@/services/ProductsAPI';
-import productsForm from '@/components/products/Form';
+import protocolAPI from '@/services/ProtocolAPI';
+import protocolForm from '@/components/protocols/Form';
 
 export default {
-  components: {productsForm},
+  components: {protocolForm},
   props: ['id'],
   data() {
     return {
       disabled: false,
-      product: {},
+      protocol: {},
       loading: null,
       errored: false,
       errorMessage: '',
@@ -26,15 +26,15 @@ export default {
   },
   beforeMount() {
     if (this.id !== 'undefined') {
-      this.getProduct(this.id);
+      this.getProtocol(this.id);
     }
   },
   methods: {
-    async getProduct(id) {
+    async getProtocol(id) {
       try {
         this.loading = true;
-        const { data } = await productsAPI.getProduct(id);
-        this.product = data;
+        const { data } = await protocolAPI.getProtocol(id);
+        this.protocol = data;
       } catch (err) {
         this.errored = true;
         this.errorMessage = err.response.data.message;
@@ -42,8 +42,8 @@ export default {
         this.loading = false
       }
     },
-    updateProduct(product) {
-      this.product = product;
+    updateProtocol(protocol) {
+      this.protocol = protocol;
     }
   }
 }
